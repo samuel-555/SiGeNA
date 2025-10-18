@@ -89,8 +89,8 @@
 |CSU01|Gerenciamento de funcionários|REQ001|RN001, RN002|
 |CSU02|Gerenciamento de animais|REQ002|RN003, RN004|
 |CSU03|Gerenciamento de espécies|REQ003|RN005, RN006|
-|CSU04|Gerenciamento de habitat\REQ004|RN007, RN008|
-|CSU05|Gerenciamento de histórico| REQ005|RN032, RN034|
+|CSU04|Gerenciamento de habitat|REQ004|RN007, RN008|
+|CSU05|Gerenciamento de histórico|REQ005|RN032, RN034|
 |CSU06|Gerenciamento de tratamentos médicos dos animais|REQ006|RN011, RN012|
 |CSU07|Gerenciamento de visitantes|REQ007|RN013, RN014|
 |CSU08|Gerenciamento de planos alimentares|REQ008|RN015, RN016|

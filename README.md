@@ -4,7 +4,7 @@
 | Ordem | Nome          |
 |:------|:--------------|
 | 1     | Alice         |
-| 2     | Rafael        |
+| 2     | Raphael       |
 | 3     | Samuel M      |
 | 4     | Sara          |
 | 5     | Thauan        |

@@ -12,7 +12,6 @@ public class UsuarioDAO {
         return cpf.replaceAll("[\\.\\-]", "").trim();
     }
 
-    
     public boolean autenticar(String cpf, String senha) {
         cpf = normalizarCPF(cpf);
         senha = senha.trim();

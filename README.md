@@ -1,4 +1,4 @@
-# SiGeNA-Sistema de Gerenciamneto de Necessidades Animais
+# SiGeNA-Sistema de Gerenciamento de Necessidades Animais
 
 ## Desenvolvedores
 | Ordem | Nome          |

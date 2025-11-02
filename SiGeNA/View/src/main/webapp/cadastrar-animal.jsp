@@ -1,4 +1,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
     <head>

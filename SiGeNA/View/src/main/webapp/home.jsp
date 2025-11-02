@@ -3,7 +3,7 @@
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("index.jsp");
         return;
     }
 %>

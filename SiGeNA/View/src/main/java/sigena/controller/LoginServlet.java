@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
         } 
         else {
             request.setAttribute("erro", "Cpf ou senha inválidos!");
-            RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
             rd.forward(request, response);
         }
             

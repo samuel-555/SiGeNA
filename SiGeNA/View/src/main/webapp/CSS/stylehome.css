@@ -1,0 +1,40 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 30px 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+h1 {
+  color: #149b5a;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.grid-botoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn {
+  background-color: #149b5a;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background-color: #0e7142;
+}

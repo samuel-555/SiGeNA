@@ -3,7 +3,7 @@
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("index.jsp");
         return;
     }
 %>
@@ -13,9 +13,17 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Bem vindo!</title>
+        <link rel="stylesheet" href="CSS\style.css">
+        <link rel="stylesheet" href="CSS\stylehome.css">
+        <title>SiGeNA</title>
     </head>
     <body>
+        <header>
+            <div class="titulo">SiGeNA</div>
+        </header>
         <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado") %>!</h1>
+        <div class="grid-botoes">
+            <a href="animais.jsp" class="btn">Gestão de Animais</a>
+        </div>
     </body>
 </html>

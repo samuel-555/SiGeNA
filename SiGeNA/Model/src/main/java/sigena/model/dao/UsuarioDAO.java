@@ -1,4 +1,4 @@
-package sigena.model;
+package sigena.model.dao;
 
 import java.sql.*;
 

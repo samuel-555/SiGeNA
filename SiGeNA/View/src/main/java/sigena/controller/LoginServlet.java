@@ -1,7 +1,7 @@
 package sigena.controller;
 
 import java.io.IOException;
-import sigena.model.UsuarioDAO;
+import sigena.model.dao.UsuarioDAO;
 import java.io.PrintWriter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;

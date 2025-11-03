@@ -1,4 +1,4 @@
-package sigena.model;
+package sigena.model.domain;
 
 public class Usuario {
     private int id;

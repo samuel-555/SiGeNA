@@ -27,22 +27,23 @@
         <div class="container">
             <h1>Cadastrar Novo Animal</h1>
         <div class="formulario">
-            <form action="">
+            <form action="AnimalController.java" method="post">
                 <label for="nome">Nome do Animal:</label>
-                <input type="text" id="nome" placeholder="Ex: Simba">
+                <input type="text" id="nome" name="nome" placeholder="Ex: Simba" required>
 
                 <label for="especie">Espécie:</label>
-                <input type="text" id="especie" placeholder="Ex: Leão Africano">
+                <input type="text" id="especie" name="especie" placeholder="Ex: Leão Africano" required>
 
                 <label for="idade">Idade (anos):</label>
-                <input type="number" id="idade" min="0" placeholder="Ex: 4">
+                <input type="number" id="idade" name="idade" min="0" placeholder="Ex: 4" required>
 
                 <label for="peso">Peso (kg):</label>
-                <input type="number" id="peso" min="0" step="0.1" placeholder="Ex: 190.5">
+                <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>
 
                 <label for="habitat">Habitat:</label>
-                <input type="text" id="habitat" placeholder="Ex: Savana 3">
-
+                <input type="text" id="habitat" name="habitat" placeholder="Ex: Savana 3" required>
+                
+                <input type="hidden" name="acao" value="salvar">
                 <button type="submit" class="btn-enviar">Salvar Animal</button>
             </form>
         </div>

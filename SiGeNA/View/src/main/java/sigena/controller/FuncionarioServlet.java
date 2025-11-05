@@ -2,56 +2,37 @@ package sigena.controller;
 
 import sigena.model.dao.FuncionarioDAO;
 import sigena.model.domain.Funcionario;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import sigena.model.domain.Cargo;
+import sigena.model.domain.EstadoFuncionario;
 
-@WebServlet("/FuncionarioServlet")
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
 public class FuncionarioServlet extends HttpServlet {
 
-    private Connection getConnection() throws SQLException {
-        // banco de dados:)
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/sigena", "root", "senha");
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try (Connection conn = getConnection()) {
-            FuncionarioDAO dao = new FuncionarioDAO(conn);
-            List<Funcionario> lista = dao.listar();
-            request.setAttribute("funcionarios", lista);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("funcionarioList.jsp");
-            dispatcher.forward(request, response);
-        } catch (SQLException e) {
-            throw new ServletException(e);
-        }
-    }
+    private final FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
 
-        String nome = request.getParameter("nome");
-        String email = request.getParameter("email");
-        String senha = request.getParameter("senha");
-        String cargo = request.getParameter("cargo");
+        String acao = request.getParameter("acao");
 
-        Funcionario funcionario = new Funcionario(nome, email, senha, cargo);
+        if ("cadastrar".equals(acao)) {
+            Funcionario f = new Funcionario();
+            f.setNome(request.getParameter("nome"));
+            f.setCargo(Cargo.valueOf(request.getParameter("cargo")));
+            f.setAreaAtuacao(request.getParameter("area"));
+            f.setObservacoes(request.getParameter("observacoes"));
+            funcionarioDAO.salvar(f);
 
-        try (Connection conn = getConnection()) {
-            FuncionarioDAO dao = new FuncionarioDAO(conn);
-            dao.inserir(funcionario);
-        } catch (SQLException e) {
-            throw new ServletException(e);
+            response.sendRedirect("funcionario.jsp");
         }
-
-        response.sendRedirect("FuncionarioServlet");
+        else if ("deletar".equals(acao)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            funcionarioDAO.remover(id);
+            response.sendRedirect("funcionario.jsp");
+        }
     }
 }

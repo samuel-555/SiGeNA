@@ -1,48 +1,41 @@
 package sigena.model.domain;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 
 public class Funcionario {
+    private static int contador = 1;
+
     private int id;
     private String nome;
-    private String email;
-    private String senha;
-    private String cargo;
-    private LocalDateTime dataCadastro;
+    private Cargo cargo;
+    private String areaAtuacao;
+    private String observacoes;
+    private EstadoFuncionario estado;
+    private LocalDate dataCadastro;
 
     public Funcionario() {
-        this.dataCadastro = LocalDateTime.now();
+        this.id = contador++;
+        this.dataCadastro = LocalDate.now();
+        this.estado = EstadoFuncionario.ATIVO;
     }
 
-    public Funcionario(String nome, String email, String senha, String cargo) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.cargo = cargo;
-        this.dataCadastro = LocalDateTime.now();
-    }
-
+    // Getters e Setters
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public Cargo getCargo() { return cargo; }
+    public void setCargo(Cargo cargo) { this.cargo = cargo; }
 
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
+    public String getAreaAtuacao() { return areaAtuacao; }
+    public void setAreaAtuacao(String areaAtuacao) { this.areaAtuacao = areaAtuacao; }
 
-    public String getCargo() { return cargo; }
-    public void setCargo(String cargo) { this.cargo = cargo; }
+    public String getObservacoes() { return observacoes; }
+    public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
 
-    public LocalDateTime getDataCadastro() { return dataCadastro; }
-    public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
+    public EstadoFuncionario getEstado() { return estado; }
+    public void setEstado(EstadoFuncionario estado) { this.estado = estado; }
 
-    public String getDataCadastroFormatada() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return dataCadastro.format(formatter);
-    }
+    public LocalDate getDataCadastro() { return dataCadastro; }
 }

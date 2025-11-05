@@ -2,10 +2,12 @@ package sigena.model.domain;
 
 public class Animal {
     private String nome;
+    private String sexo;
     private String especie;
     private Integer idade;
     private Double peso;
     private String habitat;
+    private boolean hostil;
     
     public Animal(String nome, String especie, Integer idade, Double peso, String habitat) {
         this.nome = nome;

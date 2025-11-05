@@ -14,6 +14,7 @@ public class Habitat {
     private int tamanho;//---------scapacidade----------
     private boolean precisaDeManutencao;
     private boolean disponivel;
+    private AnimaisAlocados animaisAlocados;
         
     public Habitat(String tipo,String nome, int tamanho, boolean manutencao){
         this.tipo = tipo;
@@ -21,13 +22,31 @@ public class Habitat {
         this.tamanho = tamanho;
         this.precisaDeManutencao = manutencao;
         disponivel = true;
+        animaisAlocados = new AnimaisAlocados();
     }
     
+    public void setAnimalAlocado(Animal animal){
+        animaisAlocados.adicionar(animal);
+    }
     public void setDisponivel(boolean disponivel){
         this.disponivel = disponivel;
     }
+    public void setManutencao(boolean manutencao){
+        this.precisaDeManutencao = manutencao;
+    }
+    public void setTamanho(int tamanho){
+        this.tamanho = tamanho;
+    }
     public void setNome(String nome){
         this.nome = nome;
+    }
+    public void setTipo(String tipo){
+        this.tipo = tipo;
+    }
+    
+    
+    public String getNome(){
+        return nome;
     }
     public String getTipo(){
         return tipo;
@@ -37,6 +56,9 @@ public class Habitat {
     }
     public boolean precisaDeManutencao(){
         return precisaDeManutencao;
+    }
+    public boolean estaDisponivel(){
+        return disponivel;
     }
     
 }

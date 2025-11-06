@@ -1,59 +1,66 @@
 package sigena.model.domain;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import sigena.model.domain.util.AnimalSexo;
+import sigena.model.domain.util.DataConverter;
+
 public class Animal {
     private String nome;
-    private String sexo;
-    private String especie;
-    private Integer idade;
+    private AnimalSexo sexo;
+    private LocalDate dataDeNascimento;
     private Double peso;
-    private String habitat;
     private boolean hostil;
     
-    public Animal(String nome, String especie, Integer idade, Double peso, String habitat) {
+    public Animal(String nome, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
         this.nome = nome;
-        this.especie = especie;
-        this.idade = idade;
+        this.sexo = AnimalSexo.setAnimalSexo(sexo);
+        this.dataDeNascimento = DataConverter.toLocalDate(dataDeNascimento);
         this.peso = peso;
-        this.habitat = habitat;
+        this.hostil = hostil;
     }
     
     public String getNome() {
         return nome;
     }
     
-    public String getEspecie() {
-        return especie;
-    }
-    
-    public Integer getIdade() {
-        return idade;
-    }
-    
-    public Double getPeso() {
-        return peso;
-    }
-    
-    public String getHabitat() {
-        return habitat;
-    }
-    
     public void setNome(String nome) {
         this.nome = nome;
     }
     
-    public void setEspecie(String especie) {
-        this.especie = especie;
+    public String getSexo() {
+        return sexo.getSexo();
     }
     
-    public void setIdade(Integer idade) {
-        this.idade = idade;
+    public void setSexo(String sexo) {
+        this.sexo = AnimalSexo.setAnimalSexo(sexo);
+    }
+    
+    public String getDataDeNascimento() {
+        return DataConverter.toString(this.dataDeNascimento);
+    }
+    
+    public void setDataDeNascimento(String dataDeNascimento) {
+        this.dataDeNascimento = DataConverter.toLocalDate(dataDeNascimento);
+    }
+    
+    public String getIdade() {
+        return DataConverter.toAge(this.dataDeNascimento);
+    }
+    
+    public Double getPeso() {
+        return this.peso;
     }
     
     public void setPeso(Double peso) {
         this.peso = peso;
     }
     
-    public void setHabitat(String habitat) {
-        this.habitat = habitat;
+    public boolean getHostilidade() {
+        return hostil;
+    }
+    
+    public void setHostilidade(boolean hostil) {
+        this.hostil = hostil;
     }
 }

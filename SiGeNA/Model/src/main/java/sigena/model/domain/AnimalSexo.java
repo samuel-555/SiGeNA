@@ -1,3 +1,0 @@
-package sigena.model.domain;
-
-

@@ -7,7 +7,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import sigena.model.domain.Animal;
+import sigena.model.service.GestaoAnimalService;
 
 @WebServlet(name = "AnimalController", urlPatterns = {"/AnimalController"})
 public class AnimalController extends HttpServlet {
@@ -32,35 +35,42 @@ public class AnimalController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+            GestaoAnimalService service = new GestaoAnimalService();
+            List<Animal> animais = new ArrayList<>();
+            
+            animais = service.listarAnimais();
+            
+            request.setAttribute("animais", animais);
+            
+            response.sendRedirect("animais.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
         
         String acao = request.getParameter("acao");
         
+        
         if(acao.equals("salvar")) {
-            String nome = request.getParameter("nome");
-            String especie = request.getParameter("especie");
-            Integer idade = null;
-            if(request.getParameter("idade") != null)
-                idade = Integer.parseInt(request.getParameter("idade"));
-            
-            Double peso = null;
-            if(request.getParameter("peso") != null)
-                peso = Double.parseDouble(request.getParameter("peso"));
-            
-            String habitat = request.getParameter("habitat");
-            
-            Animal novoAnimal = new Animal(nome, especie, idade, peso, habitat);
-            
-            
+            cadastrar(request, response);
+            response.sendRedirect("animais.jsp");
         }
     }
-
+    
+    private void cadastrar(HttpServletRequest request, HttpServletResponse response) {
+        String nome = request.getParameter("nome");
+        String sexo = request.getParameter("sexo");
+        String dataDeNascimento = request.getParameter("dataDeNascimento");
+        Double peso = Double.valueOf(request.getParameter("peso"));
+        boolean hostil = request.getParameter("hostil") != null;
+            
+        Animal novoAnimal = new Animal(nome, sexo, dataDeNascimento, peso, hostil);
+        GestaoAnimalService service = new GestaoAnimalService();
+            
+        service.cadastrarAnimal(novoAnimal);
+    }
+    
     @Override
     public String getServletInfo() {
         return "Short description";

@@ -6,15 +6,14 @@ import java.time.Period;
 
 public class DataConverter {
     public static LocalDate toLocalDate(String data) {
-        if(data == null)
+        if(data == null || data.isBlank())
             return null;
         
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dataOb = LocalDate.parse(data, formatter);
+        LocalDate dataOb = LocalDate.parse(data);
         return dataOb;
     }
     
-    public static String toString(LocalDate data) {
+    public static String toStringFormat(LocalDate data) {
         if(data == null)
             return null;
         
@@ -24,6 +23,9 @@ public class DataConverter {
     }
     
     public static String toAge(LocalDate data) {
+        if(data == null)
+            return null;
+        
         LocalDate hoje = LocalDate.now();
         Period periodo = Period.between(data, hoje);
         

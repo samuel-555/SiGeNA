@@ -1,11 +1,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
         response.sendRedirect("index.jsp");
         return;
     }
+    
+    LocalDate data = LocalDate.now();
+    String hoje = data.toString();
 %>
 <!DOCTYPE html>
 <html>
@@ -27,21 +32,26 @@
         <div class="container">
             <h1>Cadastrar Novo Animal</h1>
         <div class="formulario">
-            <form action="AnimalController.java" method="post">
+            <form action="AnimalController" method="post">
                 <label for="nome">Nome do Animal:</label>
                 <input type="text" id="nome" name="nome" placeholder="Ex: Simba" required>
-
-                <label for="especie">Espécie:</label>
-                <input type="text" id="especie" name="especie" placeholder="Ex: Leão Africano" required>
-
-                <label for="idade">Idade (anos):</label>
-                <input type="number" id="idade" name="idade" min="0" placeholder="Ex: 4" required>
+                
+                <label for="sexo">Sexo do animal:</label>
+                <select name="sexo" id="sexo">
+                    <option value="indefinido">Indefinido</option>
+                    <option value="macho">Macho</option>
+                    <option value="femea">Fêmea</option>
+                </select>
+                
+                <label for="dataDeNascimento">Data de nascimento:</label>
+                <input type="date" max="<%=hoje%>" id="dataDeNascimento" id="dataDeNascimento" name="dataDeNascimento">
 
                 <label for="peso">Peso (kg):</label>
                 <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>
-
-                <label for="habitat">Habitat:</label>
-                <input type="text" id="habitat" name="habitat" placeholder="Ex: Savana 3" required>
+                
+                <label for="hostil">Animal hostil
+                <input type="checkbox" id="hostil" name="hostil" value="true">
+                </label>
                 
                 <input type="hidden" name="acao" value="salvar">
                 <button type="submit" class="btn-enviar">Salvar Animal</button>

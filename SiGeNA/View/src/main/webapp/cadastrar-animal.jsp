@@ -2,6 +2,11 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
+<%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@taglib uri="jakarta.tags.functions" prefix="fn" %>
+<%@taglib uri="jakarta.tags.xml" prefix="x" %>
+<%@taglib uri="jakarta.tags.sql" prefix="sql"%>
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
@@ -26,7 +31,7 @@
         </header>
         
         <div class="botoes-acoes">
-            <a href="animais.jsp" class="btn">Listar animais</a>
+            <a href="AnimalController?acao=listar" class="btn">Voltar</a>
         </div>
         
         <div class="container">
@@ -44,7 +49,7 @@
                 </select>
                 
                 <label for="dataDeNascimento">Data de nascimento:</label>
-                <input type="date" max="<%=hoje%>" id="dataDeNascimento" id="dataDeNascimento" name="dataDeNascimento">
+                <input type="date" max="<%=hoje%>" id="dataDeNascimento" id="dataDeNascimento" name="dataDeNascimento" required>
 
                 <label for="peso">Peso (kg):</label>
                 <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>

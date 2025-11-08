@@ -41,21 +41,34 @@ public class AnimalController extends HttpServlet {
             animais = service.listarAnimais();
             
             request.setAttribute("animais", animais);
-            
-            response.sendRedirect("animais.jsp");
+            request.getRequestDispatcher("animais.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String acao = request.getParameter("acao");
-        
-        
-        if(acao.equals("salvar")) {
-            cadastrar(request, response);
-            response.sendRedirect("animais.jsp");
+        try {
+            String acao = request.getParameter("acao");
+            
+            if(acao == null)
+                throw new NullPointerException();
+                
+            if(acao.equals("salvar")) {
+                cadastrar(request, response);
+                response.sendRedirect(request.getContextPath() + "/AnimalController");
+            }
+            
+            if(acao.equals("excluir")) {
+                excluir(request, response);
+                response.sendRedirect(request.getContextPath() + "/AnimalController");
+            }
+        } catch(NullPointerException e) {
+            System.out.println(e.getMessage());
         }
+        
+        
+        
     }
     
     private void cadastrar(HttpServletRequest request, HttpServletResponse response) {
@@ -69,6 +82,20 @@ public class AnimalController extends HttpServlet {
         GestaoAnimalService service = new GestaoAnimalService();
             
         service.cadastrarAnimal(novoAnimal);
+    }
+    
+    private void excluir(HttpServletRequest request, HttpServletResponse response) {
+        String id = request.getParameter("id");
+        
+        GestaoAnimalService service = new GestaoAnimalService();
+        service.excluirAnimal(id);
+    }
+    
+    private void exibir(HttpServletRequest request, HttpServletResponse response) {
+        String id = request.getParameter("id");
+        
+        GestaoAnimalService service = new GestaoAnimalService();
+        service.excluirAnimal(id);
     }
     
     @Override

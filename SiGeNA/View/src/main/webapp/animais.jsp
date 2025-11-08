@@ -1,10 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@taglib uri="jakarta.tags.functions" prefix="fn" %>
+<%@taglib uri="jakarta.tags.xml" prefix="x" %>
+<%@taglib uri="jakarta.tags.sql" prefix="sql"%>
 
 <%
     HttpSession sessao = request.getSession(false);
@@ -33,39 +33,50 @@
     <div class="botoes-acoes">
         <a href="cadastrar-animal.jsp" class="btn">Cadastrar Novo Animal</a>
     </div>
-
-    <div class="historico">
-      <h2>Lista de Animais</h2>
-      <table>
+    
+    <div style="background: #f0f0f0; padding: 10px; margin: 10px 0;">
+        <strong>Debug Info:</strong><br>
+        Lista é null: ${animais == null}<br>
+        Tamanho da lista: ${fn:length(animais)}<br>
+        Lista vazia: ${empty animais}
+    </div>
+    <c:if test="${empty animais}">
+        <p>Nenhum animal cadastrado.</p>
+    </c:if>
+    
+    <c:if test="${not empty animais}">
+        <div class="historico">
+        <h2>Lista de Animais</h2>
+        <table>
         <thead>
           <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>Espécie</th>
-            <th>Idade</th>
-            <th>Habitat</th>
-            <th>Dieta</th>
-            <th>Saúde</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>001</td>
-            <td>Simba</td>
-            <td>Leão Africano</td>
-            <td>4</td>
-            <td>Savana 3</td>
-            <td>Carnívoro</td>
-            <td>Saudável</td>
-            <td>
-              <button class="btn-pequeno editar">Editar</button>
-              <button class="btn-pequeno excluir">Remover</button>
-            </td>
-          </tr>
+            <c:forEach var="animal" items="${animais}">
+                <tr>
+                <td><c:out value="${animal.id}"/></td>
+                <td><c:out value="${animal.nome}"/></td>
+                <td>
+                    <form action="AnimalController" method="post" class="botao-acao">
+                        <input type="hidden" name="acao" value="excluir">
+                        <input type="hidden" name="id" value="<c:out value="${animal.id}"/>">
+                        <button type="submit" class="btn-pequeno excluir">Remover</button>
+                    </form>
+                        <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>"></a>
+                    
+                </td>
+                </tr>
+            </c:forEach>
+          
         </tbody>
       </table>
-    </div>
+    </div>     
+    </c:if>
+    
   </div>
 </body>
 </html>

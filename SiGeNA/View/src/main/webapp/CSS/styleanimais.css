@@ -113,3 +113,7 @@ th {
 input[type="checkbox"] {
     display: inline;
 }
+
+.botao-acao {
+    display: inline;
+}

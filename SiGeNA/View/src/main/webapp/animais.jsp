@@ -33,13 +33,6 @@
     <div class="botoes-acoes">
         <a href="cadastrar-animal.jsp" class="btn">Cadastrar Novo Animal</a>
     </div>
-    
-    <div style="background: #f0f0f0; padding: 10px; margin: 10px 0;">
-        <strong>Debug Info:</strong><br>
-        Lista é null: ${animais == null}<br>
-        Tamanho da lista: ${fn:length(animais)}<br>
-        Lista vazia: ${empty animais}
-    </div>
     <c:if test="${empty animais}">
         <p>Nenhum animal cadastrado.</p>
     </c:if>
@@ -66,7 +59,7 @@
                         <input type="hidden" name="id" value="<c:out value="${animal.id}"/>">
                         <button type="submit" class="btn-pequeno excluir">Remover</button>
                     </form>
-                        <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>"></a>
+                        <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn-pequeno">Exibir</a>
                     
                 </td>
                 </tr>

@@ -35,13 +35,52 @@ public class AnimalController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            GestaoAnimalService service = new GestaoAnimalService();
-            List<Animal> animais = new ArrayList<>();
+        
+            try {
+                String acao = request.getParameter("acao");
             
-            animais = service.listarAnimais();
+                if(acao == null)
+                    throw new NullPointerException();
+                
+                GestaoAnimalService service = new GestaoAnimalService();
+                
+                if(acao.equals("listar")) {
+                    List<Animal> animais = new ArrayList<>();
             
-            request.setAttribute("animais", animais);
-            request.getRequestDispatcher("animais.jsp").forward(request, response);
+                    animais = service.listarAnimais();
+            
+                    request.setAttribute("animais", animais);
+                    request.getRequestDispatcher("animais.jsp").forward(request, response);
+                    
+                }
+                
+                if(acao.equals("exibir")) {
+                    String id = request.getParameter("id");
+                    
+                    Animal animal = service.buscarAnimal(id);
+                    request.setAttribute("animal", animal);
+                    request.getRequestDispatcher("exibir-animal.jsp").forward(request, response);
+                }
+                
+                if(acao.equals("editar")) {
+                    String id = request.getParameter("id");
+                    
+                    Animal animal = service.buscarAnimal(id);
+                    request.setAttribute("animal", animal);
+                    request.getRequestDispatcher("editar-animal.jsp").forward(request, response);
+                }
+                
+                if(acao.equals("salvar_alteracoes")) {
+                    String id = request.getParameter("id");
+                    
+                    Animal animal = service.buscarAnimal(id);
+                    request.setAttribute("animal", animal);
+                    request.getRequestDispatcher("exibir-animal.jsp").forward(request, response);
+                }
+            } catch(NullPointerException e) {
+                System.out.println(e.getMessage());
+            }
+            
     }
 
     @Override
@@ -56,12 +95,18 @@ public class AnimalController extends HttpServlet {
                 
             if(acao.equals("salvar")) {
                 cadastrar(request, response);
-                response.sendRedirect(request.getContextPath() + "/AnimalController");
+                response.sendRedirect(request.getContextPath() + "/AnimalController?acao=listar");
             }
             
             if(acao.equals("excluir")) {
                 excluir(request, response);
-                response.sendRedirect(request.getContextPath() + "/AnimalController");
+                response.sendRedirect(request.getContextPath() + "/AnimalController?acao=listar");
+            }
+            
+            if(acao.equals("editar")) {
+                String id = request.getParameter("id");
+                editar(request, response);
+                response.sendRedirect(request.getContextPath() + "/AnimalController?acao=exibir&id=" + id);
             }
         } catch(NullPointerException e) {
             System.out.println(e.getMessage());
@@ -91,11 +136,25 @@ public class AnimalController extends HttpServlet {
         service.excluirAnimal(id);
     }
     
-    private void exibir(HttpServletRequest request, HttpServletResponse response) {
+    /*private void exibir(HttpServletRequest request, HttpServletResponse response) {
         String id = request.getParameter("id");
         
         GestaoAnimalService service = new GestaoAnimalService();
-        service.excluirAnimal(id);
+        service.exibirAnimal(id);
+    }*/
+    
+    private void editar(HttpServletRequest request, HttpServletResponse response) {
+        Long id = Long.valueOf(request.getParameter("id"));
+        String nome = request.getParameter("nome");
+        String sexo = request.getParameter("sexo");
+        String dataDeNascimento = request.getParameter("dataDeNascimento");
+        Double peso = Double.valueOf(request.getParameter("peso"));
+        boolean hostil = request.getParameter("hostil") != null;
+            
+        Animal editadoAnimal = new Animal(id, nome, sexo, dataDeNascimento, peso, hostil);
+        GestaoAnimalService service = new GestaoAnimalService();
+            
+        service.editarAnimal(editadoAnimal);
     }
     
     @Override

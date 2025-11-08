@@ -68,8 +68,51 @@ public class AnimalDAO {
         }
     }
     
-    public void exibir(String id) {
+    public Animal buscarPorId(String id) {
+        String sql = "SELECT * FROM animais WHERE id = ?";
+        Animal animal = null;
+        try (Connection con = DriverManager.getConnection(URL, USUARIO, SENHA);
+                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+            
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                animal = consultaToAnimal(rs);
+            }
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         
+        return animal;
+    }
+    
+    public void editar(Animal animal) {
+        String sql = "UPDATE animais "
+                + "SET nome = ?, "
+                + "sexo = ?, "
+                + "data_de_nascimento = ?, "
+                + "peso = ?, "
+                + "hostil = ? "
+                + "WHERE id = ?";
+        try(Connection con = DriverManager.getConnection(URL, USUARIO, SENHA);
+                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
+            stmt.setString(1, animal.getNome());
+            stmt.setString(2, animal.getSexo());
+            
+            if(animal.getDataDeNascimentoOb() != null)
+                stmt.setDate(3, java.sql.Date.valueOf(animal.getDataDeNascimentoOb()));
+            else
+                stmt.setNull(3, Types.DATE);
+            stmt.setDouble(4, animal.getPeso());
+            stmt.setBoolean(5, animal.getHostilidade());
+            stmt.setLong(6, animal.getId());
+            
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     private Animal consultaToAnimal(ResultSet rs) throws SQLException {

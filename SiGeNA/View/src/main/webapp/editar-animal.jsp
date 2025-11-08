@@ -55,7 +55,7 @@
                 <input type="number" id="peso" name="peso" min="0" step="0.1" value="<c:out value="${animal.peso}"/>" placeholder="Ex: 190.5" required>
                 
                 <label for="hostil">Animal hostil
-                    <input type="checkbox" id="hostil" name="hostil" value="true" <c:if test="animal.hostilidade">checked</c:if>>
+                    <input type="checkbox" id="hostil" name="hostil" value="true" <c:if test="${animal.hostilidade}">checked</c:if>>
                 </label>
                 
                 <input type="hidden" name="id" value="<c:out value="${animal.id}"/>"> 

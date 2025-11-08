@@ -1,0 +1,144 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 3 de nov. de 2025, 09:37:33
+    Author     : USUARIO
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background-color: #149b5a;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.titulo {
+  background-color: #0e7142;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #149b5a;
+  margin-bottom: 25px;
+}
+
+.botoes-acoes {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.btn {
+  background-color: #149b5a;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background-color: #0e7142;
+}
+
+.formulario, .historico {
+  margin-bottom: 40px;
+}
+
+h2 {
+  color: #0e7142;
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn-enviar {
+  background-color: #149b5a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.btn-enviar:hover {
+  background-color: #0e7142;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #149b5a;
+  color: #fff;
+}
+
+.btn-pequeno {
+  background-color: #0e7142;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-pequeno.excluir {
+  background-color: #c0392b;
+}
+
+.btn-pequeno:hover {
+  opacity: 0.85;
+}
+
+

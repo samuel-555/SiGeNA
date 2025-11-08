@@ -7,19 +7,19 @@ import java.sql.SQLException;
 
 public class ConexaoDB {
     
-    private static final String url = "jdbc:mysql://localhost:3306/";
-    private static final String db_name = "sigena";
-    private static final String user = "root";
-    private static final String password = "";
+    private static final String URL = "jdbc:mysql://localhost:3306/";
+    private static final String DB_NAME = "sigena";
+    private static final String USUARIO = "root";
+    private static final String SENHA = "";
     
     public static Connection getConnection() throws SQLException{
-        try(Connection connection = DriverManager.getConnection(url, user, password);
-            Statement statement = connection.createStatement()){
+        try(Connection con = DriverManager.getConnection(URL, USUARIO, SENHA);
+            Statement statement = con.createStatement()){
             
-            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + db_name);
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + DB_NAME);
         }
         
-        Connection connection = DriverManager.getConnection(url + db_name, user, password);
+        Connection connection = DriverManager.getConnection(URL + DB_NAME, USUARIO, SENHA);
         return connection;
         
     }  

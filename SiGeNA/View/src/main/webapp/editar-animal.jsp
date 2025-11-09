@@ -35,33 +35,37 @@
         </div>
         
         <div class="container">
-            <h1>Cadastrar Novo Animal</h1>
+            <h1>Editar Animal</h1>
         <div class="formulario">
             <form action="AnimalController" method="post">
                 <label for="nome">Nome do Animal:</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: Simba" required>
+                <input type="text" id="nome" name="nome" value="<c:out value="${animal.nome}"/>" placeholder="Ex: Simba" required>
                 
                 <label for="sexo">Sexo do animal:</label>
                 <select name="sexo" id="sexo">
-                    <option value="indefinido">Indefinido</option>
-                    <option value="macho">Macho</option>
-                    <option value="femea">Fêmea</option>
+                    <option value="Indefinido">Indefinido</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Fêmea">Fêmea</option>
                 </select>
                 
                 <label for="dataDeNascimento">Data de nascimento:</label>
-                <input type="date" max="<%=hoje%>" id="dataDeNascimento" name="dataDeNascimento" required>
+                <input type="date" max="<%=hoje%>" id="dataDeNascimento" name="dataDeNascimento" value="<c:out value="${animal.dataDeNascimentoOb}"/>" required>
 
                 <label for="peso">Peso (kg):</label>
-                <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>
+                <input type="number" id="peso" name="peso" min="0" step="0.1" value="<c:out value="${animal.peso}"/>" placeholder="Ex: 190.5" required>
                 
                 <label for="hostil">Animal hostil
-                <input type="checkbox" id="hostil" name="hostil" value="true">
+                    <input type="checkbox" id="hostil" name="hostil" value="true" <c:if test="${animal.hostilidade}">checked</c:if>>
                 </label>
                 
-                <input type="hidden" name="acao" value="salvar">
-                <button type="submit" class="btn-enviar">Salvar Animal</button>
+                <input type="hidden" name="id" value="<c:out value="${animal.id}"/>"> 
+                <input type="hidden" name="acao" value="editar">
+                <button type="submit" class="btn-enviar">Salvar Alterações</button>
             </form>
         </div>
         </div>
+                <script>
+                    document.querySelector('#sexo').value = <c:out value="${animal.sexo}"/>;
+                </script>
     </body>
 </html>

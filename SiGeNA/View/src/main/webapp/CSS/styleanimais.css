@@ -109,3 +109,11 @@ th {
 .btn-pequeno:hover {
   opacity: 0.85;
 }
+
+input[type="checkbox"] {
+    display: inline;
+}
+
+.botao-acao {
+    display: inline;
+}

@@ -3,26 +3,26 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package sigena.model.domain;
+import sigena.model.service.GestaoHabitatService;
 
-/**
- *
- * @author USUARIO
- */
+
 public class Habitat {
     private String tipo;
     private String nome;
-    private int tamanho;//---------scapacidade----------
-    private boolean precisaDeManutencao;
+    private int capacidade;
+    private int tamanho;
+    private boolean manutencao;
     private boolean disponivel;
     private AnimaisAlocados animaisAlocados;
-        
+            
     public Habitat(String tipo,String nome, int tamanho, boolean manutencao){
         this.tipo = tipo;
         this.nome = nome;
         this.tamanho = tamanho;
-        this.precisaDeManutencao = manutencao;
+        this.manutencao = manutencao;
         disponivel = true;
         animaisAlocados = new AnimaisAlocados();
+        capacidade = tamanho;
     }
     
     public void setAnimalAlocado(Animal animal){
@@ -32,7 +32,7 @@ public class Habitat {
         this.disponivel = disponivel;
     }
     public void setManutencao(boolean manutencao){
-        this.precisaDeManutencao = manutencao;
+        this.manutencao = manutencao;
     }
     public void setTamanho(int tamanho){
         this.tamanho = tamanho;
@@ -43,8 +43,14 @@ public class Habitat {
     public void setTipo(String tipo){
         this.tipo = tipo;
     }
+    public void setCapacidade(int capacidade){
+        this.capacidade = capacidade;
+    }
     
     
+    public void getAnimalAlocado(){
+        animaisAlocados.listar();
+    }
     public String getNome(){
         return nome;
     }
@@ -54,11 +60,14 @@ public class Habitat {
     public int getTamanho(){
         return tamanho;
     }
-    public boolean precisaDeManutencao(){
-        return precisaDeManutencao;
+    public boolean getManutencao(){
+        return manutencao;
     }
-    public boolean estaDisponivel(){
+    public boolean getDisponivel(){
         return disponivel;
+    }
+    public int getCapacidade(){
+        return capacidade;
     }
     
 }

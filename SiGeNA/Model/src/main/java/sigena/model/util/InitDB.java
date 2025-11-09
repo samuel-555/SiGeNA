@@ -21,7 +21,7 @@ public class InitDB {
                 tipo VARCHAR(255) NOT NULL,
                 capacidade INT NOT NULL,
                 tamanho INT NOT NULL,
-                precisaDeManutencao BOOLEAN NOT NULL,
+                manutencao BOOLEAN NOT NULL,
                 disponivel BOOLEAN NOT NULL
             );
             """;

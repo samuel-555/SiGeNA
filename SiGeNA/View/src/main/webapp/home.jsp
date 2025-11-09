@@ -24,6 +24,7 @@
         <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado") %>!</h1>
         <div class="grid-botoes">
             <a href="animais.jsp" class="btn">Gestão de Animais</a>
+            <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
         </div>
     </body>
 </html>

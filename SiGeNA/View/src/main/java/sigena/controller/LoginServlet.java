@@ -6,6 +6,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import sigena.model.common.exception.PersistenciaException;
+import sigena.model.domain.Usuario;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -18,6 +19,7 @@ public class LoginServlet extends HttpServlet {
 
         String cpf = request.getParameter("cpf");
         String senha = request.getParameter("senha");
+        Usuario usuario = new Usuario(cpf, senha);
 
         if (cpf == null || senha == null || cpf.isEmpty() || senha.isEmpty()) {
             request.setAttribute("erro", "CPF e senha são obrigatórios!");
@@ -29,6 +31,7 @@ public class LoginServlet extends HttpServlet {
             if (dao.autenticar(cpf, senha)) {
                 HttpSession session = request.getSession();
                 session.setAttribute("CpfLogado", cpf);
+                session.setAttribute("UsuarioLogado", usuario);
                 response.sendRedirect("home.jsp");
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");

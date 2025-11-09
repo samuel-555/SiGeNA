@@ -1,9 +1,41 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 3 de nov. de 2025, 09:37:33
+    Author     : USUARIO
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background-color: #149b5a;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.titulo {
+  background-color: #0e7142;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
 .container {
-  max-width: 1000px;
+  max-width: 900px;
   margin: 30px auto;
   background-color: #f9f9f9;
   border-radius: 10px;
-  padding: 25px 35px;
+  padding: 20px 30px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -78,12 +110,11 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
-  font-size: 14px;
 }
 
 th, td {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 10px;
   text-align: center;
 }
 
@@ -110,10 +141,4 @@ th {
   opacity: 0.85;
 }
 
-input[type="checkbox"] {
-    display: inline;
-}
 
-.botao-acao {
-    display: inline;
-}

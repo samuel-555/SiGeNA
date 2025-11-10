@@ -12,43 +12,49 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SiGeNA - Gestão de Habitat</title>
-  <link rel="stylesheet" href="CSS\style.css">
-  <link rel="stylesheet" href="CSS\stylehabitat.css">
+  <link rel="stylesheet" href="CSS/style.css">
+  <link rel="stylesheet" href="CSS/stylehabitat.css">
 </head>
 <body>
   <header>
-    <div class="titulo">SiGeNA</div>
+    <div class="titulo"><a href="home.jsp">SiGeNA</a></div>
   </header>
 
   <div class="container">
     <h1>Gestão de Habitat</h1>
 
     <div class="botoes-acoes">
-      <a href="habitats.jsp" class="btn">Voltar</a>
+      <a href="HabitatController?acao=listar" class="btn">Voltar</a>
     </div>
-
+    
     <div class="formulario">
       <h2>Cadastrar Novo Habitat</h2>
-      <form>
+      
+    <form action="${pageContext.request.contextPath}/HabitatController" method="post">
+    <input type="hidden" name="acao" value="inserir">
+        
+        <c:if test="${not empty msgErro}">
+            <p style="color:red;font-weight:bold">${msgErro}</p>
+        </c:if>
+        
         <label for="nome">Nome do Habitat:</label>
-        <input type="text" id="nome" placeholder="Ex: Savana Africana">
+        <input type="text" id="nome" name="nome" placeholder="Ex: Savana Africana">
 
         <label for="tipo">Tipo de Habitat:</label>
-        <input type="text" id="tipo" placeholder="Ex: Cerrado, Aquático, Floresta">
+        <input type="text" id="tipo" name="tipo" placeholder="Ex: Cerrado, Floresta">
 
-        <label for="capacidade">Tamanho em m³:</label>
-        <input type="number" id="capacidade" min="1" placeholder="Ex: 10 m³">
+        <label for="tamanho">Tamanho em m³:</label>
+        <input type="number" name="tamanho" id="tamanho" min="1" placeholder="Ex: 10 m³">
+        
+        <label for="manutencao">Precisa de Manutenção</label>
+        <input type="checkbox" id="manutencao" name="manutencao">
 
-        <label for="observacoes">Observações:</label>
-        <textarea id="observacoes" rows="3" placeholder="Ex: Alimentação específica, cuidados especiais"></textarea>
-
+        
         <button type="submit" class="btn-enviar">Salvar Habitat</button>
       </form>
     </div>
-        </tbody>
-      </table>
     </div>
-  </div>
+ 
 </body>
 </html>
 

@@ -24,11 +24,9 @@ public class AnimaisAlocados {
         animais.remove(animal);
     }
     
-    public Animal listar(){
+    public void listar(){
        for(int i = 0; i < animais.size(); i++)
-           return animais.get(i);
-       
-       return null;
+           System.out.println(animais.get(i));
    }
     
     public int tamanho(){

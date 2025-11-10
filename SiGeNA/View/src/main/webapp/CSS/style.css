@@ -39,3 +39,10 @@ header a {
     text-decoration: none;
     cursor: pointer;
 }
+
+.mensagem {
+    color: red;
+    margin-top: 10px;
+    font-size: 13px;
+    text-align: center;
+}

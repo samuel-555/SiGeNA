@@ -52,7 +52,8 @@ label {
   font-weight: bold;
 }
 
-input, textarea {
+input:not([type="checkbox"]),
+textarea {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
@@ -110,10 +111,31 @@ th {
   opacity: 0.85;
 }
 
-input[type="checkbox"] {
+.botao-acao {
     display: inline;
 }
 
-.botao-acao {
-    display: inline;
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  background-color: #eef8f3;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #149b5a;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  margin: 0;
+  font-weight: normal;
+  color: #333;
+  cursor: pointer;
 }

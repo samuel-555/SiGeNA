@@ -32,10 +32,17 @@ public class InitDB {
 
     public void initAnimais() throws SQLException {
         String sql = """
-            CREATE TABLE animais (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255),
-                especie VARCHAR(255)
+            CREATE TABLE IF NOT EXISTS animais (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  id_especie INT NOT NULL,
+                  sexo VARCHAR(20) NOT NULL,
+                  data_de_nascimento DATE NOT NULL,
+                  peso DOUBLE NOT NULL,
+                  hostil BOOLEAN NOT NULL,
+                  data_de_insercao DATETIME NOT NULL,
+                  FOREIGN KEY (id_especie) REFERENCES especie(id)
+                     ON UPDATE CASCADE
             );
             """;
 
@@ -103,11 +110,12 @@ public class InitDB {
 
     public void initTodos() throws PersistenciaException {
         try {
-            initHabitats();
-            initAnimais();
-            initHabitat_animal();
-            initUsuarios();
+            //initHabitats();
             initEspecies();
+            initAnimais();
+            //initHabitat_animal();
+            initUsuarios();
+            
 
         } catch (SQLException e) {
             throw new PersistenciaException("erro ao inicializar tabelas: " + e.getMessage());

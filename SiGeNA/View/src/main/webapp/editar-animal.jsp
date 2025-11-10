@@ -22,8 +22,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>SiGeNA - Gestão de Animais</title>
-        <link rel="stylesheet" href="CSS\styleanimais.css">
-        <link rel="stylesheet" href="CSS\style.css">
+        <link rel="stylesheet" href="CSS/styleanimais.css">
+        <link rel="stylesheet" href="CSS/style.css">
     </head>
     <body>
         <header>
@@ -37,9 +37,20 @@
         <div class="container">
             <h1>Editar Animal</h1>
         <div class="formulario">
+            <p><strong>ID:</strong> <c:out value="${animal.id}"/></p>
             <form action="AnimalController" method="post">
                 <label for="nome">Nome do Animal:</label>
                 <input type="text" id="nome" name="nome" value="<c:out value="${animal.nome}"/>" placeholder="Ex: Simba" required>
+                
+                <label for="especie">Espécie:</label>
+                <select name="especie" id="especie">
+                    <option value="${animal.especieId}">${animal.especieNome}</option>
+                    <c:forEach items="${especies}" var="especie">
+                        <c:if test="${animal.especieId != especie.id}">
+                            <option value="${especie.id}">${especie.nome}</option>
+                        </c:if>
+                    </c:forEach>
+                </select>
                 
                 <label for="sexo">Sexo do animal:</label>
                 <select name="sexo" id="sexo">
@@ -54,9 +65,10 @@
                 <label for="peso">Peso (kg):</label>
                 <input type="number" id="peso" name="peso" min="0" step="0.1" value="<c:out value="${animal.peso}"/>" placeholder="Ex: 190.5" required>
                 
-                <label for="hostil">Animal hostil
+                <div class="checkbox-group">
                     <input type="checkbox" id="hostil" name="hostil" value="true" <c:if test="${animal.hostilidade}">checked</c:if>>
-                </label>
+                    <label for="hostil">Animal hostil</label>
+                </div>
                 
                 <input type="hidden" name="id" value="<c:out value="${animal.id}"/>"> 
                 <input type="hidden" name="acao" value="editar">

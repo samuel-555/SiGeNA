@@ -10,7 +10,7 @@ public class ConexaoDB {
     private static final String DB_NAME = "sigena";
     private static final String USUARIO = "root";
     private static final String SENHA = "";
-
+    
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); 

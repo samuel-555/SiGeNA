@@ -1,31 +1,60 @@
 package sigena.model.service;
+
 import sigena.model.dao.UsuarioDAO;
 import sigena.model.common.exception.PersistenciaException;
+import sigena.model.common.exception.DatabaseException;
+import sigena.model.domain.Funcionario;
+import sigena.model.domain.Usuario;
 
 public class GestaoUsuarioService {
 
-    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    public boolean autenticar(String cpf, String senha) throws PersistenciaException {
-        if (cpf == null || senha == null || cpf.isEmpty() || senha.isEmpty()) {
+    public Usuario autenticar(String cpf, String senha) throws PersistenciaException {
+        if (cpf == null || senha == null || cpf.isBlank() || senha.isBlank()) {
             throw new PersistenciaException("CPF e senha são obrigatórios!");
         }
         return usuarioDAO.autenticar(cpf, senha);
     }
 
-    public String cadastrar(String cpf, String senha) throws PersistenciaException {
-        if (cpf == null || cpf.isBlank() || senha == null || senha.isBlank()) {
-            throw new PersistenciaException("CPF e senha não podem estar vazios.");
+    public void criarUsuario(Funcionario funcionario) throws DatabaseException, PersistenciaException {
+        if (funcionario == null) {
+            throw new PersistenciaException("Funcionário não informado.");
         }
-        
-        if (usuarioDAO.existeCPF(cpf)) {
-            return "CPF já cadastrado! Não é permitido mais de um cadastro com o mesmo CPF.";
+        if (funcionario.getCpf() == null || funcionario.getCpf().isBlank()) {
+            throw new PersistenciaException("CPF do funcionário é obrigatório.");
         }
+        if (funcionario.getSenha() == null || funcionario.getSenha().isBlank()) {
+            throw new PersistenciaException("Senha do funcionário é obrigatória.");
+        }
+        if (usuarioDAO.existeCPF(funcionario.getCpf())) {
+            throw new PersistenciaException("Já existe um usuário cadastrado com este CPF.");
+        }
+        usuarioDAO.criarUsuario(funcionario);
+    }
 
-        return usuarioDAO.cadastrar(cpf, senha);
+    public void atualizarUsuario(Funcionario funcionario) throws DatabaseException, PersistenciaException {
+        if (funcionario == null || funcionario.getId() == 0) {
+            throw new PersistenciaException("Funcionário inválido para atualização.");
+        }
+        usuarioDAO.atualizarSenhaOuCargo(funcionario);
+    }
+
+    public void deletarUsuarioPorFuncionario(int funcionarioId) throws DatabaseException, PersistenciaException {
+        if (funcionarioId <= 0) {
+            throw new PersistenciaException("ID do funcionário inválido.");
+        }
+        usuarioDAO.deletarPorFuncionario(funcionarioId);
+    }
+
+    public void sincronizarUsuarios() throws DatabaseException {
+        usuarioDAO.sincronizarFuncionariosComUsuarios();
     }
 
     public boolean existeCPF(String cpf) throws PersistenciaException {
+        if (cpf == null || cpf.isBlank()) {
+            throw new PersistenciaException("CPF não informado.");
+        }
         return usuarioDAO.existeCPF(cpf);
     }
 }

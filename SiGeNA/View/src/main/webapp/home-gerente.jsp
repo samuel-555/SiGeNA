@@ -31,7 +31,7 @@
             <a href="animais.jsp" class="btn">Gestão de Animais</a>
             <a href="habitats.jsp" class="btn">Gestão de Habitat</a>
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
-            <a href="FuncionarioServlet.jsp" class="btn">Gestão de Funcionários</a>
+            <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
         </div>
     </body>
 </html>

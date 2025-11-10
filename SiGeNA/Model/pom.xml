@@ -6,11 +6,16 @@
         <artifactId>SiGeNA</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    
     <artifactId>Model</artifactId>
     <packaging>jar</packaging>
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <exec.mainClass>com.mycompany.model.Model</exec.mainClass>
-    </properties>
+    <name>Model</name>
+    
+     <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+    </dependencies>
 </project>

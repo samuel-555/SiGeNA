@@ -22,7 +22,7 @@ public class InitDB {
                 tipo VARCHAR(255) NOT NULL,
                 capacidade INT NOT NULL,
                 tamanho INT NOT NULL,
-                precisaDeManutencao BOOLEAN NOT NULL,
+                manutencao BOOLEAN NOT NULL,
                 disponivel BOOLEAN NOT NULL
             );
             """;
@@ -34,9 +34,16 @@ public class InitDB {
     public void initAnimais() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS animais (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255),
-                especie VARCHAR(255)
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  id_especie INT NOT NULL,
+                  sexo VARCHAR(20) NOT NULL,
+                  data_de_nascimento DATE NOT NULL,
+                  peso DOUBLE NOT NULL,
+                  hostil BOOLEAN NOT NULL,
+                  data_de_insercao DATETIME NOT NULL,
+                  FOREIGN KEY (id_especie) REFERENCES especie(id)
+                     ON UPDATE CASCADE
             );
             """;
         try (Statement st = con.createStatement()) {
@@ -145,10 +152,11 @@ public class InitDB {
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
-            initAnimais();
+            initEspecies();
             initHabitat_animal();
             initFuncionarios();
             initUsuarios();
+            initAnimais();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
@@ -163,7 +171,7 @@ public class InitDB {
             Connection con = ConexaoDB.getConnection();
             InitDB init = new InitDB(con);
             init.initTodos();
-            System.out.println("✅ Banco de dados criado e sincronizado com sucesso!");
+            System.out.println(" Banco de dados criado e sincronizado com sucesso!");
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

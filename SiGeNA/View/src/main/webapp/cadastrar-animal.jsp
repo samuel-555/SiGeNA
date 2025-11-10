@@ -41,6 +41,14 @@
                 <label for="nome">Nome do Animal:</label>
                 <input type="text" id="nome" name="nome" placeholder="Ex: Simba" required>
                 
+                <label for="especie">Espécie:</label>
+                <select name="especie" id="especie">
+                    <option value="-1">Selecione uma espécie</option>>
+                    <c:forEach items="${especies}" var="especie">
+                        <option value="${especie.id}">${especie.nome}</option>
+                    </c:forEach>
+                </select>
+                
                 <label for="sexo">Sexo do animal:</label>
                 <select name="sexo" id="sexo">
                     <option value="indefinido">Indefinido</option>
@@ -54,10 +62,15 @@
                 <label for="peso">Peso (kg):</label>
                 <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>
                 
-                <label for="hostil">Animal hostil
-                <input type="checkbox" id="hostil" name="hostil" value="true">
-                </label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="hostil" name="hostil" value="true">
+                    <label for="hostil">Animal hostil</label>
+                </div>
                 
+                <c:if test="${not empty erro}">
+                    <div class="mensagem"><c:out value="${erro}"/></div>
+                </c:if>
+                    
                 <input type="hidden" name="acao" value="salvar">
                 <button type="submit" class="btn-enviar">Salvar Animal</button>
             </form>

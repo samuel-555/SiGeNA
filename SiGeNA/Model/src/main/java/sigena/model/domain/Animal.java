@@ -8,21 +8,24 @@ import sigena.model.domain.util.DataConverter;
 public class Animal {
     private Long id;
     private String nome;
+    private Especie especie;
     private AnimalSexo sexo;
     private LocalDate dataDeNascimento;
     private Double peso;
     private boolean hostil;
     
-    public Animal(String nome, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
+    public Animal(String nome, Especie especie, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
         this.nome = nome;
+        this.especie = especie;
         this.sexo = AnimalSexo.setAnimalSexo(sexo);
         this.dataDeNascimento = DataConverter.toLocalDate(dataDeNascimento);
         this.peso = peso;
         this.hostil = hostil;
     }
     
-    public Animal(Long id, String nome, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
+    public Animal(Long id, String nome, Especie especie, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
         this.nome = nome;
+        this.especie = especie;
         this.sexo = AnimalSexo.setAnimalSexo(sexo);
         this.dataDeNascimento = DataConverter.toLocalDate(dataDeNascimento);
         this.peso = peso;
@@ -36,6 +39,20 @@ public class Animal {
     
     public String getNome() {
         return nome;
+    }
+    
+    public String getEspecieNome() {
+        if(especie != null)
+            return especie.getNome();
+        
+        return null;
+    }
+    
+    public Integer getEspecieId() {
+        if(especie != null)
+            return especie.getId();
+        
+        return null;
     }
     
     public void setNome(String nome) {

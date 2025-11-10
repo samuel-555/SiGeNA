@@ -15,7 +15,7 @@ public class HabitatDAO {
     
     public void inserir(Habitat habitat){
         
-        String sql = "INSERT INTO habitat(nome,tipo,capacidade,tamanho,precisaDeManutencao,disponivel) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO habitat(nome,tipo,capacidade,tamanho,manutencao,disponivel) VALUES(?,?,?,?,?,?)";
         
         try (Connection con = ConexaoDB.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,7 +35,7 @@ public class HabitatDAO {
     }
     
     public void editar(String nomeAntigo, Habitat habitat){
-    String sql = "UPDATE habitat SET nome=?, tipo=?, tamanho=?, precisaDeManutencao=?, capacidade=?, disponivel=? WHERE nome=?";
+    String sql = "UPDATE habitat SET nome=?, tipo=?, tamanho=?, manutencao=?, capacidade=?, disponivel=? WHERE nome=?";
 
     try(Connection con = ConexaoDB.getConnection();
         PreparedStatement ps = con.prepareStatement(sql)){
@@ -75,7 +75,7 @@ public class HabitatDAO {
     }
     
     public void editarManutencao(String nomeHabitat, boolean manutencao){
-    String sql = "UPDATE habitat SET precisaDeManutencao=? WHERE nome=?";
+    String sql = "UPDATE habitat SET manutencao=? WHERE nome=?";
 
     try(Connection con = ConexaoDB.getConnection();
         PreparedStatement ps = con.prepareStatement(sql)){
@@ -126,7 +126,7 @@ public class HabitatDAO {
 
         List<Habitat> lista = new ArrayList<>();
 
-        String sql = "SELECT tipo, nome, tamanho, precisaDeManutencao, capacidade, disponivel FROM habitat";
+        String sql = "SELECT tipo, nome, tamanho, manutencao, capacidade, disponivel FROM habitat";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
@@ -153,7 +153,7 @@ public class HabitatDAO {
 
     
     public Habitat buscar(String nome) { //-------------------ver isso aqui-------------------------
-        String sql = "SELECT tipo, nome, tamanho, precisaDeManutencao, capacidade, disponivel FROM habitat WHERE nome = ?";
+        String sql = "SELECT tipo, nome, tamanho, manutencao, capacidade, disponivel FROM habitat WHERE nome = ?";
 
 
         try(Connection con = ConexaoDB.getConnection();

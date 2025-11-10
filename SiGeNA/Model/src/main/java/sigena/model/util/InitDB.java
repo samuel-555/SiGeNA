@@ -154,7 +154,7 @@ public class InitDB {
 
         String insertAdmin = """
             INSERT INTO usuarios (cpf, senha, cargo)
-            SELECT '11111111111', '123', 'GERENTE'
+            SELECT ' ', '123', 'GERENTE'
             WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE cpf='11111111111');
             """;
         try (Statement st = con.createStatement()) {
@@ -181,13 +181,16 @@ public class InitDB {
 
     public void initTodos() throws PersistenciaException {
         try {
+            
             initHabitats();
             initEspecies();
-            initPlanosAlimentares();;
-            initHabitat_animal();
+            
+            
             initFuncionarios();
             initUsuarios();
             initAnimais();
+            
+            initPlanosAlimentares();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

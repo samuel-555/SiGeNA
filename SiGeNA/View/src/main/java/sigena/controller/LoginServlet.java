@@ -2,6 +2,7 @@ package sigena.controller;
 
 import java.io.IOException;
 import sigena.model.dao.UsuarioDAO;
+import sigena.model.domain.Usuario;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -18,6 +19,7 @@ public class LoginServlet extends HttpServlet {
 
         String cpf = request.getParameter("cpf");
         String senha = request.getParameter("senha");
+        Usuario usuario1 = new Usuario(cpf, senha);
 
         try {
             var usuario = dao.autenticar(cpf, senha);
@@ -25,6 +27,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("CpfLogado", usuario.getCpf());
                 session.setAttribute("cargoUsuario", usuario.getCargo());
+                session.setAttribute("UsuarioLogado", usuario1);
 
                 if (usuario.getCargo() == sigena.model.domain.Cargo.GERENTE) {
                     response.sendRedirect("home-gerente.jsp");

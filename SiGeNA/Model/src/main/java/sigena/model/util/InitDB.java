@@ -101,6 +101,38 @@ public class InitDB {
         }
     }
 
+    public void initTratamento() throws SQLException {
+        String sql = """
+                     
+                CREATE TABLE IF NOT EXISTS tratamento(
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     animal_id BIGINT NOT NULL,
+                     vet_id INT NOTL NULL,
+                     diagnostico VARCHAR(255) NOT NULL,
+                     medicacao VARCHAR(255),
+                     frequencia INT,
+                     observacao TEXT,
+                     tipo varchar(100),
+                     status VARCHAR(100),
+                     data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     data_final DATETIME NULL,
+                     
+                     CONSTRAINT fkAnimal FOREING KEY (animal_id)
+                     REFERENCES animais(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE,
+                     
+                     CONSTRAINT fkVet FOREING KEY (vet_id)
+                     REFERENCES usuarios(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE,
+                );
+                """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
@@ -108,6 +140,7 @@ public class InitDB {
             initHabitat_animal();
             initUsuarios();
             initEspecies();
+            initTratamento();
 
         } catch (SQLException e) {
             throw new PersistenciaException("erro ao inicializar tabelas: " + e.getMessage());

@@ -13,16 +13,12 @@ import sigena.model.domain.util.TipoTratamento;
 
 public class TratamentoDAO {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/tratamentos";
-    private static final String USUARIO = "root";
-    private static final String SENHA = "";
-
     public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) {
         String sql = "INSERT INTO tratamentos(animal_id, vet_id, diagnostico, medicacao, frequencia, observacao, tipo, status, data_inicial, data_final) values (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
         try {
-            //Connection con = ConexaoDB.getConnection();
-            Connection con = DriverManager.getConnection(URL, USUARIO, SENHA);
+            Connection con = ConexaoDB.getConnection();
+
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setLong(1, animal.getId());
             ps.setInt(2, usuario.getId());
@@ -47,7 +43,7 @@ public class TratamentoDAO {
         String sql = "SELECT * FROM tratamentos";
         List<Tratamento> tratamentos = new ArrayList<>();
 
-        try (Connection con = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 tratamentos.add(consultaToTratamento(rs));
@@ -61,25 +57,25 @@ public class TratamentoDAO {
     }
 
     private Tratamento consultaToTratamento(ResultSet rs) throws SQLException {
-        
+
         Long animalId = rs.getLong("animal_id");
         AnimalDAO animalDAO = new AnimalDAO();
         Animal animal = animalDAO.buscarPorId(animalId);
         int vetId = rs.getInt("vet_id");
-        Usuario vet = new Usuario();
+        UsuarioDAO vetDAO = new UsuarioDAO();
+        Usuario vet = vetDAO.buscarPorId(vetId);
         String diagnostico = rs.getString("diagnostico");
         String medicacao = rs.getString("medicacao");
         int frequencia = rs.getInt("frequencia");
         String observacao = rs.getString("observacao");
         String tipoStr = rs.getString("tipo");
         String statusStr = rs.getString("status");
-        Timestamp dataFinal = rs.getTimestamp("data_final");
+        LocalDateTime dataFinal = rs.getTimestamp("data_final").toLocalDateTime();
+
         TipoTratamento tipo = Enum.valueOf(TipoTratamento.class, tipoStr.toUpperCase());
         StatusTratamento status = Enum.valueOf(StatusTratamento.class, statusStr.toUpperCase());
-        Tratamento aux = new Tratamento();
-        
-        
-        return new Tratamento(animal, vetId, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal);
+
+        return new Tratamento(animal, vet, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal);
     }
 
 }

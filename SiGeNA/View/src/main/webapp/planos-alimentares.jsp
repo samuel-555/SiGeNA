@@ -1,6 +1,10 @@
 <%@page import="java.util.List"%>
 <%@page import="sigena.model.domain.PlanoAlimentar"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
+    String paginaHomeComContexto = request.getContextPath() + "/" + paginaHome;
+%>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,13 +14,13 @@
     <link rel="stylesheet" href="CSS/style.css">
     </head>
 <body>
-    <header><div class="titulo"><a href="home.jsp">SiGeNA</a></div></header>
+    <header><div class="titulo"><a href="<%= paginaHome %>">SiGeNA</a></div></header>
 
     <div class="container">
         <h1>Gestão de Planos Alimentares</h1>
         <div class="botoes-acoes">
             <a href="PlanosAlimentaresController?acao=cadastrar" class="btn">Cadastrar Novo Plano</a>
-            <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>" class="btn">Voltar à Home</a>
+            <a href="<%= paginaHomeComContexto %>" class="btn">Voltar à Home</a>
         </div>
 
         <div class="historico">

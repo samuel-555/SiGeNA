@@ -80,7 +80,7 @@ public class HabitatController extends HttpServlet {
         }
     }
     
-    public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String nome = request.getParameter("nome");
         String tipo = request.getParameter("tipo");
         
@@ -91,9 +91,21 @@ public class HabitatController extends HttpServlet {
 
         GestaoHabitatService service = new GestaoHabitatService();
             
-        service.cadastrarHabitat(tipo, nome,tamanho, manutencao);
+        try{
+            service.cadastrarHabitat(tipo, nome,tamanho, manutencao);
+            response.sendRedirect("HabitatController");
+        }
+        catch (RuntimeException e){
+            request.setAttribute("msgErro", "Já existe um habitat com este nome.");
+            
+            request.setAttribute("tipo", tipo);
+            request.setAttribute("tamanho", tamanho);
+            request.setAttribute("manutencao", manutencao);
+            
+            request.getRequestDispatcher("cadastrar-habitat.jsp").forward(request, response);
+        }
         
-        response.sendRedirect("HabitatController");
+       
         
     }
    

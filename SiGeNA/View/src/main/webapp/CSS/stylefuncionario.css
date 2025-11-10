@@ -1,12 +1,6 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : 3 de nov. de 2025, 09:37:33
-    Author     : USUARIO
-*/
-* {
+
+
+*{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -62,7 +56,6 @@ h1 {
   cursor: pointer;
   font-weight: bold;
   transition: background 0.2s;
-  text-decoration: none;
 }
 
 .btn:hover {
@@ -140,4 +133,3 @@ th {
 .btn-pequeno:hover {
   opacity: 0.85;
 }
-

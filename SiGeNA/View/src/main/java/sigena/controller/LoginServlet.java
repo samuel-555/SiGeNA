@@ -19,22 +19,23 @@ public class LoginServlet extends HttpServlet {
         String cpf = request.getParameter("cpf");
         String senha = request.getParameter("senha");
 
-        if (cpf == null || senha == null || cpf.isEmpty() || senha.isEmpty()) {
-            request.setAttribute("erro", "CPF e senha são obrigatórios!");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
-            return;
-        }
-
         try {
-            if (dao.autenticar(cpf, senha)) {
+            var usuario = dao.autenticar(cpf, senha);
+            if (usuario != null) {
                 HttpSession session = request.getSession();
-                session.setAttribute("CpfLogado", cpf);
-                response.sendRedirect("home.jsp");
+                session.setAttribute("CpfLogado", usuario.getCpf());
+                session.setAttribute("cargoUsuario", usuario.getCargo());
+
+                if (usuario.getCargo() == sigena.model.domain.Cargo.GERENTE) {
+                    response.sendRedirect("home-gerente.jsp");
+                } else {
+                    response.sendRedirect("home.jsp");
+                }
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             }
-        } catch (PersistenciaException e) {
+        } catch (sigena.model.common.exception.PersistenciaException e) {
             request.setAttribute("erro", "Erro ao autenticar: " + e.getMessage());
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }

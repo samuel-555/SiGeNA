@@ -3,7 +3,7 @@ package sigena.model.domain;
 public enum Cargo {
     GERENTE("Gerente"),
     ZOOTECNISTA("Zootecnista"),
-    TRATADOR("Tratador de Animais"),
+    TRATADOR("Tratador"),
     VETERINARIO("Veterinário");
 
     private final String descricao;

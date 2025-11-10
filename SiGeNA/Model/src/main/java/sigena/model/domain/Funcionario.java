@@ -1,41 +1,98 @@
 package sigena.model.domain;
 
-import java.time.LocalDate;
-
 public class Funcionario {
-    private static int contador = 1;
 
     private int id;
     private String nome;
     private Cargo cargo;
     private String areaAtuacao;
-    private String observacoes;
+    private Turno turno;
     private EstadoFuncionario estado;
-    private LocalDate dataCadastro;
+    private String observacoes;
+    private String senha;
+    private String cpf; 
 
     public Funcionario() {
-        this.id = contador++;
-        this.dataCadastro = LocalDate.now();
-        this.estado = EstadoFuncionario.ATIVO;
     }
 
-    // Getters e Setters
-    public int getId() { return id; }
+    public Funcionario(String nome, Cargo cargo, String areaAtuacao, Turno turno, EstadoFuncionario estado, String senha) {
+        this.nome = nome;
+        this.cargo = cargo;
+        this.areaAtuacao = areaAtuacao;
+        this.turno = turno;
+        this.estado = estado;
+        this.senha = senha;
+    }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public int getId() {
+        return id;
+    }
 
-    public Cargo getCargo() { return cargo; }
-    public void setCargo(Cargo cargo) { this.cargo = cargo; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getAreaAtuacao() { return areaAtuacao; }
-    public void setAreaAtuacao(String areaAtuacao) { this.areaAtuacao = areaAtuacao; }
+    public String getNome() {
+        return nome;
+    }
 
-    public String getObservacoes() { return observacoes; }
-    public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-    public EstadoFuncionario getEstado() { return estado; }
-    public void setEstado(EstadoFuncionario estado) { this.estado = estado; }
+    public Cargo getCargo() {
+        return cargo;
+    }
 
-    public LocalDate getDataCadastro() { return dataCadastro; }
+    public void setCargo(Cargo cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getAreaAtuacao() {
+        return areaAtuacao;
+    }
+
+    public void setAreaAtuacao(String areaAtuacao) {
+        this.areaAtuacao = areaAtuacao;
+    }
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
+    }
+
+    public EstadoFuncionario getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoFuncionario estado) {
+        this.estado = estado;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+    
+    public String getCpf(){
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 }

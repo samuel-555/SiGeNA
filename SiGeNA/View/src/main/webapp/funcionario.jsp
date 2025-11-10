@@ -1,69 +1,85 @@
-<%@ page import="java.util.*, sigena.model.dao.FuncionarioDAO, sigena.model.domain.Funcionario" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ page import="sigena.model.domain.Cargo" %>
 <%
-    // Simula√ß√£o de sess√£o do gerente (em produ√ß√£o, viria do login)
-    String cargoUsuario = (String) session.getAttribute("cargoUsuario");
-    if (cargoUsuario == null || !"Gerente".equals(cargoUsuario)) {
-        response.sendRedirect("login.jsp");
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
         return;
     }
-
-    FuncionarioDAO dao = new FuncionarioDAO();
-    List<Funcionario> funcionarios = dao.listar();
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    if (cargo == null || cargo != Cargo.GERENTE) {
+        response.sendRedirect("home.jsp");
+        return;
+    }
 %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SiGeNA - Gest√£o de Funcion√°rios</title>
-  <link rel="stylesheet" href="CSS/stylefuncionario.css">
-</head>
-<body>
-  <header>
-    <div class="titulo"><a href="..\Tela Inicial\telainicial.html" style="color: inherit; text-decoration: none; cursor: pointer;">SiGeNA</a></div>
-  </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SiGeNA - Gest„o de Funcion·rios</title>
+        <link rel="stylesheet" href="CSS\\style.css">
+        <link rel="stylesheet" href="CSS\\stylefuncionario.css">
+    </head>
+    <body>
+        <header><div class="titulo">SiGeNA</div></header>
 
-  <div class="container">
-    <h1>Gest√£o de Funcion√°rios</h1>
+        <div class="container">
+            <h1>Gest„o de Funcion·rios</h1>
 
-    <div class="botoes-acoes">
-      <a href="cadastrar-funcionario.jsp" class="btn">Cadastrar Funcion√°rio</a>
-    </div>
+            <div class="botoes-acoes">
+                <a href="cadastrar-funcionario.jsp" class="btn">Cadastrar Novo Funcion·rio</a>
+            </div>
 
-    <div class="historico">
-      <h2>Lista de Funcion√°rios</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Cargo</th>
-            <th>√Årea de Atua√ß√£o</th>
-            <th>Data de Cadastro</th>
-            <th>A√ß√µes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (Funcionario f : funcionarios) { %>
-          <tr>
-            <td><%= f.getNome() %></td>
-            <td><%= f.getCargo().getDescricao() %></td>
-            <td><%= f.getAreaAtuacao() %></td>
-            <td><%= f.getDataCadastro() %></td>
-            <td>
-              <form action="FuncionarioServlet" method="post" style="display:inline;">
-                <input type="hidden" name="acao" value="deletar">
-                <input type="hidden" name="id" value="<%= f.getId() %>">
-                <button class="btn-pequeno excluir" type="submit">Excluir</button>
-              </form>
-            </td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</body>
+            <c:if test="${not empty erro}">
+                <div style="color:#b00;padding:8px 0;"><strong>${erro}</strong></div>
+            </c:if>
+
+            <div class="historico">
+                <h2>Lista de Funcion·rios</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Setor</th>
+                            <th>Turno</th>
+                            <th>Estado</th>
+                            <th>AÁıes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                            java.util.List<sigena.model.domain.Funcionario> lista
+                                    = (java.util.List<sigena.model.domain.Funcionario>) request.getAttribute("funcionarios");
+                            if (lista != null) {
+                                for (sigena.model.domain.Funcionario f : lista) {
+                        %>
+                        <tr>
+                            <td><%= f.getNome()%></td>
+                            <td><%= f.getCargo().getDescricao()%></td>
+                            <td><%= f.getAreaAtuacao()%></td>
+                            <td><%= f.getTurno().getDescricao()%></td>
+                            <td><%= f.getEstado()%></td>
+                            <td>
+                                <a class="btn-pequeno editar" href="FuncionarioServlet?acao=editar&id=<%= f.getId()%>">Editar</a>
+                                <form action="FuncionarioServlet" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclus„o?');">
+                                    <input type="hidden" name="acao" value="deletar"/>
+                                    <input type="hidden" name="id" value="<%= f.getId()%>"/>
+                                    <input type="hidden" name="setor" value="<%= f.getAreaAtuacao()%>"/>
+                                    <input type="hidden" name="turno" value="<%= f.getTurno().name()%>"/>
+                                    <button class="btn-pequeno excluir" type="submit">Excluir</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <%
+                                }
+                            }
+                        %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
 </html>

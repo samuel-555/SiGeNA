@@ -1,48 +1,66 @@
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SiGeNA - Gest„o de Funcion·rios</title>
-  <link rel="stylesheet" href="CSS/stylefuncionario.css">
+  <title>Cadastrar Funcion√°rio</title>
+  <link rel="stylesheet" href="CSS/style.css">
+  <link rel="stylesheet" href="CSS\\stylefuncionario.css">
 </head>
 <body>
-  <header>
-    <div class="titulo"><a href="funcionario.jsp" style="color: inherit; text-decoration: none;">SiGeNA</a></div>
-  </header>
+  <header><div class="titulo">SiGeNA</div></header>
 
   <div class="container">
-    <h1>Gest„o de Funcion·rios</h1>
+    <h1>Cadastrar Funcion√°rio</h1>
 
-    <div class="botoes-acoes">
-      <a href="funcionario.jsp" class="btn">Voltar</a>
-    </div>
+    <form action="FuncionarioServlet" method="post">
+      <input type="hidden" name="acao" value="${funcionario != null ? 'atualizar' : 'salvar'}">
+      <c:if test="${funcionario != null}">
+        <input type="hidden" name="id" value="${funcionario.id}">
+      </c:if>
 
-    <div class="formulario">
-      <h2>Adicionar Novo Funcion·rio</h2>
-      <form action="FuncionarioServlet" method="post">
-        <input type="hidden" name="acao" value="cadastrar">
+      <label>Nome:</label>
+      <input type="text" name="nome" value="${funcionario.nome}" required>
 
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" placeholder="Ex: Maria Oliveira" required>
+      <label>CPF:</label>
+      <input type="text" name="cpf" value="${funcionario.cpf}" required>
 
-        <label for="cargo">Cargo:</label>
-        <select id="cargo" name="cargo" required>
-          <% for (Cargo c : Cargo.values()) { %>
-            <option value="<%= c.name() %>"><%= c.getDescricao() %></option>
-          <% } %>
-        </select>
+      <label>Cargo:</label>
+      <select name="cargo" required>
+        <option value="GERENTE" ${funcionario.cargo == 'GERENTE' ? 'selected' : ''}>Gerente</option>
+        <option value="ZOOTECNISTA" ${funcionario.cargo == 'ZOOTECNISTA' ? 'selected' : ''}>Zootecnista</option>
+        <option value="VETERINARIO" ${funcionario.cargo == 'VETERINARIO' ? 'selected' : ''}>Veterin√°rio</option>
+        <option value="TRATADOR" ${funcionario.cargo == 'TRATADOR' ? 'selected' : ''}>Tratador</option>
+      </select>
 
-        <label for="area">¡rea de AtuaÁ„o:</label>
-        <input type="text" id="area" name="area" placeholder="Ex: ClÌnica, AlimentaÁ„o, Limpeza">
+      <label>√Årea de Atua√ß√£o:</label>
+      <input type="text" name="area" value="${funcionario.areaAtuacao}" required>
 
-        <label for="observacoes">ObservaÁıes:</label>
-        <textarea id="observacoes" name="observacoes" rows="3" placeholder="Ex: Especialista em animais felinos"></textarea>
+      <label>Turno:</label>
+      <select name="turno" required>
+        <option value="MANHA">Manh√£</option>
+        <option value="TARDE">Tarde</option>
+        <option value="NOITE">Noite</option>
+      </select>
 
-        <button type="submit" class="btn-enviar">Salvar Funcion·rio</button>
-      </form>
-    </div>
+      <label>Estado:</label>
+      <select name="estado">
+        <option value="ATIVO">Ativo</option>
+        <option value="FERIAS">F√©rias</option>
+        <option value="LICENCA_MATERNIDADE">Licen√ßa Maternidade</option>
+        <option value="LICENCA_PATERNIDADE">Licen√ßa Paternidade</option>
+        <option value="AFASTADO">Afastado</option>
+      </select>
+
+      <label>Senha:</label>
+      <input type="password" name="senha" required>
+
+      <label>Observa√ß√µes:</label>
+      <textarea name="observacoes" rows="3">${funcionario.observacoes}</textarea>
+
+      <button type="submit" class="btn">Salvar</button>
+      <a href="FuncionarioServlet" class="btn cancelar">Cancelar</a>
+    </form>
   </div>
 </body>
 </html>

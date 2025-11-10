@@ -91,11 +91,19 @@ public class HabitatController extends HttpServlet {
 
         GestaoHabitatService service = new GestaoHabitatService();
             
-        
+        try{
             service.cadastrarHabitat(tipo, nome,tamanho, manutencao);
             response.sendRedirect("HabitatController");
-       
-        
+        }
+        catch (RuntimeException e){
+            request.setAttribute("msgErro", "Já existe um habitat com este nome.");
+            
+            request.setAttribute("tipo", tipo);
+            request.setAttribute("tamanho", tamanho);
+            request.setAttribute("manutencao", manutencao);
+            
+            request.getRequestDispatcher("cadastrar-habitat.jsp").forward(request, response);
+        }
         
        
         

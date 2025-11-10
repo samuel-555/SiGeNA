@@ -33,7 +33,9 @@
     <form action="${pageContext.request.contextPath}/HabitatController" method="post">
     <input type="hidden" name="acao" value="inserir">
         
-        
+        <c:if test="${not empty msgErro}">
+            <p style="color:red;font-weight:bold">${msgErro}</p>
+        </c:if>
         
         <label for="nome">Nome do Habitat:</label>
         <input type="text" id="nome" name="nome" placeholder="Ex: Savana Africana">

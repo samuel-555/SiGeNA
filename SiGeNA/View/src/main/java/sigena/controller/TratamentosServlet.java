@@ -65,12 +65,12 @@ public class TratamentosServlet extends HttpServlet {
 
     public void cadastrar(HttpServletRequest request) throws Exception {
         GestaoAnimalService service = new GestaoAnimalService();
-        String animalId = request.getParameter("animal");
+        Long animalId = Long.valueOf(request.getParameter("animal"));
         Animal animal = service.buscarAnimal(animalId);
         if (animal == null) {
             throw new Exception("Animal não encontrado.");
         }
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogado");
+        Usuario usuario = (Usuario) request.getSession().getAttribute("UsuarioLogado");
         if (usuario == null) {
             throw new Exception("Usuário não autenticado.");
         }

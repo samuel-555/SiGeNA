@@ -24,7 +24,7 @@
     </head>
     <body>
   <header>
-    <div class="titulo"><a href="home.jsp">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
@@ -48,32 +48,6 @@
         </div>
     </c:if>
 
-    <div class="historico">
-      <h2>Histórico de Tratamentos</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Animal</th>
-            <th>Medicação</th>
-            <th>Frequência</th>
-            <th>Data Início</th>
-            <th>Data Final</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Rex</td>
-            <td>Antibiótico X</td>
-            <td>2x ao dia</td>
-            <td>10/10/2025</td>
-            <td>
-              <button class="btn-pequeno editar">Editar</button>
-              <button class="btn-pequeno excluir">Excluir</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </body>

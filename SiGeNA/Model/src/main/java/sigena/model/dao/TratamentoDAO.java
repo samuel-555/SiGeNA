@@ -8,6 +8,7 @@ import sigena.model.util.ConexaoDB;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.util.StatusTratamento;
 import sigena.model.domain.util.TipoTratamento;
 
@@ -39,7 +40,7 @@ public class TratamentoDAO {
         }
     }
 
-    public List<Tratamento> listar() {
+    public List<Tratamento> listar() throws PersistenciaException {
         String sql = "SELECT * FROM tratamentos";
         List<Tratamento> tratamentos = new ArrayList<>();
 
@@ -56,14 +57,14 @@ public class TratamentoDAO {
         return tratamentos;
     }
 
-    private Tratamento consultaToTratamento(ResultSet rs) throws SQLException {
+    private Tratamento consultaToTratamento(ResultSet rs) throws SQLException, PersistenciaException {
 
         Long animalId = rs.getLong("animal_id");
         AnimalDAO animalDAO = new AnimalDAO();
         Animal animal = animalDAO.buscarPorId(animalId);
         int vetId = rs.getInt("vet_id");
         UsuarioDAO vetDAO = new UsuarioDAO();
-        Usuario vet = vetDAO.buscarPorId(vetId);
+        Usuario vet = vetDAO.buscaPorId(vetId);
         String diagnostico = rs.getString("diagnostico");
         String medicacao = rs.getString("medicacao");
         int frequencia = rs.getInt("frequencia");

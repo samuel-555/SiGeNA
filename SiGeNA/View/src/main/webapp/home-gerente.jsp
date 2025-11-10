@@ -33,6 +33,7 @@
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
             <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
+            <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
         </div>
     </body>
 </html>

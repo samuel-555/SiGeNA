@@ -8,6 +8,8 @@
     </parent>
     <artifactId>Model</artifactId>
     <packaging>jar</packaging>
+    <name>Model</name>
+    
      <dependencies>
         <dependency>
             <groupId>mysql</groupId>
@@ -15,9 +17,4 @@
             <version>8.0.33</version>
         </dependency>
     </dependencies>
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <exec.mainClass>sigena.model.util.InitDB</exec.mainClass>
-    </properties>
 </project>

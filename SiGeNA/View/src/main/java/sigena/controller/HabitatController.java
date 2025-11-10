@@ -104,9 +104,6 @@ public class HabitatController extends HttpServlet {
             
             request.getRequestDispatcher("cadastrar-habitat.jsp").forward(request, response);
         }
-        
-       
-        
     }
    
    public void editar(HttpServletRequest request, HttpServletResponse response) throws IOException {

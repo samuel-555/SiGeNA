@@ -16,7 +16,7 @@
         <h1>Gestão de Planos Alimentares</h1>
         <div class="botoes-acoes">
             <a href="PlanosAlimentaresController?acao=cadastrar" class="btn">Cadastrar Novo Plano</a>
-            <a href="home.jsp" class="btn">Voltar à Home</a>
+            <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>" class="btn">Voltar à Home</a>
         </div>
 
         <div class="historico">

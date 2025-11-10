@@ -1,7 +1,7 @@
 package sigena.controller;
 
 import java.io.IOException;
-import sigena.model.dao.UsuarioDAO;
+import sigena.model.service.GestaoUsuarioService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -11,7 +11,7 @@ import sigena.model.domain.Usuario;
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
-    private UsuarioDAO dao = new UsuarioDAO();
+    private GestaoUsuarioService dao = new GestaoUsuarioService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -20,12 +20,6 @@ public class LoginServlet extends HttpServlet {
         String cpf = request.getParameter("cpf");
         String senha = request.getParameter("senha");
         Usuario usuario = new Usuario(cpf, senha);
-
-        if (cpf == null || senha == null || cpf.isEmpty() || senha.isEmpty()) {
-            request.setAttribute("erro", "CPF e senha são obrigatórios!");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
-            return;
-        }
 
         try {
             if (dao.autenticar(cpf, senha)) {

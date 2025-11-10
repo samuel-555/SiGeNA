@@ -60,7 +60,7 @@ public class UsuarioDAO {
         }
     }
 
-    private boolean existeCPF(String cpf) throws PersistenciaException {
+    public boolean existeCPF(String cpf) throws PersistenciaException {
         cpf = normalizarCPF(cpf);
         String sql = "SELECT * FROM usuarios WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ?";
 

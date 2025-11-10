@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <link  rel="stylesheet" href="CSS\login.css">
-    <link rel="stylesheet" href="CSS\style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/login.css">
     <meta charset="UTF-8">
     <title>SiGeNA - login</title>
 </head>

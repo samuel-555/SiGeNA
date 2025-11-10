@@ -124,4 +124,29 @@ public class UsuarioDAO {
             throw new DatabaseException("Erro ao sincronizar usuários com funcionários: " + e.getMessage());
         }
     }
+    public Usuario buscaPorId(int id) throws PersistenciaException {
+        String sql = "SELECT id, cpf, senha, cargo FROM usuarios WHERE id = ?";
+
+        try (Connection con = ConexaoDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setId(rs.getInt("id"));
+                    u.setCpf(rs.getString("cpf"));
+                    u.setSenha(rs.getString("senha"));
+                    u.setCargo(Cargo.valueOf(rs.getString("cargo")));
+                    return u;
+                } else {
+                    return null;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao buscar usuário por ID: " + e.getMessage());
+        }
+    }
 }

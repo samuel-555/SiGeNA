@@ -24,7 +24,7 @@
 </head>
 <body>
   <header>
-    <div class="titulo"><a href="home.jsp">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
@@ -41,11 +41,12 @@
     <c:if test="${not empty animal}">
         <div class="ficha-animal">
             <h3><c:out value="${animal.nome}"/></h3>
-            <p><span>ID: </span><c:out value="${animal.id}"/></p>
-            <p><span>Data de nascimento: </span><c:out value="${animal.dataDeNascimentoFormat}"/>(<c:out value="${animal.idade}"/>)</p>
-            <p><span>Sexo: </span><c:out value="${animal.sexo}"/></p>
-            <p><span>Peso: </span><c:out value="${animal.peso}"/></p>
-            <p><span>Hostil: </span>
+            <p><strong>ID: </strong><c:out value="${animal.id}"/></p>
+            <p><strong>Espécie: </strong><c:out value="${animal.especieNome}"/></p>
+            <p><strong>Data de nascimento: </strong><c:out value="${animal.dataDeNascimentoFormat}"/>(<c:out value="${animal.idade}"/>)</p>
+            <p><strong>Sexo: </strong><c:out value="${animal.sexo}"/></p>
+            <p><strong>Peso: </strong><c:out value="${animal.peso}"/></p>
+            <p><strong>Hostil: </strong>
                 <c:if test="${not animal.hostilidade}">Não</c:if>
                 <c:if test="${animal.hostilidade}">Sim</c:if>
             </p>

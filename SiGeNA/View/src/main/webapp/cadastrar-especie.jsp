@@ -9,7 +9,7 @@
     </head>
     <body>
         <header>
-            <div class="titulo">SiGeNA</div>
+            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
         </header>
 
         <div class="container">

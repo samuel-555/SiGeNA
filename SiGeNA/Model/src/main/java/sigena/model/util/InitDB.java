@@ -22,7 +22,7 @@ public class InitDB {
                 tipo VARCHAR(255) NOT NULL,
                 capacidade INT NOT NULL,
                 tamanho INT NOT NULL,
-                precisaDeManutencao BOOLEAN NOT NULL,
+                manutencao BOOLEAN NOT NULL,
                 disponivel BOOLEAN NOT NULL
             );
             """;
@@ -34,13 +34,50 @@ public class InitDB {
     public void initAnimais() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS animais (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255),
-                especie VARCHAR(255)
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  id_especie INT NOT NULL,
+                  sexo VARCHAR(20) NOT NULL,
+                  data_de_nascimento DATE NOT NULL,
+                  peso DOUBLE NOT NULL,
+                  hostil BOOLEAN NOT NULL,
+                  data_de_insercao DATETIME NOT NULL,
+                  FOREIGN KEY (id_especie) REFERENCES especie(id)
+                     ON UPDATE CASCADE
             );
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
+        }
+    }
+
+    public void initPlanosAlimentares() throws SQLException {
+        String planosSql = """
+            CREATE TABLE IF NOT EXISTS planos_alimentares (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                animal_id BIGINT NOT NULL,
+                data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (animal_id) REFERENCES animais(id)
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE
+            );
+            """;
+
+        String itensSql = """
+            CREATE TABLE IF NOT EXISTS itens_plano_alimentar (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                plano_id BIGINT NOT NULL,
+                alimento VARCHAR(255) NOT NULL,
+                gramatura DOUBLE,
+                vezes_por_dia INT,
+                FOREIGN KEY (plano_id) REFERENCES planos_alimentares(id)
+                    ON DELETE CASCADE
+            );
+            """;
+
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(planosSql);
+            st.executeUpdate(itensSql);
         }
     }
 
@@ -142,13 +179,48 @@ public class InitDB {
         }
     }
 
+    public void initTratamento() throws SQLException {
+        String sql = """
+                     
+                CREATE TABLE IF NOT EXISTS tratamento(
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     animal_id BIGINT NOT NULL,
+                     vet_id INT NOT NULL,
+                     diagnostico VARCHAR(255) NOT NULL,
+                     medicacao VARCHAR(255),
+                     frequencia INT,
+                     observacao TEXT,
+                     tipo varchar(100),
+                     status VARCHAR(100),
+                     data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     data_final DATETIME NULL,
+                     
+                     CONSTRAINT fkAnimal FOREIGN KEY (animal_id)
+                     REFERENCES animais(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE,
+                     
+                     CONSTRAINT fkVet FOREIGN KEY (vet_id)
+                     REFERENCES usuarios(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE
+                );
+                """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
+            
             initHabitats();
-            initAnimais();
-            initHabitat_animal();
+            initEspecies();            
             initFuncionarios();
             initUsuarios();
+            initAnimais();
+            initTratamento();
+            initPlanosAlimentares();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
@@ -163,7 +235,7 @@ public class InitDB {
             Connection con = ConexaoDB.getConnection();
             InitDB init = new InitDB(con);
             init.initTodos();
-            System.out.println("✅ Banco de dados criado e sincronizado com sucesso!");
+            System.out.println(" Banco de dados criado e sincronizado com sucesso!");
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

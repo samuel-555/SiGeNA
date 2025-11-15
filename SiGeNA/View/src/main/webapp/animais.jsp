@@ -24,14 +24,14 @@
 </head>
 <body>
   <header>
-    <div class="titulo"><a href="home.jsp">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
     <h1>Gestão de Animais</h1>
 
     <div class="botoes-acoes">
-        <a href="cadastrar-animal.jsp" class="btn">Cadastrar Novo Animal</a>
+        <a href="AnimalController?acao=cadastrar" class="btn">Cadastrar Novo Animal</a>
     </div>
     <c:if test="${empty animais}">
         <p>Nenhum animal cadastrado.</p>
@@ -45,6 +45,7 @@
           <tr>
             <th>ID</th>
             <th>Nome</th>
+            <th>Espécie</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -53,6 +54,7 @@
                 <tr>
                 <td><c:out value="${animal.id}"/></td>
                 <td><c:out value="${animal.nome}"/></td>
+                <td><c:out value="${animal.especieNome}"/></td>
                 <td>
                     <form action="AnimalController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">

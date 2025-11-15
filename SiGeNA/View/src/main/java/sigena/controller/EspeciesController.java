@@ -1,6 +1,6 @@
 package sigena.controller;
 
-import sigena.model.dao.EspecieDAO;
+import sigena.model.service.GestaoEspeciesService;
 import sigena.model.domain.Especie;
 import sigena.model.common.exception.PersistenciaException;
 import jakarta.servlet.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @WebServlet("/EspeciesController")
 public class EspeciesController extends HttpServlet {
 
-    private EspecieDAO dao = new EspecieDAO();
+    private GestaoEspeciesService service = new GestaoEspeciesService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -22,27 +22,27 @@ public class EspeciesController extends HttpServlet {
             if ("excluir".equals(acao)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try {
-                    dao.excluir(id);
+                    service.excluir(id);
                 } catch (PersistenciaException e) {
                     request.setAttribute("erro", "Não é possível excluir: há animais vinculados a essa espécie.");
                 }
             }
             if ("ver".equals(acao)) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                Especie especie = dao.buscarPorId(id);
+                Especie especie = service.buscarPorId(id);
                 request.setAttribute("especie", especie);
                 request.getRequestDispatcher("ver-especie.jsp").forward(request, response);
                 return;
             }
             if ("editar".equals(acao)) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                Especie especie = dao.buscarPorId(id);
+                Especie especie = service.buscarPorId(id);
                 request.setAttribute("especie", especie);
                 request.getRequestDispatcher("editar-especie.jsp").forward(request, response);
                 return;
             }
 
-            List<Especie> lista = dao.listar();
+            List<Especie> lista = service.listar();
             request.setAttribute("lista", lista);
             request.getRequestDispatcher("especies.jsp").forward(request, response);
         } catch (PersistenciaException e) {
@@ -64,14 +64,7 @@ public class EspeciesController extends HttpServlet {
                 e.setPredador(request.getParameter("predador") != null);
                 e.setObservacoes(request.getParameter("observacoes"));
 
-                if (e.getHabitat() == null || e.getHabitat().isEmpty()
-                        || e.getAlimentacao() == null || e.getAlimentacao().isEmpty()) {
-                    request.setAttribute("erro", "Habitat e Alimentação são obrigatórios.");
-                    request.getRequestDispatcher("cadastrar-especie.jsp").forward(request, response);
-                    return;
-                }
-
-                dao.inserir(e);
+                service.inserir(e);
                 response.sendRedirect("EspeciesController");
                 return;
             }
@@ -85,7 +78,7 @@ public class EspeciesController extends HttpServlet {
                 e.setPredador(request.getParameter("predador") != null);
                 e.setObservacoes(request.getParameter("observacoes"));
 
-                dao.atualizar(e);
+                service.atualizar(e);
                 response.sendRedirect("EspeciesController?acao=ver&id=" + e.getId());
             }
         } catch (PersistenciaException e) {

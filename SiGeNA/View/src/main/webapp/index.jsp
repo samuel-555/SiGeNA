@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <link  rel="stylesheet" href="CSS\login.css">
-    <link rel="stylesheet" href="CSS\style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/login.css">
     <meta charset="UTF-8">
     <title>SiGeNA - login</title>
 </head>
@@ -15,7 +15,7 @@
         <div class="login-box">
             <form action="LoginServlet" method="post">
                 <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" required>
+                <input type="text" id="cpf" name="cpf" required minlength="11" maxlength="11" pattern="\\d{11}" title="Informe exatamente 11 dígitos numéricos">
 
                 <label for="senha">Senha:</label>
                 <input type="password" id="senha" name="senha" required>

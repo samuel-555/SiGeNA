@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="CSS\\stylefuncionario.css">
 </head>
 <body>
-  <header><div class="titulo">SiGeNA</div></header>
+  <header><div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div></header>
 
   <div class="container">
     <h1>Cadastrar Funcionário</h1>
@@ -23,7 +23,7 @@
       <input type="text" name="nome" value="${funcionario.nome}" required>
 
       <label>CPF:</label>
-      <input type="text" name="cpf" value="${funcionario.cpf}" required>
+      <input type="text" name="cpf" value="${funcionario.cpf}" required minlength="11" maxlength="11" pattern="\\d{11}" title="Informe exatamente 11 dígitos numéricos">
 
       <label>Cargo:</label>
       <select name="cargo" required>

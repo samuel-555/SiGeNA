@@ -23,7 +23,9 @@
         <link rel="stylesheet" href="CSS\\stylefuncionario.css">
     </head>
     <body>
-        <header><div class="titulo">SiGeNA</div></header>
+        <header>
+            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+        </header>
 
         <div class="container">
             <h1>Gestão de Funcionários</h1>

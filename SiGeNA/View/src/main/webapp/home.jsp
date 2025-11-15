@@ -22,9 +22,13 @@
         </header>
         <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado") %>!</h1>
         <div class="grid-botoes">
+
+            
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
-            <a href="habitats.jsp" class="btn">Gestão de Habitat</a>
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
+            <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
+            <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
+            <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
         </div>
     </body>
 </html>

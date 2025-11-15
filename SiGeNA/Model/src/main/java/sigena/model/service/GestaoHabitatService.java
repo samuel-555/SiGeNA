@@ -9,7 +9,7 @@ import java.util.List;
 public class GestaoHabitatService {
    
     private final HabitatDAO dao;
-    private final AnimalDAO animalDao;
+
     
     public GestaoHabitatService(){
         dao = new HabitatDAO();
@@ -54,19 +54,6 @@ public class GestaoHabitatService {
         dao.editarDisponivel(nomeHabitat, disponivel);
     }
     
-    public void editarCapacidade(String nomeHabitat,int animalId){
-        Habitat habitat = dao.buscar(nomeHabitat);
-        Animal animal = animalDao.buscarPorId(animalId);
-        
-        int novaCapacidade = calcularCapacidade(habitat.getCapacidade(),animal);
-        
-        if(novaCapacidade < 1){
-            habitat.setDisponivel(false);
-            dao.editarDisponivel(nomeHabitat, false);
-        }
-            
-        dao.editarCapacidade(nomeHabitat, novaCapacidade);
-    }
     
     public Habitat buscar(String nome){
         return dao.buscar(nome);
@@ -77,7 +64,7 @@ public class GestaoHabitatService {
     
     public void inserirAnimalAlocado(String habitat, int animalId){
         dao.inserirAnimalAlocado(habitat,animalId);
-        editarCapacidade(habitat,animalId);
+       
     }
     
     public int calcularCapacidade(int capacidade,Animal animal){

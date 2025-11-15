@@ -75,11 +75,23 @@ public class FuncionarioServlet extends HttpServlet {
         try {
             if ("salvar".equals(acao)) {
                 Funcionario f = montar(req);
+                if (!cpfValido(f.getCpf())) {
+                    req.setAttribute("erro", "O CPF deve conter exatamente 11 dígitos numéricos.");
+                    req.setAttribute("funcionario", f);
+                    req.getRequestDispatcher("cadastrar-funcionario.jsp").forward(req, resp);
+                    return;
+                }
                 service.salvar(f);
                 resp.sendRedirect(req.getContextPath() + "/FuncionarioServlet");
 
             } else if ("atualizar".equals(acao)) {
                 Funcionario f = montar(req);
+                if (!cpfValido(f.getCpf())) {
+                    req.setAttribute("erro", "O CPF deve conter exatamente 11 dígitos numéricos.");
+                    req.setAttribute("funcionario", f);
+                    req.getRequestDispatcher("cadastrar-funcionario.jsp").forward(req, resp);
+                    return;
+                }
                 f.setId(Integer.parseInt(req.getParameter("id")));
                 service.atualizar(f);
                 resp.sendRedirect(req.getContextPath() + "/FuncionarioServlet");
@@ -122,5 +134,9 @@ public class FuncionarioServlet extends HttpServlet {
 
     private String n(String s) {
         return s == null ? "" : s.trim();
+    }
+
+    private boolean cpfValido(String cpf) {
+        return cpf != null && cpf.matches("\\d{11}");
     }
 }

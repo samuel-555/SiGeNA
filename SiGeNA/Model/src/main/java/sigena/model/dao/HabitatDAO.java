@@ -137,7 +137,7 @@ public class HabitatDAO {
                     rs.getString("tipo"),
                     rs.getString("nome"),
                     rs.getInt("tamanho"),
-                    rs.getBoolean("precisaDeManutencao")
+                    rs.getBoolean("manutencao")
             );
             habitat.setCapacidade(rs.getInt("capacidade"));
             habitat.setDisponivel(rs.getBoolean("disponivel"));
@@ -168,7 +168,7 @@ public class HabitatDAO {
                         rs.getString("tipo"),
                         rs.getString("nome"),
                         rs.getInt("tamanho"),
-                        rs.getBoolean("precisaDeManutencao")
+                        rs.getBoolean("manutencao")
                 );
                 habitat.setCapacidade(rs.getInt("capacidade"));
                 habitat.setDisponivel(rs.getBoolean("disponivel"));

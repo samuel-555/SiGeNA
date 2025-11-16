@@ -15,7 +15,7 @@
         <div class="login-box">
             <form action="LoginServlet" method="post">
                 <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" required minlength="11" maxlength="11" pattern="\\d{11}" title="Informe exatamente 11 dígitos numéricos">
+                <input type="text" id="cpf" name="cpf" required minlength="11" maxlength="11" pattern="\d{11}" title="Informe exatamente 11 dígitos numéricos">
 
                 <label for="senha">Senha:</label>
                 <input type="password" id="senha" name="senha" required>

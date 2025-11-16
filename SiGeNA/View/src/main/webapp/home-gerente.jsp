@@ -29,7 +29,7 @@
 
         <div class="grid-botoes">
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
-            <a href="habitats.jsp" class="btn">Gestão de Habitat</a>
+            <a href="HabitatController" class="btn">Gestão de Habitat</a>
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
             <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>

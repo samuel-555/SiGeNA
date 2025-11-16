@@ -23,7 +23,7 @@
       <input type="text" name="nome" value="${funcionario.nome}" required>
 
       <label>CPF:</label>
-      <input type="text" name="cpf" value="${funcionario.cpf}" required minlength="11" maxlength="11" pattern="\\d{11}" title="Informe exatamente 11 dígitos numéricos">
+      <input type="text" name="cpf" value="${funcionario.cpf}" required minlength="11" maxlength="11" pattern="\d{11}" title="Informe exatamente 11 dígitos numéricos">
 
       <label>Cargo:</label>
       <select name="cargo" required>

@@ -15,6 +15,7 @@
     GestaoAnimalService service = new GestaoAnimalService();
     List<Animal> animais = service.listarAnimais();
     pageContext.setAttribute("animais", animais);
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
 %>
 <!DOCTYPE html>
 <html>
@@ -26,7 +27,7 @@
     </head>
     <body>
         <header>
-            <div class="titulo"><a href="home.jsp">SiGeNA</a></div>
+            <div class="titulo"><a href="<%= paginaHome %>">SiGeNA</a></div>
         </header>
         <div class="container">
             <div class="botoes-acoes">

@@ -5,14 +5,16 @@ import sigena.model.dao.HabitatDAO;
 import sigena.model.dao.AnimalDAO;
 import sigena.model.domain.Animal;
 import java.util.List;
+import sigena.model.common.exception.PersistenciaException;
 
 public class GestaoHabitatService {
    
     private final HabitatDAO dao;
-
+    private final AnimalDAO animalDao;
     
     public GestaoHabitatService(){
         dao = new HabitatDAO();
+        animalDao = new AnimalDAO();
     }
 
     public void cadastrarHabitat(String tipo,String nome, int tamanho, boolean manutencao){
@@ -54,6 +56,19 @@ public class GestaoHabitatService {
         dao.editarDisponivel(nomeHabitat, disponivel);
     }
     
+    public void editarCapacidade(String nomeHabitat, long animalId) throws PersistenciaException{
+        Habitat habitat = dao.buscar(nomeHabitat);
+        Animal animal = animalDao.buscarPorId(animalId);
+        
+        int novaCapacidade = calcularCapacidade(habitat.getCapacidade(),animal);
+        
+        if(novaCapacidade < 1){
+            habitat.setDisponivel(false);
+            dao.editarDisponivel(nomeHabitat, false);
+        }
+        
+        dao.editarCapacidade(nomeHabitat, novaCapacidade);
+    }
     
     public Habitat buscar(String nome){
         return dao.buscar(nome);
@@ -62,9 +77,13 @@ public class GestaoHabitatService {
         dao.excluir(habitat);
     }
     
-    public void inserirAnimalAlocado(String habitat, int animalId){
+    public void inserirAnimalAlocado(String habitat, long animalId) throws PersistenciaException{
         dao.inserirAnimalAlocado(habitat,animalId);
-       
+        editarCapacidade(habitat,animalId);
+        
+        Animal animal = animalDao.buscarPorId(animalId);
+        if(animal.getHostilidade() == true)
+            editarDisponivel(habitat, false);
     }
     
     public int calcularCapacidade(int capacidade,Animal animal){

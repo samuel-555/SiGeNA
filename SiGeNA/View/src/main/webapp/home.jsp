@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%
@@ -29,6 +30,27 @@
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+        </div>
+        <div class="tarefas">
+            
+            <!--  if user = gerente -> cadastrar tarefas -->
+            <!-- set user.cpf == funcionario.cpf? -->
+            
+            <c:forEach var= "funcionario" items="${funcionarios}">
+                <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario.cpf}"/>
+                <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui só pra cadastro -->
+                    
+                    <c:if test="${empty tarefas}">
+                        <p>Sem tarefas cadastradas para hoje></p>
+                    </c:if>
+                        
+                    <c:forEach var="tarefa" items="${tarefas}">
+                        <c:out value="${tarefa}"/>
+                    </c:forEach>
+                    
+                </c:if>
+            </c:forEach>
+                    
         </div>
     </body>
 </html>

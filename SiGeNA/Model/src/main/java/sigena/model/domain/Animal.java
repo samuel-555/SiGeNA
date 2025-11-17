@@ -40,6 +40,10 @@ public class Animal {
         return id;
     }
     
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     public String getNome() {
         return nome;
     }
@@ -103,7 +107,7 @@ public class Animal {
     }
     
     public String getHabitatNome() {
-        if(habitat != null)
+        if(habitat == null)
             return null;
         
         return habitat.getNome();

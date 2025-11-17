@@ -15,6 +15,7 @@ public class GestaoAnimalService {
             return false;
         
         animalDAO.cadastrar(animal);
+        System.out.println(animal.getHabitatNome());
         habitatDAO.inserirAnimalAlocado(animal.getHabitatNome(), animal.getId());
         
         return true;

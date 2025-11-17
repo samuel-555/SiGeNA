@@ -148,7 +148,7 @@ public class AnimalController extends HttpServlet {
         Double peso = Double.valueOf(request.getParameter("peso"));
         boolean hostil = request.getParameter("hostil") != null;
         Habitat habitat = consultaHabitat.buscar(request.getParameter("habitat"));
-        
+
         Animal novoAnimal = new Animal(nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
             
         boolean result = service.cadastrarAnimal(novoAnimal);
@@ -157,21 +157,9 @@ public class AnimalController extends HttpServlet {
             HttpSession session = request.getSession(false);
             session.setAttribute("camposInvalidosError", "Dados inválidos digitados, verifique os campos!");
             
-            List<Especie> especies = null;
-                    List<Habitat> habitats = null;
+            response.sendRedirect("AnimalController?acao=cadastrar");
                     
-                    try {
-                        especies = consultaEspecie.listar();
-                        habitats = consultaHabitat.listarHabitats();
-                    } catch(PersistenciaException e) {
-                        request.setAttribute("erro", e.getMessage());
-                    }
-                    
-                    request.setAttribute("especies", especies);
-                    request.setAttribute("habitats", habitats);
-                    request.getRequestDispatcher("cadastrar-animal.jsp").forward(request, response);
-                    
-                    return;
+            return;
         }
     }
     

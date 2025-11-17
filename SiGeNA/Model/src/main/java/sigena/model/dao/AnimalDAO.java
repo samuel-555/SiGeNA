@@ -23,9 +23,18 @@ public class AnimalDAO {
             setPreparedStatementInsert(stmt, animal);
             stmt.executeUpdate();
             
+            try(ResultSet rs = stmt.getGeneratedKeys()) {
+                if(rs.next()) {
+                    Long id = rs.getLong(1);
+                    animal.setId(id);
+                }
+            }
+            
         } catch (SQLException e) {
             throw new PersistenciaException("Não foi possível cadastrar animal: " + e.getMessage());
         }
+        
+        System.out.println(animal.getHabitatNome());
     }
     
     public List<Animal> listar() throws PersistenciaException{
@@ -45,7 +54,6 @@ public class AnimalDAO {
                 animais.add(consultaToAnimal(rs));
             
         } catch (SQLException e) {
-            System.out.println("kkkkkkk");
             throw new PersistenciaException("Não foi possível listar animais: " + e.getMessage());
         }
         
@@ -65,7 +73,14 @@ public class AnimalDAO {
     }
     
     public Animal buscarPorId(Long id) throws PersistenciaException {
-        String sql = "SELECT * FROM animais WHERE id = ?";
+        String sql = "SELECT "
+                + "animais.*, "
+                + "habitat_animal.habitat_nome "
+                + "FROM animais "
+                + "JOIN habitat_animal "
+                + "ON animais.id = habitat_animal.animal_id "
+                + "WHERE animais.id = ?;";
+        
         Animal animal = null;
         
         try (Connection con = ConexaoDB.getConnection();

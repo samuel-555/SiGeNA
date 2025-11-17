@@ -70,6 +70,15 @@
                     <label for="hostil">Animal hostil</label>
                 </div>
                 
+                <label for="especie">Habitat:*</label>
+                <select name="habitat" id="habitat">
+                    <option value="${animal.habitatNome}">${animal.habitatNome}</option>
+                    <c:forEach items="${habitats}" var="habitat">
+                        <c:if test="${animal.habitatNome != habitat.nome}">
+                            <option value="${habitat.nome}">${habitat.nome}</option>
+                        </c:if>
+                    </c:forEach>
+                </select><br>
                 <input type="hidden" name="id" value="<c:out value="${animal.id}"/>"> 
                 <input type="hidden" name="acao" value="editar">
                 <button type="submit" class="btn-enviar">Salvar Alterações</button>

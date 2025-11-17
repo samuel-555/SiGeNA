@@ -1,5 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,12 +13,12 @@
     </head>
     <body>
         <header>
-            <div class="titulo"><a href="home.jsp">SiGeNA</a></div>
+            <div class="titulo"><a href="<%= paginaHome %>">SiGeNA</a></div>
         </header>
 
         <div class="botoes-acoes">
             <a href="PlanosAlimentaresController" class="btn">Voltar</a>
-            <a href="home.jsp" class="btn">Home</a>
+            <a href="<%= paginaHome %>" class="btn">Home</a>
         </div>
 
         <div class="container">

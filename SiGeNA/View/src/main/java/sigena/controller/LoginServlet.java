@@ -18,10 +18,18 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String cpf = request.getParameter("cpf");
+        if (cpf != null) {
+            cpf = cpf.trim();
+        }
         String senha = request.getParameter("senha");
         Usuario usuario1 = new Usuario(cpf, senha);
 
         try {
+            if (cpf == null || !cpf.matches("\\d{11}")) {
+                request.setAttribute("erro", "O CPF deve conter exatamente 11 dígitos numéricos.");
+                request.getRequestDispatcher("index.jsp").forward(request, response);
+                return;
+            }
             var usuario = dao.autenticar(cpf, senha);
             if (usuario != null) {
                 HttpSession session = request.getSession();

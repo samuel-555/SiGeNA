@@ -13,17 +13,19 @@ public class Animal {
     private LocalDate dataDeNascimento;
     private Double peso;
     private boolean hostil;
+    private Habitat habitat;
     
-    public Animal(String nome, Especie especie, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
+    public Animal(String nome, Especie especie, String sexo, String dataDeNascimento, Double peso, boolean hostil, Habitat habitat) {
         this.nome = nome;
         this.especie = especie;
         this.sexo = AnimalSexo.setAnimalSexo(sexo);
         this.dataDeNascimento = DataConverter.toLocalDate(dataDeNascimento);
         this.peso = peso;
         this.hostil = hostil;
+        this.habitat = habitat;
     }
     
-    public Animal(Long id, String nome, Especie especie, String sexo, String dataDeNascimento, Double peso, boolean hostil) {
+    public Animal(Long id, String nome, Especie especie, String sexo, String dataDeNascimento, Double peso, boolean hostil, Habitat habitat) {
         this.nome = nome;
         this.especie = especie;
         this.sexo = AnimalSexo.setAnimalSexo(sexo);
@@ -31,6 +33,7 @@ public class Animal {
         this.peso = peso;
         this.hostil = hostil;
         this.id = id;
+        this.habitat = habitat;
     }
     
     public Long getId() {
@@ -97,5 +100,12 @@ public class Animal {
     
     public void setHostilidade(boolean hostil) {
         this.hostil = hostil;
+    }
+    
+    public String getHabitatNome() {
+        if(habitat != null)
+            return null;
+        
+        return habitat.getNome();
     }
 }

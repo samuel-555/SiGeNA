@@ -4,31 +4,36 @@ import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Animal;
 import sigena.model.dao.AnimalDAO;
+import sigena.model.dao.HabitatDAO;
 
 public class GestaoAnimalService {
-    AnimalDAO dao = new AnimalDAO();
+    AnimalDAO animalDAO = new AnimalDAO();
+    HabitatDAO habitatDAO = new HabitatDAO();
     
     public boolean cadastrarAnimal(Animal animal) throws PersistenciaException{
         if(animal.getEspecieNome() == null)
             return false;
         
-        dao.cadastrar(animal);
+        animalDAO.cadastrar(animal);
+        habitatDAO.inserirAnimalAlocado(animal.getHabitatNome(), animal.getId());
+        
         return true;
     }
     
     public List<Animal> listarAnimais() throws PersistenciaException{
-        return dao.listar();
+        return animalDAO.listar();
     }
     
     public void excluirAnimal(Long id) throws PersistenciaException{
-        dao.excluir(id);
+        animalDAO.excluir(id);
     }
     
     public Animal buscarAnimal(Long id) throws PersistenciaException{
-        return dao.buscarPorId(id);
+        return animalDAO.buscarPorId(id);
     }
     
     public void editarAnimal(Animal animal) throws PersistenciaException{
-        dao.editar(animal);
+        animalDAO.editar(animal);
+        habitatDAO.editarAnimalAlocado(animal.getHabitatNome(), animal.getId());
     }
 }

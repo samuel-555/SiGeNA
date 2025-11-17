@@ -15,14 +15,14 @@ import sigena.model.domain.Animal;
 import sigena.model.domain.Especie;
 import sigena.model.domain.Habitat;
 import sigena.model.service.GestaoAnimalService;
-import sigena.model.dao.EspecieDAO;
+import sigena.model.service.GestaoEspeciesService;
 import sigena.model.service.GestaoHabitatService;
 
 @WebServlet(name = "AnimalController", urlPatterns = {"/AnimalController"})
 public class AnimalController extends HttpServlet {
     GestaoAnimalService service = new GestaoAnimalService();
     GestaoHabitatService consultaHabitat = new GestaoHabitatService();
-    EspecieDAO consultaEspecie = new EspecieDAO();
+    GestaoEspeciesService consultaEspecie = new GestaoEspeciesService();
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -49,7 +49,7 @@ public class AnimalController extends HttpServlet {
                 String acao = request.getParameter("acao");
                 
                 if("listar".equals(acao)) {
-                    List<Animal> animais = new ArrayList<>();
+                    List<Animal> animais = null;
                     animais = service.listarAnimais();
                     request.setAttribute("animais", animais);
                     request.getRequestDispatcher("animais.jsp").forward(request, response);
@@ -147,28 +147,36 @@ public class AnimalController extends HttpServlet {
         String dataDeNascimento = request.getParameter("dataDeNascimento");
         Double peso = Double.valueOf(request.getParameter("peso"));
         boolean hostil = request.getParameter("hostil") != null;
-        Animal novoAnimal = new Animal(nome, especie, sexo, dataDeNascimento, peso, hostil);
-        GestaoAnimalService service = new GestaoAnimalService();
+        Habitat habitat = consultaHabitat.buscar(request.getParameter("habitat"));
+        
+        Animal novoAnimal = new Animal(nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
             
         boolean result = service.cadastrarAnimal(novoAnimal);
         
         if(!result) {
-            List<Especie> especies = null;
-            try {
-                especies = consultaEspecie.listar();
-            } catch(PersistenciaException e) {
-                System.out.println(e.getMessage());
-            }
-                    
             HttpSession session = request.getSession(false);
-            session.setAttribute("campoVazioError", "Dados inválidos! Verifique os campos.");
-            response.sendRedirect("cadastrar-animal.jsp");
+            session.setAttribute("camposInvalidosError", "Dados inválidos digitados, verifique os campos!");
+            
+            List<Especie> especies = null;
+                    List<Habitat> habitats = null;
+                    
+                    try {
+                        especies = consultaEspecie.listar();
+                        habitats = consultaHabitat.listarHabitats();
+                    } catch(PersistenciaException e) {
+                        request.setAttribute("erro", e.getMessage());
+                    }
+                    
+                    request.setAttribute("especies", especies);
+                    request.setAttribute("habitats", habitats);
+                    request.getRequestDispatcher("cadastrar-animal.jsp").forward(request, response);
+                    
+                    return;
         }
     }
     
     private void excluir(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
         Long id = Long.valueOf(request.getParameter("id"));
-        GestaoAnimalService service = new GestaoAnimalService();
         service.excluirAnimal(id);
     }
     
@@ -181,9 +189,9 @@ public class AnimalController extends HttpServlet {
         String dataDeNascimento = request.getParameter("dataDeNascimento");
         Double peso = Double.valueOf(request.getParameter("peso"));
         boolean hostil = request.getParameter("hostil") != null;
-            
-        Animal editadoAnimal = new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil);
-        GestaoAnimalService service = new GestaoAnimalService();
+        Habitat habitat = consultaHabitat.buscar(request.getParameter("habitat"));
+        
+        Animal editadoAnimal = new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
             
         service.editarAnimal(editadoAnimal);
     }

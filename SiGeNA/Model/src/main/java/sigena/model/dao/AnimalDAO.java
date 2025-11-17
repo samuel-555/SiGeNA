@@ -45,6 +45,7 @@ public class AnimalDAO {
                 animais.add(consultaToAnimal(rs));
             
         } catch (SQLException e) {
+            System.out.println("kkkkkkk");
             throw new PersistenciaException("Não foi possível listar animais: " + e.getMessage());
         }
         
@@ -96,10 +97,6 @@ public class AnimalDAO {
                 setPreparedStatementUpdate(stmt, animal);
                 stmt.executeUpdate();
             }
-            try (PreparedStatement stmt = con.prepareStatement(sqlHabitat, Statement.RETURN_GENERATED_KEYS)){
-                setPreparedStatementUpdate(stmt, animal);
-                stmt.executeUpdate();
-            }
             
         } catch (SQLException e) {
             throw new PersistenciaException("Não foi possível editar animal: " + e.getMessage());
@@ -125,7 +122,12 @@ public class AnimalDAO {
         String dataDeNascimento = rs.getDate("data_de_nascimento").toLocalDate().toString();
         Double peso = rs.getDouble("peso");
         boolean hostil = rs.getBoolean("hostil");
-        Habitat habitat = consultaHabitat.buscar(rs.getString("habitat_nome"));
+        String habitatNome = rs.getString("habitat_nome");
+        Habitat habitat = null;
+
+        if (habitatNome != null) {
+            habitat = consultaHabitat.buscar(habitatNome);
+        }
         
         return new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
     }

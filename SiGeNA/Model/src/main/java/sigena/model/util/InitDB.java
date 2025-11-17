@@ -221,6 +221,7 @@ public class InitDB {
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
+            initHabitat_animal();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

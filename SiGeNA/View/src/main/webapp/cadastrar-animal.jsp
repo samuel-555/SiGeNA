@@ -43,7 +43,7 @@
                 
                 <label for="especie">Espécie:*</label>
                 <select name="especie" id="especie">
-                    <option value="-1">Selecione uma espécie</option>>
+                    <option value="-1">Selecione uma espécie</option>
                     <c:forEach items="${especies}" var="especie">
                         <option value="${especie.id}">${especie.nome}</option>
                     </c:forEach>
@@ -66,6 +66,14 @@
                     <input type="checkbox" id="hostil" name="hostil" value="true">
                     <label for="hostil">Animal hostil</label>
                 </div>
+                
+                <label for="especie">Habitat:*</label>
+                <select name="habitat" id="habitat">
+                    <option value="">Selecione um habitat</option>
+                    <c:forEach items="${habitats}" var="habitat">
+                        <option value="${habitat.nome}">${habitat.nome}</option>
+                    </c:forEach>
+                </select><br>
                 
                 <c:if test="${not empty erro}">
                     <div class="mensagem"><c:out value="${erro}"/></div>

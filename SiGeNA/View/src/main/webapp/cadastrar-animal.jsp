@@ -75,8 +75,9 @@
                     </c:forEach>
                 </select><br>
                 
-                <c:if test="${not empty erro}">
-                    <div class="mensagem"><c:out value="${erro}"/></div>
+                <c:if test="${not empty sessionScope.campoInvalidoErro}">
+                    <div class="mensagem"><c:out value="${sessionScope.campoInvalidoErro}"/></div>
+                    <c:remove var="campoInvalidoErro" scope="session"/>
                 </c:if>
                     
                 <input type="hidden" name="acao" value="salvar">

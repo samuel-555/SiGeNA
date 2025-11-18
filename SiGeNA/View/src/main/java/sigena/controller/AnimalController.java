@@ -20,9 +20,9 @@ import sigena.model.service.GestaoHabitatService;
 
 @WebServlet(name = "AnimalController", urlPatterns = {"/AnimalController"})
 public class AnimalController extends HttpServlet {
-    GestaoAnimalService service = new GestaoAnimalService();
-    GestaoHabitatService consultaHabitat = new GestaoHabitatService();
-    GestaoEspeciesService consultaEspecie = new GestaoEspeciesService();
+    private final GestaoAnimalService service = new GestaoAnimalService();
+    private final GestaoHabitatService consultaHabitat = new GestaoHabitatService();
+    private final GestaoEspeciesService consultaEspecie = new GestaoEspeciesService();
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -51,6 +51,18 @@ public class AnimalController extends HttpServlet {
                 if("listar".equals(acao)) {
                     List<Animal> animais = null;
                     animais = service.listarAnimais();
+                    List<Especie> especies = null;
+                    List<Habitat> habitats = null;
+                    
+                    try {
+                        especies = consultaEspecie.listar();
+                        habitats = consultaHabitat.listarHabitats();
+                    } catch(PersistenciaException e) {
+                        request.setAttribute("erro", e.getMessage());
+                    }
+                    
+                    request.setAttribute("especies", especies);
+                    request.setAttribute("habitats", habitats);
                     request.setAttribute("animais", animais);
                     request.getRequestDispatcher("animais.jsp").forward(request, response);
                 }
@@ -120,8 +132,17 @@ public class AnimalController extends HttpServlet {
                 throw new NullPointerException();
                 
             if("salvar".equals(acao)) {
-                cadastrar(request, response);
+                boolean success = cadastrar(request, response);
+                HttpSession sessao = request.getSession(false);
+                if(!success) {
+                    sessao.setAttribute("campoInvalidoErro", "Campo(s) inválido(s) preenchido(s)!");
+                    response.sendRedirect(request.getContextPath() + "/AnimalController?acao=cadastrar");
+                    return;
+                }
+                
+                sessao.setAttribute("acaoBemSucedida", "Animal cadastrado com sucesso!");
                 response.sendRedirect(request.getContextPath() + "/AnimalController?acao=listar");
+                return;
             }
             
             if("excluir".equals(acao)) {
@@ -130,8 +151,15 @@ public class AnimalController extends HttpServlet {
             }
             
             if("editar".equals(acao)) {
+                boolean success = editar(request, response);
                 String id = request.getParameter("id");
-                editar(request, response);
+                HttpSession sessao = request.getSession(false);
+                if(!success) {
+                    sessao.setAttribute("campoInvalidoErro", "Campo(s) inválido(s) preenchido(s)!");
+                    response.sendRedirect(request.getContextPath() + "/AnimalController?acao=editar&id=" + id);
+                    return;
+                }
+                sessao.setAttribute("acaoBemSucedida", "Animal editado com sucesso!");
                 response.sendRedirect(request.getContextPath() + "/AnimalController?acao=exibir&id=" + id);
             }
         } catch(PersistenciaException e) {
@@ -139,7 +167,7 @@ public class AnimalController extends HttpServlet {
         }
     }
     
-    private void cadastrar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException, IOException, ServletException{
+    private boolean cadastrar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException, IOException, ServletException{
         String nome = request.getParameter("nome");
         int especieId = Integer.parseInt(request.getParameter("especie"));
         Especie especie = consultaEspecie.buscarPorId(especieId);
@@ -150,17 +178,8 @@ public class AnimalController extends HttpServlet {
         Habitat habitat = consultaHabitat.buscar(request.getParameter("habitat"));
 
         Animal novoAnimal = new Animal(nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
-            
-        boolean result = service.cadastrarAnimal(novoAnimal);
         
-        if(!result) {
-            HttpSession session = request.getSession(false);
-            session.setAttribute("camposInvalidosError", "Dados inválidos digitados, verifique os campos!");
-            
-            response.sendRedirect("AnimalController?acao=cadastrar");
-                    
-            return;
-        }
+        return service.cadastrarAnimal(novoAnimal);
     }
     
     private void excluir(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
@@ -168,7 +187,7 @@ public class AnimalController extends HttpServlet {
         service.excluirAnimal(id);
     }
     
-    private void editar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
+    private boolean editar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
         Long id = Long.valueOf(request.getParameter("id"));
         String nome = request.getParameter("nome");
         int especieId = Integer.parseInt(request.getParameter("especie"));
@@ -181,7 +200,7 @@ public class AnimalController extends HttpServlet {
         
         Animal editadoAnimal = new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
             
-        service.editarAnimal(editadoAnimal);
+        return service.editarAnimal(editadoAnimal);
     }
     
     @Override

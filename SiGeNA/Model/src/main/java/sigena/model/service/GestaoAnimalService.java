@@ -4,14 +4,17 @@ import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Animal;
 import sigena.model.dao.AnimalDAO;
+import sigena.model.dao.EspecieDAO;
 import sigena.model.dao.HabitatDAO;
+import sigena.model.domain.util.AnimalSexo;
 
 public class GestaoAnimalService {
-    AnimalDAO animalDAO = new AnimalDAO();
-    HabitatDAO habitatDAO = new HabitatDAO();
+    private final AnimalDAO animalDAO = new AnimalDAO();
+    private final EspecieDAO especieDAO = new EspecieDAO();
+    private final HabitatDAO habitatDAO = new HabitatDAO();
     
     public boolean cadastrarAnimal(Animal animal) throws PersistenciaException{
-        if(animal.getEspecieNome() == null)
+        if(!conferirCampos(animal))
             return false;
         
         animalDAO.cadastrar(animal);
@@ -33,8 +36,42 @@ public class GestaoAnimalService {
         return animalDAO.buscarPorId(id);
     }
     
-    public void editarAnimal(Animal animal) throws PersistenciaException{
+    public boolean editarAnimal(Animal animal) throws PersistenciaException{
+        if(!conferirCampos(animal))
+            return false;
+        
         animalDAO.editar(animal);
         habitatDAO.editarAnimalAlocado(animal.getHabitatNome(), animal.getId());
+        
+        return true;
+    }
+    
+    private boolean conferirCampos(Animal animal) {
+        if(animal.getNome().replaceAll("\\s", "").equals(""))
+            return false;
+        
+        try {
+            if(animal.getEspecieNome() == null || especieDAO.buscarPorId(animal.getEspecieId()) == null)
+                return false;
+        } catch(PersistenciaException e) {
+            return false;
+        }
+
+        try {
+            AnimalSexo.setAnimalSexo(animal.getSexo());
+        } catch(IllegalArgumentException e) {
+            return false;
+        }
+        
+        if(animal.getDataDeNascimentoOb() == null)
+            return false;
+        
+        if(animal.getPeso() <= 0)
+            return false;
+        
+        if(animal.getHabitatNome() == null || habitatDAO.buscar(animal.getHabitatNome()) == null)
+            return false;
+        
+        return true;
     }
 }

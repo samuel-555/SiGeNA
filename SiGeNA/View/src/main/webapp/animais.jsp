@@ -29,14 +29,20 @@
 
   <div class="container">
     <h1>Gestão de Animais</h1>
-
+    <c:if test="${empty especies || empty habitats}">
+        <p>Para cadastrar animais, deverá ser feito o cadastro de, no mínimo, 1 espécie e 1 habitat previamente</p>
+    </c:if>
+    <c:if test="${not empty especies && not empty habitats}">
     <div class="botoes-acoes">
         <a href="AnimalController?acao=cadastrar" class="btn">Cadastrar Novo Animal</a>
     </div>
     <c:if test="${empty animais}">
         <p>Nenhum animal cadastrado.</p>
     </c:if>
-    
+    <c:if test="${not empty sessionScope.acaoBemSucedida}">
+        <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
+        <c:remove var="acaoBemSucedida" scope="session"/>
+    </c:if>
     <c:if test="${not empty animais}">
         <div class="historico">
         <h2>Lista de Animais</h2>
@@ -70,6 +76,7 @@
         </tbody>
       </table>
     </div>     
+    </c:if>
     </c:if>
     
   </div>

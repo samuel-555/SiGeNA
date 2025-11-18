@@ -37,7 +37,10 @@
     <c:if test="${empty animal}">
         <p>Erro: Animal não encontrado</p>
     </c:if>
-    
+    <c:if test="${not empty sessionScope.acaoBemSucedida}">
+        <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
+        <c:remove var="acaoBemSucedida" scope="session"/>
+    </c:if>
     <c:if test="${not empty animal}">
         <div class="ficha-animal">
             <h3><c:out value="${animal.nome}"/></h3>

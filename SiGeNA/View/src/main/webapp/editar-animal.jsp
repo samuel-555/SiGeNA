@@ -40,7 +40,7 @@
             <p><strong>ID:</strong> <c:out value="${animal.id}"/></p>
             <form action="AnimalController" method="post">
                 <label for="nome">Nome do Animal:</label>
-                <input type="text" id="nome" name="nome" value="<c:out value="${animal.nome}"/>" placeholder="Ex: Simba" required>
+                <input type="text" id="nome" name="nome" value="<c:out value="${animal.nome}"/>" placeholder="Ex: Simba">
                 
                 <label for="especie">Espécie:</label>
                 <select name="especie" id="especie">
@@ -79,6 +79,12 @@
                         </c:if>
                     </c:forEach>
                 </select><br>
+                
+                <c:if test="${not empty sessionScope.campoInvalidoErro}">
+                    <div class="mensagem"><c:out value="${sessionScope.campoInvalidoErro}"/></div>
+                    <c:remove var="campoInvalidoErro" scope="session"/>
+                </c:if>
+                    
                 <input type="hidden" name="id" value="<c:out value="${animal.id}"/>"> 
                 <input type="hidden" name="acao" value="editar">
                 <button type="submit" class="btn-enviar">Salvar Alterações</button>

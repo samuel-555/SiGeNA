@@ -186,24 +186,16 @@ public class InitDB {
                      id INT AUTO_INCREMENT PRIMARY KEY,
                      animal_id BIGINT NOT NULL,
                      vet_id INT NOT NULL,
-                     diagnostico VARCHAR(255) NOT NULL,
-                     medicacao VARCHAR(255),
+                     diagnostico TEXT NOT NULL,
+                     medicacao TEXT NOT NULL,
                      frequencia INT,
-                     observacao TEXT,
-                     tipo varchar(100),
-                     status VARCHAR(100),
-                     data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                     data_final DATETIME NULL,
+                     observacao LONGTEXT,
+                     tipo TEXT NOT NULL,
+                     status TEXT NOT NULL,
+                     data_inicio DATETIME NOT NULL,
+                     data_final DATETIME NOT NULL
                      
-                     CONSTRAINT fkAnimal FOREIGN KEY (animal_id)
-                     REFERENCES animais(id)
-                     ON DELETE CASCADE
-                     ON UPDATE CASCADE,
-                     
-                     CONSTRAINT fkVet FOREIGN KEY (vet_id)
-                     REFERENCES usuarios(id)
-                     ON DELETE CASCADE
-                     ON UPDATE CASCADE
+                    
                 );
                 """;
         try (Statement st = con.createStatement()) {

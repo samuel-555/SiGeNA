@@ -15,7 +15,7 @@ import sigena.model.domain.util.TipoTratamento;
 public class TratamentoDAO {
 
     public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) {
-        String sql = "INSERT INTO tratamentos(animal_id, vet_id, diagnostico, medicacao, frequencia, observacao, tipo, status, data_inicial, data_final) values (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
+        String sql = "INSERT INTO tratamento(animal_id, vet_id, diagnostico, medicacao, frequencia, observacao, tipo, status, data_inicio, data_final) values (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
         try {
             Connection con = ConexaoDB.getConnection();
@@ -41,7 +41,7 @@ public class TratamentoDAO {
     }
 
     public List<Tratamento> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM tratamentos";
+        String sql = "SELECT * FROM tratamento";
         List<Tratamento> tratamentos = new ArrayList<>();
 
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {

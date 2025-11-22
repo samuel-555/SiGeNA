@@ -38,12 +38,12 @@
             <h1>Cadastrar Novo Animal</h1>
         <div class="formulario">
             <form action="AnimalController" method="post">
-                <label for="nome">Nome do Animal:</label>
+                <label for="nome">Nome do Animal:*</label>
                 <input type="text" id="nome" name="nome" placeholder="Ex: Simba" required>
                 
-                <label for="especie">Espécie:</label>
+                <label for="especie">Espécie:*</label>
                 <select name="especie" id="especie">
-                    <option value="-1">Selecione uma espécie</option>>
+                    <option value="-1">Selecione uma espécie</option>
                     <c:forEach items="${especies}" var="especie">
                         <option value="${especie.id}">${especie.nome}</option>
                     </c:forEach>
@@ -56,10 +56,10 @@
                     <option value="femea">Fêmea</option>
                 </select>
                 
-                <label for="dataDeNascimento">Data de nascimento:</label>
+                <label for="dataDeNascimento">Data de nascimento:*</label>
                 <input type="date" max="<%=hoje%>" id="dataDeNascimento" name="dataDeNascimento" required>
 
-                <label for="peso">Peso (kg):</label>
+                <label for="peso">Peso (kg):*</label>
                 <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>
                 
                 <div class="checkbox-group">
@@ -67,8 +67,17 @@
                     <label for="hostil">Animal hostil</label>
                 </div>
                 
-                <c:if test="${not empty erro}">
-                    <div class="mensagem"><c:out value="${erro}"/></div>
+                <label for="especie">Habitat:*</label>
+                <select name="habitat" id="habitat">
+                    <option value="">Selecione um habitat</option>
+                    <c:forEach items="${habitats}" var="habitat">
+                        <option value="${habitat.nome}">${habitat.nome}</option>
+                    </c:forEach>
+                </select><br>
+                
+                <c:if test="${not empty sessionScope.campoInvalidoErro}">
+                    <div class="mensagem"><c:out value="${sessionScope.campoInvalidoErro}"/></div>
+                    <c:remove var="campoInvalidoErro" scope="session"/>
                 </c:if>
                     
                 <input type="hidden" name="acao" value="salvar">

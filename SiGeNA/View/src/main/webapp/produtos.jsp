@@ -1,0 +1,86 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="sigena.model.domain.util.TipoProduto"%>
+<%@page import="jakarta.servlet.http.HttpSession" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+    
+    pageContext.setAttribute("tiposProduto", TipoProduto.values());
+    
+%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>SiGeNA - Gestão de Produtos / Estoque</title>
+        <link rel="stylesheet" href="CSS/styleprodutos.css">
+        <link rel="stylesheet" href="CSS/style.css">
+    </head>
+    <body>
+        <header>
+            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>" >SiGeNA</a></div>
+        </header>
+
+        <div class="container">
+            <h1>Gestão de Produtos / Estoque</h1>
+
+            <div class="botoes-acoes">
+                <button class="btn">Adicionar Item ao Estoque</button>
+                <button class="btn">Verificar Disponibilidade</button>
+                <button class="btn">Ajustar Quantidade / Validade</button>
+                <button class="btn">Excluir Item</button>
+            </div>
+
+            <div class="formulario">
+                <h2>Adicionar Novo Item</h2>
+                <form method="POST">
+                    <label for="nome">Nome do Produto:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: Ração Premium Cães 10kg">
+
+                    <label for="categoria">Categoria:</label>
+                    <select id="categoria" name="tipoProduto">
+                        <c:forEach var="tipo" items="${tiposProduto}">
+                            <option value="${tipo.tipo}">${fn:replace(tipo.tipo, "_", " ")}</option>
+                        </c:forEach>
+                    </select>
+
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Ex: 15">
+                    
+                    <div id="perecivel" style="display: block;"> 
+                    <label for="lote">Data de Lote</label>
+                    <input type="date" id="lote" name="lote">
+                    
+                    <label for="validade">Data de Validade:</label>
+                    <input type="date" id="validade" name="validade">
+                    </div>
+                    
+                    <input type="hidden" name="acao" value="salvar">
+                    <button type="submit" clasWs="btn-enviar">Salvar Item</button>
+                </form>
+            </div>
+
+            <div class="historico">
+                <h2>Estoque Atual</h2>
+
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+        document.getElementById("categoria").addEventListener("change", function() {
+        let valor = this.value;
+        
+        if (valor === "Perecivel") {
+            document.getElementById("perecivel").style.display = "block";
+        } else {
+            document.getElementById("perecivel").style.display = "none";
+        }
+    });
+</script>

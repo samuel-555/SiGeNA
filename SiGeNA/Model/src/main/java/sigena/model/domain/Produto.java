@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public class Produto {
 
-    public String nome;
-    public Long id;
-    //public Fornecedor fornecedor;
-    public int quantidade;
-    public LocalDate validade;
-    public LocalDate lote;
-    public Boolean disponivel;
+    private String nome;
+    private Long id;
+    //private Fornecedor fornecedor;
+    private int quantidade;
+    private LocalDate validade;
+    private LocalDate lote;
+    private Boolean disponivel;
 
     public Produto(String nome, int quantidade, LocalDate validade, LocalDate lote, Boolean disponivel) {
         this.nome = nome;

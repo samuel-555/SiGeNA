@@ -193,7 +193,8 @@ public class InitDB {
                      tipo TEXT NOT NULL,
                      status TEXT NOT NULL,
                      data_inicio DATETIME NOT NULL,
-                     data_final DATETIME NOT NULL
+                     data_final DATE NOT NULL,
+                     horario TIME
                      
                     
                 );

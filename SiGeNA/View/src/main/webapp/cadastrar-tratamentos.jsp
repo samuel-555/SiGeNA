@@ -39,7 +39,7 @@
                     <label for="tipoTratamento" >Tipo do Tratamento</label>
                     <select id="tipoTratamento" name="tipoTratamento">
                         <c:forEach var="tipo" items="${tiposTratamento}">
-                        <option value="${tipo.tipo}">${tipo.tipo}</option>
+                        <option value="${tipo}">${tipo.tipo}</option>
                         </c:forEach>
                     </select>
                     <label for="animal">Animal:</label>
@@ -54,12 +54,19 @@
                     
                     <label for="medicacao">Medicação:</label>
                     <input type="text" id="medicacao" name="medicacao" placeholder="Ex: Antibiótico X">
-
+                    
+                    <div id="temFrequencia" style="display: block;">
                     <label for="frequencia">Frequência:</label>
-                    <input type="number" step="1" id="frequencia" name="frequencia" placeholder="Ex: 8 em 8h">
-
+                    <input type="number" step="1" id="frequencia" name="frequencia" placeholder="Ex: 8 em 8h" >
+                    </div>
+                    
                     <label for="data">Data:</label>
-                    <input type="datetime-local" id="data" name="data">
+                    <input type="date" id="data" name="data" >
+                    
+                    <div id="temHora" style="display: none;">
+                    <label for="horario">Horario:</label>
+                    <input type="time" id="horario" name="horario" placeholder="Horaio da consulta: 10:30">
+                    </div>
                     
                     <label for="observacoes">Observações:</label>
                     <textarea id="observacoes" name="observacoes" rows="3" placeholder="Observações adicionais"></textarea>
@@ -72,3 +79,21 @@
         </div>
     </body>
 </html>
+
+<script>
+    document.getElementById("tipoTratamento").addEventListener("change", function(){
+        let valor = this.value;
+        
+
+        if(valor === "CIRURGIA" || valor === "PREVENTIVO"){
+            document.getElementById("temFrequencia").style.display = "none";
+            document.getElementById("temHora").style.display = "block";
+        }else{
+            document.getElementById("temFrequencia").style.display = "block";
+            document.getElementById("temHora").style.display = "none";
+        }
+
+            
+    });
+    
+</script>

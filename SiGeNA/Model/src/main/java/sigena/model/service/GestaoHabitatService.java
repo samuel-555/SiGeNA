@@ -6,6 +6,7 @@ import sigena.model.dao.AnimalDAO;
 import sigena.model.domain.Animal;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
+import sigena.model.common.exception.HabitatVazioException;
 
 public class GestaoHabitatService {
    
@@ -33,11 +34,16 @@ public class GestaoHabitatService {
         Habitat habitat = new Habitat(tipo, nome, tamanho, manutencao);
         Habitat habitatAntigo = dao.buscar(nomeAntigo);
         
-        if(habitatAntigo.getTamanho() !=tamanho){
+        if(habitatAntigo.getTamanho() != tamanho){
             if (tamanho > habitatAntigo.getTamanho())
                 habitat.setCapacidade(habitatAntigo.getCapacidade()+ tamanho);
-            else
+            else{
+                if((habitatAntigo.getCapacidade() - tamanho)< habitatAntigo.getCapacidade()){
+                    habitat.setCapacidade(0);
+                    habitat.setDisponivel(false);
+                }
                 habitat.setCapacidade(habitatAntigo.getCapacidade() - tamanho);
+            }
         }
         else
             habitat.setCapacidade(habitatAntigo.getCapacidade());
@@ -73,7 +79,11 @@ public class GestaoHabitatService {
     public Habitat buscar(String nome){
         return dao.buscar(nome);
     }
-    public void excluir(Habitat habitat){
+    
+    public void excluir(Habitat habitat) throws HabitatVazioException {
+        if(!habitat.getVazio())
+            throw new HabitatVazioException("Não é permitido deletar um habitat com animais alocados");
+        
         dao.excluir(habitat);
     }
     

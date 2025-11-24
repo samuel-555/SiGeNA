@@ -210,6 +210,23 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
+    
+    public void initTarefas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS tarefas (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL,
+                texto VARCHAR(255),
+                concluida BOOLEAN NOT NULL,
+                funcionario_id INT NOT NULL,
+                dataCadastro DATETIME NOT NULL,
+                dataPConclusao DATETIME NOT NULL
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initTodos() throws PersistenciaException {
         try {
@@ -221,6 +238,7 @@ public class InitDB {
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
+            initTarefas();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

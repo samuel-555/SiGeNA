@@ -11,23 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.util.List;
+import sigena.model.service.GestaoTarefaService;
+import sigena.model.domain.Tarefa;
 
-/**
- *
- * @author USUARIO
- */
 @WebServlet(name = "TarefaController", urlPatterns = {"/TarefaController"})
 public class TarefaController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -45,43 +36,81 @@ public class TarefaController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        GestaoTarefaService service = new GestaoTarefaService();
+            
+        String acao = request.getParameter("acao");
+       
+        List<Tarefa> tarefas = service.listarTarefas();
+        request.setAttribute("home", tarefas);
+        request.getRequestDispatcher("cadastrar-tarefa.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String acao = request.getParameter("acao");
+        switch(acao){
+            case "inserir":
+                cadastrar(request, response);
+                break;
+            case "editar":
+                editar(request, response);
+                break;
+            case "excluir":
+                excluir(request, response);
+                break;
+
+        }
+    }
+    
+    
+    public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+        String nome = request.getParameter("nome");
+        String texto = request.getParameter("texto");
+        int id_destinatario = Integer.parseInt(request.getParameter("id_destinatario"));
+        LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
+
+        GestaoTarefaService service = new GestaoTarefaService();
+            
+        
+        service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao);
+        response.sendRedirect("TarefaController");
+        
+    }
+   
+   public void editar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String nome = request.getParameter("nome");
+        String texto = request.getParameter("texto");
+        int id_destinatario = Integer.parseInt(request.getParameter("id_destinatario"));
+        LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
+
+        long id = Integer.parseInt(request.getParameter("id")); //isso aqui tá errado, lembra de arrumar depois!!
+
+        GestaoTarefaService service = new GestaoTarefaService();
+        service.editar(id, nome, texto, id_destinatario, dataPConclusao);
+
+        response.sendRedirect("TarefaController");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    
+    public void excluir(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String nome = request.getParameter("nome");
+
+       
+        GestaoTarefaService service = new GestaoTarefaService();
+        Tarefa tarefa = new Tarefa("","",0,false);//so descobre como buscar logo 
+        tarefa.setNome(nome);
+        
+       
+        service.excluir(tarefa);
+      
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+    }
+            
 
 }

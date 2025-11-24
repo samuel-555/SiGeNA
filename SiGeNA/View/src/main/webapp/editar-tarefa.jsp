@@ -18,7 +18,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>SiGeNA - Gestão de Habitat</title>
+        <title>SiGeNA - Gestão de Tarefas</title>
         <link rel="stylesheet" href="CSS\style.css">
     </head>
     <body>
@@ -27,27 +27,35 @@
         </header>
         
         <div class="botoes-acoes">
-            <a href="HabitatController?acao=listar" class="btn">Voltar</a>
+            <a href="TarefaController?acao=listar" class="btn">Voltar</a>
         </div>
         
         <div class="container">
-            <h1>Editar Habitat</h1>
+            <h1>Editar Tarefa</h1>
         <div class="formulario">
-            <form action="${pageContext.request.contextPath}/HabitatController" method="post">
+            <form action="${pageContext.request.contextPath}/TarefaController" method="post">
                 <input type="hidden" name="acao" value="editar">
-                <input type="hidden" name="nomeAntigo" value="${habitat.nome}"/>                
+                <input type="hidden" name="id" value="${habitat.id}"/>                
 
-                <label for="nome">Nome do Habitat:</label>
-                <input type="text" id="nome" name="nome" placeholder="Savana doida" value="${habitat.nome}" required>
+                <label for="nome">Nome da tarefa:</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: Limpar aquário">
 
-                <label for="tipo">Tipo de Habitat:</label>
-                <input type="text" id="tipo" name="tipo" placeholder="Terra" value="${habitat.tipo}" required>
-
-                <label for="tamanho">Tamanho em m³:</label>
-                <input type="number" id="tamanho" name="tamanho" placeholder="10 m³" value="${habitat.tamanho}" min="1" required>
-
-                <label for="manutencao">Precisa de Manutenção</label>
-                <input type="checkbox" id="manutencao" name="manutencao" <c:if test="${habitat.manutencao}">checked</c:if> >
+                <label for="destinatario">Funcionario encarregado:</label>
+                <select name="destinatario" id="destinatario">
+                    
+                    <c:forEach items="${funcionarios}" var="funcionario">
+                        
+                        <c:if test="${funcionario.estado == 'ATIVO'}">
+                            <option value="${funcionario.id}">${funcionario.nome}:${funcionario.cargo}</option>
+                        </c:if>
+                    
+                    </c:forEach>
+                            
+                </select>
+                
+                <label for="data-conclusao">Data para conclusão:</label>
+                <input type="date" name="data-conclusao" id="data-conclusao"placeholder="Ex: 10/10/2007">
+                
 
                 <button type="submit" class="btn-enviar">Salvar Alterações</button>
             </form>

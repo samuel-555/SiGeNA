@@ -23,7 +23,7 @@ public class TarefaController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -71,7 +71,7 @@ public class TarefaController extends HttpServlet {
     public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
-        int id_destinatario = Integer.parseInt(request.getParameter("id_destinatario"));
+        int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
         LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
 
         GestaoTarefaService service = new GestaoTarefaService();
@@ -86,10 +86,10 @@ public class TarefaController extends HttpServlet {
 
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
-        int id_destinatario = Integer.parseInt(request.getParameter("id_destinatario"));
+        int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
         LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
 
-        long id = Integer.parseInt(request.getParameter("id")); //isso aqui tá errado, lembra de arrumar depois!!
+        long id = Integer.parseInt(request.getParameter("id"));
 
         GestaoTarefaService service = new GestaoTarefaService();
         service.editar(id, nome, texto, id_destinatario, dataPConclusao);
@@ -99,12 +99,12 @@ public class TarefaController extends HttpServlet {
 
     
     public void excluir(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String nome = request.getParameter("nome");
+        long id = Integer.parseInt(request.getParameter("id"));
 
        
         GestaoTarefaService service = new GestaoTarefaService();
-        Tarefa tarefa = new Tarefa("","",0,false);//so descobre como buscar logo 
-        tarefa.setNome(nome);
+        Tarefa tarefa = new Tarefa("","",0,LocalDateTime.now());
+        tarefa.setId(id);
         
        
         service.excluir(tarefa);

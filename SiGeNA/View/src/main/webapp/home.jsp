@@ -32,10 +32,9 @@
 
         <div class="grid-botoes">
             
-            <c:if test="${sessionScope.cargoUsuario.name() == 'GERENTE'}">
-                <a href="cadastrar-tarefa.jsp" class="btn">Cadastrar Tarefa</a>
-            </c:if>
-
+            
+                <h1> oi <%=sessao.getAttribute("cargoUsuario")%>
+            
    
 
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
@@ -70,18 +69,44 @@
             
             <c:forEach var= "funcionario" items="${funcionarios}">
                 <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario-cpf}"/>
-                <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui só pra cadastro -->
-                    
-                    <c:if test="${empty tarefas}">
-                        <p>Sem tarefas cadastradas para hoje></p>
-                    </c:if>
-                        
-                    <c:forEach var="tarefa" items="${tarefas}">
-                        <c:out value="${tarefa}"/>
-                    </c:forEach>
-                    
+                
+                <c:if test="${empty tarefas}">
+                    <p>Sem tarefas cadastradas para hoje></p>
                 </c:if>
-            </c:forEach>
+                  
+                <c:if test="${not empty habitats}">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Tipo</th>
+        <th>Tamanho</th>
+        <th>Precisa de Manutenção</th>
+        <th>Disponibilidade</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+        <c:forEach var="tarefa" items="${tarefas}">
+            <%--só aparecer as tarefas não concluidas--%>
+          <tr>
+            <td>${tarefa.nome}</td>
+            <td>${tarefa.dataPConclusao}</td>
+            <td>
+                
+                    <c:out value="${tarefa}"/>
+                    
+                    <label for="manutencao">Precisa de Manutenção</label>
+                    <input type="checkbox" id="manutencao" name="manutencao" <c:if test="${habitat.manutencao}">checked</c:if> >
+                
+                    
+                    
+                <input type="hidden" name="acao" value="excluir">
+                <input type="hidden" name="nome" value="${tarefa.id}">
+                <button class="btn-pequeno excluir">Excluir</button>
+
+        </c:forEach>
                     
         </div>
     </body>

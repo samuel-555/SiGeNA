@@ -25,12 +25,10 @@ public class GestaoTarefaService {
         return dao.listar();
     }
     
-    
-    //colocar uma coisa pra id alguam coisa esqueci
+   
     //COISA PRA ATUALIZAR A DATA DE CADASTRO OU NÃO????)(
     public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao) {
         Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);
-        Tarefa tarefaAntiga = dao.buscar(id);//parte da coisa que tem que mudar muda hein
         
         tarefa.setNome(nome);
         tarefa.setTexto(texto);
@@ -44,7 +42,6 @@ public class GestaoTarefaService {
         dao.editarConcluida(id, concluida);
     }
     
-    //esse tá confuso tem que ver
     public Tarefa buscar(long id){
         return dao.buscar(id);
     }

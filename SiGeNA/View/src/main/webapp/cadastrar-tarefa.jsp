@@ -40,9 +40,18 @@
         <label for="nome">Nome da tarefa:</label>
         <input type="text" id="nome" name="nome" placeholder="Ex: Limpar aquário">
 
-        <!-- possivelmente colocar selecao de tipo pra separar os funcionarios que vao aparecer -->
-        <label for="encarregado">Funcionario encarregado:</label> <!--  campo de seleção apenas com os funcionarios ativos -->
-        <input type="text" id="encarregado" name="encarregado" placeholder="Ex: Jorge veterinário">
+        <label for="destinatario">Funcionario encarregado:</label>
+                <select name="destinatario" id="destinatario">
+                    
+                    <c:forEach items="${funcionarios}" var="funcionario">
+                        
+                        <c:if test="${funcionario.estado == 'ATIVO'}">
+                            <option value="${funcionario.id}">${funcionario.nome}:${funcionario.cargo}</option>
+                        </c:if>
+                    
+                    </c:forEach>
+                            
+                </select>
 
         <label for="data-conclusao">Data para conclusão:</label>
         <input type="date" name="data-conclusao" id="data-conclusao"placeholder="Ex: 10/10/2007">

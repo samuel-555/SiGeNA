@@ -77,5 +77,5 @@ public class Tarefa {
     }
     public void setDataCadastro(LocalDateTime data){
         this.dataCadastro = data;
-    }
+    }//
 }

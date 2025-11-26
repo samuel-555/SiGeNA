@@ -106,7 +106,7 @@ public class TarefaController extends HttpServlet {
         GestaoTarefaService service = new GestaoTarefaService();
         
         if(!service.validarData(dataPConclusao))
-            //botar erro aqui ou try ali em baixo ver oq é melhor
+            //botar erro aqui ou try ali em baixo ver oq é melhor!
         
         service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao);
         response.sendRedirect("TarefaController");

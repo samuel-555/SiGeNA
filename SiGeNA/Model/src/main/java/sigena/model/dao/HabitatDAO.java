@@ -152,7 +152,7 @@ public class HabitatDAO {
 
 
     
-    public Habitat buscar(String nome) { //-------------------ver isso aqui-------------------------
+    public Habitat buscar(String nome) { 
         String sql = "SELECT tipo, nome, tamanho, manutencao, capacidade, disponivel FROM habitat WHERE nome = ?";
 
 
@@ -183,14 +183,14 @@ public class HabitatDAO {
         return null;
     }
        
-    public void inserirAnimalAlocado(String habitatNome, int animalId) {
+    public void inserirAnimalAlocado(String habitatNome, long animalId) {
         String sql = "INSERT INTO habitat_animal(habitat_nome, animal_id) VALUES(?,?)";
         
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
             
             ps.setString(1,habitatNome);
-            ps.setInt(2,animalId);
+            ps.setLong(2,animalId);
             
             ps.executeUpdate();
         }
@@ -198,5 +198,21 @@ public class HabitatDAO {
             throw new RuntimeException(e);
         }
 
+    }
+    
+    public void editarAnimalAlocado(String habitatNome, long animalId){
+        String sql = "UPDATE habitat_animal SET habitat_nome=? WHERE animal_id=?";
+
+        try(Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)){
+        
+            ps.setString(1, habitatNome);
+            ps.setLong(2,animalId);
+
+            ps.executeUpdate();
+        }
+        catch(SQLException e){
+            throw new RuntimeException(e);
+        } 
     }
 }

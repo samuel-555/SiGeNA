@@ -85,7 +85,7 @@ public class InitDB {
         String sql = """
             CREATE TABLE IF NOT EXISTS habitat_animal (
                 habitat_nome VARCHAR(100),
-                animal_id INT,
+                animal_id BIGINT,
                 PRIMARY KEY (habitat_nome, animal_id),
                 FOREIGN KEY (habitat_nome) REFERENCES habitat(nome)
                     ON DELETE CASCADE,
@@ -221,6 +221,7 @@ public class InitDB {
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
+            initHabitat_animal();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

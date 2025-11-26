@@ -17,7 +17,7 @@ public class GestaoTarefaService {
     }
     
     public void cadastrarTarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao){
-        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);//adicionar teste de validade da data
+        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);//adicionar teste de validade da data     
         dao.inserir(tarefa);
     }
     
@@ -25,8 +25,6 @@ public class GestaoTarefaService {
         return dao.listar();
     }
     
-   
-    //COISA PRA ATUALIZAR A DATA DE CADASTRO OU NÃO????)(
     public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao) {
         Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);
         
@@ -34,6 +32,7 @@ public class GestaoTarefaService {
         tarefa.setTexto(texto);
         tarefa.setIdDestinatario(id_destinatario);
         tarefa.setDataPConclusao(dataPConclusao);
+        tarefa.setDataCadastro(LocalDateTime.now());
         
         dao.editar(id,tarefa);
     }
@@ -48,6 +47,13 @@ public class GestaoTarefaService {
     
     public void excluir(Tarefa tarefa){
         dao.excluir(tarefa);
+    }
+    
+    public boolean validarData(LocalDateTime data){
+        LocalDateTime agora = LocalDateTime.now();
+        if(data.isAfter(agora))
+            return true;
+        return false;
     }
     
 }

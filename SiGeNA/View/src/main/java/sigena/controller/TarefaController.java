@@ -102,9 +102,11 @@ public class TarefaController extends HttpServlet {
         String texto = request.getParameter("texto");
         int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
         LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
-
+        
         GestaoTarefaService service = new GestaoTarefaService();
-            
+        
+        if(!service.validarData(dataPConclusao))
+            //botar erro aqui ou try ali em baixo ver oq é melhor
         
         service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao);
         response.sendRedirect("TarefaController");

@@ -12,7 +12,7 @@ public class Tarefa {
     private String texto;
     private boolean concluida;
     private int id_destinatario;
-    private final LocalDateTime dataCadastro;
+    private LocalDateTime dataCadastro;
     private LocalDateTime dataPConclusao;
     
     public Tarefa(String nome, String texto, boolean concluida, int id_destinatario,LocalDateTime dataCadastro ,LocalDateTime dataPConclusao){
@@ -74,5 +74,8 @@ public class Tarefa {
     }
     public void setDataPConclusao(LocalDateTime data){
         this.dataPConclusao = data;
+    }
+    public void setDataCadastro(LocalDateTime data){
+        this.dataCadastro = data;
     }
 }

@@ -26,7 +26,7 @@
             <div class="titulo">SiGeNA</div>
         </header>
         <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado")%>!</h1>
-
+        <h2>oi, <%= sessao.getAttribute("cargoUsuario")%></h2>
         <div class="grid-botoes">
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
             <a href="HabitatController" class="btn">Gestão de Habitat</a>
@@ -34,6 +34,10 @@
             <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+        </div>
+        
+        <div class="tarefas">
+            <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
         </div>
     </body>
 </html>

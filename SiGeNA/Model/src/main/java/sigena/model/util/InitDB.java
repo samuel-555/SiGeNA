@@ -236,6 +236,7 @@ public class InitDB {
             initFuncionarios();
             initUsuarios();
             initAnimais();
+            initHabitat_animal();
             initTratamento();
             initPlanosAlimentares();
             initTarefas();

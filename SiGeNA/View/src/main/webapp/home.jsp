@@ -31,12 +31,6 @@
         <c:set var="cargoUsuario" value="${sessionScope.cargoUsuario}" />
 
         <div class="grid-botoes">
-            
-            
-                <h1> oi <%=sessao.getAttribute("cargoUsuario")%>
-            
-   
-
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
@@ -45,9 +39,7 @@
         </div>
         <div class="tarefas">
             
-            
-            
-            <c:if test="${cargoUsuario != 'GERENTE'}">
+            <%--
                 <c:forEach var= "funcionario" items="${funcionarios}">
                     
                 <c:set var="tarefas" value="${tarefa.destinatario.cpf == UsuarioLogado.cpf}"/>
@@ -74,7 +66,7 @@
                     <p>Sem tarefas cadastradas para hoje></p>
                 </c:if>
                   
-                <c:if test="${not empty habitats}">
+                <c:if test="${not empty habitats}">--%>
   <table>
     <thead>
       <tr>

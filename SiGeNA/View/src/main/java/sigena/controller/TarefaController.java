@@ -11,10 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import sigena.model.common.exception.DatabaseException;
+import sigena.model.domain.Funcionario;
 import sigena.model.service.GestaoTarefaService;
 import sigena.model.domain.Tarefa;
+import sigena.model.service.FuncionarioService;
 
 @WebServlet(name = "TarefaController", urlPatterns = {"/TarefaController"})
 public class TarefaController extends HttpServlet {
@@ -44,9 +48,24 @@ public class TarefaController extends HttpServlet {
             
         String acao = request.getParameter("acao");
        
+        if ("cadastrar".equals(acao)) {
+            try {
+                abrirFormulario(request, response);
+            } catch (SQLException ex) {
+                System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            } catch (DatabaseException ex) {
+                System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+            return;
+        }
+        if ("listar".equals(acao)) {
+            listar(request, response);
+        return;
+    }
+        
         List<Tarefa> tarefas = service.listarTarefas();
         request.setAttribute("home", tarefas);
-        request.getRequestDispatcher("cadastrar-tarefa.jsp").forward(request, response);
+        request.getRequestDispatcher("home-gerente.jsp").forward(request, response);
     }
 
     @Override
@@ -67,6 +86,16 @@ public class TarefaController extends HttpServlet {
         }
     }
     
+    
+    public void abrirFormulario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, DatabaseException{
+        FuncionarioService funcionarioService = new FuncionarioService();
+
+        List<Funcionario> funcionarios = funcionarioService.listar();
+        request.setAttribute("funcionarios", funcionarios);
+
+        request.getRequestDispatcher("cadastrar-tarefa.jsp").forward(request, response);
+
+    }
     
     public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String nome = request.getParameter("nome");
@@ -111,6 +140,17 @@ public class TarefaController extends HttpServlet {
       
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
-            
+    
+    private void listar(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        GestaoTarefaService service = new GestaoTarefaService();
+
+        List<Tarefa> tarefas = service.listarTarefas();
+        request.setAttribute("home", tarefas);
+
+        request.getRequestDispatcher("home-tarefas.jsp").forward(request, response);
+    }
+
 
 }

@@ -39,14 +39,17 @@
         
         <label for="nome">Nome da tarefa:</label>
         <input type="text" id="nome" name="nome" placeholder="Ex: Limpar aquário">
-
+        
+        <label for="texto">Descrição da tarefa:</label>
+        <input type="text" id="texto" name="texto" placeholder="Ex: Limpar os aquários dos pinguins">
+        
         <label for="destinatario">Funcionario encarregado:</label>
                 <select name="destinatario" id="destinatario">
                     
                     <c:forEach items="${funcionarios}" var="funcionario">
                         
                         <c:if test="${funcionario.estado == 'ATIVO'}">
-                            <option value="${funcionario.id}">${funcionario.nome}:${funcionario.cargo}</option>
+                            <option value="${funcionario.id}">${funcionario.nome}</option>
                         </c:if>
                     
                     </c:forEach>

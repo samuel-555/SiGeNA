@@ -1,6 +1,7 @@
 package sigena.model.domain;
 
 import java.time.LocalDate;
+import sigena.model.domain.util.TipoProduto;
 
 public class Produto {
 
@@ -11,13 +12,25 @@ public class Produto {
     private LocalDate validade;
     private LocalDate lote;
     private Boolean disponivel;
+    private TipoProduto tipo;
 
-    public Produto(String nome, int quantidade, LocalDate validade, LocalDate lote, Boolean disponivel) {
+    public Produto(String nome,/* Fornecedor fornecedor,*/ int quantidade, LocalDate validade, LocalDate lote, Boolean disponivel, TipoProduto tipo) {
         this.nome = nome;
+        //this.fornecedor = fornecedor;
         this.quantidade = quantidade;
         this.validade = validade;
         this.lote = lote;
         this.disponivel = disponivel;
+        this.tipo = tipo;
+    }
+    
+    public Produto(String nome,/* Fornecedor fornecedor,*/ int quantidade, LocalDate validade, LocalDate lote, TipoProduto tipo) {
+        this.nome = nome;
+        //this.fornecedor = fornecedor;
+        this.quantidade = quantidade;
+        this.validade = validade;
+        this.lote = lote;
+        this.tipo = tipo;
     }
 
     public void setNome(String nome) {
@@ -27,6 +40,14 @@ public class Produto {
     public String getNome() {
         return nome;
     }
+    
+    /*public void setFornecedor(fornecedor fornecedor) {
+        this.fornecedor = fornecedor;
+    }
+
+    public Fornecedor getFornecedor() {
+        return fornecedor;
+    }*/
 
     public void setId(Long id) {
         this.id = id;
@@ -66,5 +87,13 @@ public class Produto {
 
     public Boolean getDisponivel() {
         return disponivel;
+    }
+    
+    public void setTipo(TipoProduto tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getTipo() {
+        return tipo.getTipo();
     }
 }

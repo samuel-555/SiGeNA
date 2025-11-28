@@ -45,12 +45,12 @@
                     <label for="categoria">Categoria:</label>
                     <select id="categoria" name="tipoProduto">
                         <c:forEach var="tipo" items="${tiposProduto}">
-                            <option value="${tipo.tipo}">${fn:replace(tipo.tipo, "_", " ")}</option>
+                            <option value="${tipo}">${fn:replace(tipo.tipo, "_", " ")}</option>
                         </c:forEach>
                     </select>
 
                     <label for="quantidade">Quantidade:</label>
-                    <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Ex: 15">
+                    <input type="number" id="quantidade" name="quantidade" min="1" step="1" placeholder="Ex: 15">
                     
                     <div id="perecivel" style="display: block;"> 
                     <label for="lote">Data de Lote</label>

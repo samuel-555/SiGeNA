@@ -10,6 +10,8 @@ import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.util.DataConverter;
 import sigena.model.domain.Animal;
 import sigena.model.domain.Especie;
+import sigena.model.domain.Habitat;
+import sigena.model.service.GestaoHabitatService;
 import sigena.model.util.ConexaoDB;
 
 public class AnimalDAO {
@@ -21,13 +23,28 @@ public class AnimalDAO {
             setPreparedStatementInsert(stmt, animal);
             stmt.executeUpdate();
             
+            try(ResultSet rs = stmt.getGeneratedKeys()) {
+                if(rs.next()) {
+                    Long id = rs.getLong(1);
+                    animal.setId(id);
+                }
+            }
+            
         } catch (SQLException e) {
             throw new PersistenciaException("Não foi possível cadastrar animal: " + e.getMessage());
         }
+        
+        System.out.println(animal.getHabitatNome());
     }
     
     public List<Animal> listar() throws PersistenciaException{
-        String sql = "SELECT * FROM animais";
+        String sql = "SELECT "
+                + "animais.*, "
+                + "habitat_animal.habitat_nome "
+                + "FROM animais "
+                + "JOIN habitat_animal "
+                + "ON animais.id = habitat_animal.animal_id;";
+        
         List<Animal> animais = new ArrayList<>();
         
         try (Connection con = ConexaoDB.getConnection();
@@ -56,7 +73,14 @@ public class AnimalDAO {
     }
     
     public Animal buscarPorId(Long id) throws PersistenciaException {
-        String sql = "SELECT * FROM animais WHERE id = ?";
+        String sql = "SELECT "
+                + "animais.*, "
+                + "habitat_animal.habitat_nome "
+                + "FROM animais "
+                + "JOIN habitat_animal "
+                + "ON animais.id = habitat_animal.animal_id "
+                + "WHERE animais.id = ?;";
+        
         Animal animal = null;
         
         try (Connection con = ConexaoDB.getConnection();
@@ -74,7 +98,7 @@ public class AnimalDAO {
     }
     
     public void editar(Animal animal) throws PersistenciaException {
-        String sql = "UPDATE animais "
+        String sqlAnimal = "UPDATE animais "
                 + "SET nome = ?, "
                 + "id_especie = ?, "
                 + "sexo = ?, "
@@ -83,19 +107,24 @@ public class AnimalDAO {
                 + "hostil = ? "
                 + "WHERE id = ?";
         
-        try(Connection con = ConexaoDB.getConnection();
-                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            setPreparedStatementUpdate(stmt, animal);
-            stmt.executeUpdate();
+        try(Connection con = ConexaoDB.getConnection();) {
+            try (PreparedStatement stmt = con.prepareStatement(sqlAnimal, Statement.RETURN_GENERATED_KEYS)){
+                setPreparedStatementUpdate(stmt, animal);
+                stmt.executeUpdate();
+            }
+            
         } catch (SQLException e) {
             throw new PersistenciaException("Não foi possível editar animal: " + e.getMessage());
         }
+        
+        
     }
     
     private Animal consultaToAnimal(ResultSet rs) throws SQLException, PersistenciaException {
         Long id = rs.getLong("id");
         String nome = rs.getString("nome");
         EspecieDAO consultaEspecie = new EspecieDAO();
+        GestaoHabitatService consultaHabitat = new GestaoHabitatService();
         Especie especie = null;
         
         try {
@@ -108,12 +137,18 @@ public class AnimalDAO {
         String dataDeNascimento = rs.getDate("data_de_nascimento").toLocalDate().toString();
         Double peso = rs.getDouble("peso");
         boolean hostil = rs.getBoolean("hostil");
+        String habitatNome = rs.getString("habitat_nome");
+        Habitat habitat = null;
+
+        if (habitatNome != null) {
+            habitat = consultaHabitat.buscar(habitatNome);
+        }
         
-        return new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil);
+        return new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
     }
     
     private void setPreparedStatementInsert(PreparedStatement stmt, Animal animal) throws SQLException{
-        stmt.setString(1, animal.getNome());
+            stmt.setString(1, animal.getNome());
             stmt.setInt(2, animal.getEspecieId());
             stmt.setString(3, animal.getSexo());
             

@@ -109,8 +109,8 @@ public class EspecieDAO {
     private boolean existeAnimalVinculado(int idEspecie) throws PersistenciaException {
         String sql = """
             SELECT COUNT(*) FROM animais
-            WHERE especie = (
-                SELECT nome FROM especies WHERE id = ?
+            WHERE id_especie = (
+                SELECT nome FROM especie WHERE id = ?
             )
         """;
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {

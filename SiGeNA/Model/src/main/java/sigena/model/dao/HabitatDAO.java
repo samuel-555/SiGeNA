@@ -15,7 +15,7 @@ public class HabitatDAO {
     
     public void inserir(Habitat habitat){
         
-        String sql = "INSERT INTO habitat(nome,tipo,capacidade,tamanho,precisaDeManutencao,disponivel) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO habitat(nome,tipo,capacidade,tamanho,manutencao,disponivel) VALUES(?,?,?,?,?,?)";
         
         try (Connection con = ConexaoDB.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,7 +35,7 @@ public class HabitatDAO {
     }
     
     public void editar(String nomeAntigo, Habitat habitat){
-    String sql = "UPDATE habitat SET nome=?, tipo=?, tamanho=?, precisaDeManutencao=?, capacidade=?, disponivel=? WHERE nome=?";
+    String sql = "UPDATE habitat SET nome=?, tipo=?, tamanho=?, manutencao=?, capacidade=?, disponivel=? WHERE nome=?";
 
     try(Connection con = ConexaoDB.getConnection();
         PreparedStatement ps = con.prepareStatement(sql)){
@@ -75,7 +75,7 @@ public class HabitatDAO {
     }
     
     public void editarManutencao(String nomeHabitat, boolean manutencao){
-    String sql = "UPDATE habitat SET precisaDeManutencao=? WHERE nome=?";
+    String sql = "UPDATE habitat SET manutencao=? WHERE nome=?";
 
     try(Connection con = ConexaoDB.getConnection();
         PreparedStatement ps = con.prepareStatement(sql)){
@@ -126,7 +126,7 @@ public class HabitatDAO {
 
         List<Habitat> lista = new ArrayList<>();
 
-        String sql = "SELECT tipo, nome, tamanho, precisaDeManutencao, capacidade, disponivel FROM habitat";
+        String sql = "SELECT tipo, nome, tamanho, manutencao, capacidade, disponivel FROM habitat";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
@@ -137,7 +137,7 @@ public class HabitatDAO {
                     rs.getString("tipo"),
                     rs.getString("nome"),
                     rs.getInt("tamanho"),
-                    rs.getBoolean("precisaDeManutencao")
+                    rs.getBoolean("manutencao")
             );
             habitat.setCapacidade(rs.getInt("capacidade"));
             habitat.setDisponivel(rs.getBoolean("disponivel"));
@@ -152,8 +152,8 @@ public class HabitatDAO {
 
 
     
-    public Habitat buscar(String nome) { //-------------------ver isso aqui-------------------------
-        String sql = "SELECT tipo, nome, tamanho, precisaDeManutencao, capacidade, disponivel FROM habitat WHERE nome = ?";
+    public Habitat buscar(String nome) { 
+        String sql = "SELECT tipo, nome, tamanho, manutencao, capacidade, disponivel FROM habitat WHERE nome = ?";
 
 
         try(Connection con = ConexaoDB.getConnection();
@@ -168,7 +168,7 @@ public class HabitatDAO {
                         rs.getString("tipo"),
                         rs.getString("nome"),
                         rs.getInt("tamanho"),
-                        rs.getBoolean("precisaDeManutencao")
+                        rs.getBoolean("manutencao")
                 );
                 habitat.setCapacidade(rs.getInt("capacidade"));
                 habitat.setDisponivel(rs.getBoolean("disponivel"));
@@ -183,14 +183,14 @@ public class HabitatDAO {
         return null;
     }
        
-    public void inserirAnimalAlocado(String habitatNome, int animalId) {
+    public void inserirAnimalAlocado(String habitatNome, long animalId) {
         String sql = "INSERT INTO habitat_animal(habitat_nome, animal_id) VALUES(?,?)";
         
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
             
             ps.setString(1,habitatNome);
-            ps.setInt(2,animalId);
+            ps.setLong(2,animalId);
             
             ps.executeUpdate();
         }
@@ -198,5 +198,21 @@ public class HabitatDAO {
             throw new RuntimeException(e);
         }
 
+    }
+    
+    public void editarAnimalAlocado(String habitatNome, long animalId){
+        String sql = "UPDATE habitat_animal SET habitat_nome=? WHERE animal_id=?";
+
+        try(Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)){
+        
+            ps.setString(1, habitatNome);
+            ps.setLong(2,animalId);
+
+            ps.executeUpdate();
+        }
+        catch(SQLException e){
+            throw new RuntimeException(e);
+        } 
     }
 }

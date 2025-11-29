@@ -1,5 +1,7 @@
 # SiGeNA-Sistema de Gerenciamento de Necessidades Animais
 
+O SiGeNA é um projeto que visa sistematizar os serviços de zoológicos, refúgios ou quaisquer outros tipos de instituição com foco em cuidados animais
+
 ## Desenvolvedores
 | Ordem | Nome          |
 |:------|:--------------|

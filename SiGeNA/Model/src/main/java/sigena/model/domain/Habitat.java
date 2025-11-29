@@ -13,7 +13,7 @@ public class Habitat {
     private int tamanho;
     private boolean manutencao;
     private boolean disponivel;
-    private AnimaisAlocados animaisAlocados;
+    private final AnimaisAlocados animaisAlocados;
             
     public Habitat(String tipo,String nome, int tamanho, boolean manutencao){
         this.tipo = tipo;

@@ -85,7 +85,7 @@ public class InitDB {
         String sql = """
             CREATE TABLE IF NOT EXISTS habitat_animal (
                 habitat_nome VARCHAR(100),
-                animal_id INT,
+                animal_id BIGINT,
                 PRIMARY KEY (habitat_nome, animal_id),
                 FOREIGN KEY (habitat_nome) REFERENCES habitat(nome)
                     ON DELETE CASCADE,
@@ -179,15 +179,49 @@ public class InitDB {
         }
     }
 
+    public void initTratamento() throws SQLException {
+        String sql = """
+                     
+                CREATE TABLE IF NOT EXISTS tratamento(
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     animal_id BIGINT NOT NULL,
+                     vet_id INT NOT NULL,
+                     diagnostico VARCHAR(255) NOT NULL,
+                     medicacao VARCHAR(255),
+                     frequencia INT,
+                     observacao TEXT,
+                     tipo varchar(100),
+                     status VARCHAR(100),
+                     data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     data_final DATETIME NULL,
+                     
+                     CONSTRAINT fkAnimal FOREIGN KEY (animal_id)
+                     REFERENCES animais(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE,
+                     
+                     CONSTRAINT fkVet FOREIGN KEY (vet_id)
+                     REFERENCES usuarios(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE
+                );
+                """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
+            
             initHabitats();
-            initEspecies();
-            initPlanosAlimentares();;
-            initHabitat_animal();
+            initEspecies();            
             initFuncionarios();
             initUsuarios();
             initAnimais();
+            initTratamento();
+            initPlanosAlimentares();
+            initHabitat_animal();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

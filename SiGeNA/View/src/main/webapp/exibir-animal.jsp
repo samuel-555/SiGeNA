@@ -37,19 +37,23 @@
     <c:if test="${empty animal}">
         <p>Erro: Animal não encontrado</p>
     </c:if>
-    
+    <c:if test="${not empty sessionScope.acaoBemSucedida}">
+        <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
+        <c:remove var="acaoBemSucedida" scope="session"/>
+    </c:if>
     <c:if test="${not empty animal}">
         <div class="ficha-animal">
             <h3><c:out value="${animal.nome}"/></h3>
             <p><strong>ID: </strong><c:out value="${animal.id}"/></p>
             <p><strong>Espécie: </strong><c:out value="${animal.especieNome}"/></p>
-            <p><strong>Data de nascimento: </strong><c:out value="${animal.dataDeNascimentoFormat}"/>(<c:out value="${animal.idade}"/>)</p>
+            <p><strong>Data de nascimento: </strong><c:out value="${animal.dataDeNascimentoFormat}"/> (<c:out value="${animal.idade}"/>)</p>
             <p><strong>Sexo: </strong><c:out value="${animal.sexo}"/></p>
-            <p><strong>Peso: </strong><c:out value="${animal.peso}"/></p>
+            <p><strong>Peso: </strong><c:out value="${animal.peso}"/> Kg</p>
             <p><strong>Hostil: </strong>
                 <c:if test="${not animal.hostilidade}">Não</c:if>
                 <c:if test="${animal.hostilidade}">Sim</c:if>
             </p>
+            <p><strong>Habitat alocado: </strong><c:out value="${animal.habitatNome}"/></p>
         </div>
     </c:if>
     <div class="botoes-acoes">

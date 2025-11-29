@@ -26,33 +26,33 @@ public class FornecedorController extends HttpServlet {
                 if("listar".equals(acao)) {
                     List<Fornecedor> fornecedores = null;
                     fornecedores = service.listarFornecedores();
-                    request.setAttribute("fonecedores", fornecedores);
+                    request.setAttribute("fornecedores", fornecedores);
                     request.getRequestDispatcher("fornecedores.jsp").forward(request, response);
                 }
                 
                 if("exibir".equals(acao)) {
                     Long id = Long.valueOf(request.getParameter("id"));
                     Fornecedor fornecedor = service.buscarFornecedor(id);
-                    request.setAttribute("fonecedor", fornecedor);
+                    request.setAttribute("fornecedor", fornecedor);
                     request.getRequestDispatcher("exibir-fornecedor.jsp").forward(request, response);
                 }
                 
                 if("editar".equals(acao)) {
                     Long id = Long.valueOf(request.getParameter("id"));
                     Fornecedor fornecedor = service.buscarFornecedor(id);
-                    request.setAttribute("fonecedor", fornecedor);
+                    request.setAttribute("fornecedor", fornecedor);
                     request.getRequestDispatcher("editar-fornecedor.jsp").forward(request, response);
                 }
                 
                 if("salvar_alteracoes".equals(acao)) {
                     Long id = Long.valueOf(request.getParameter("id"));
                     Fornecedor fornecedor = service.buscarFornecedor(id);
-                    request.setAttribute("fonecedor", fornecedor);
+                    request.setAttribute("fornecedor", fornecedor);
                     request.getRequestDispatcher("exibir-fornecedor.jsp").forward(request, response);
                 }
                 
                 if("cadastrar".equals(acao)) {
-                    request.getRequestDispatcher("cadastrar-animal.jsp").forward(request, response);
+                    request.getRequestDispatcher("cadastrar-fornecedor.jsp").forward(request, response);
                 }
                 
             } catch(PersistenciaException e) {
@@ -79,7 +79,7 @@ public class FornecedorController extends HttpServlet {
                 }
                 
                 sessao.setAttribute("acaoBemSucedida", "Fornecedor cadastrado com sucesso!");
-                response.sendRedirect(request.getContextPath() + "/AnimalController?acao=listar");
+                response.sendRedirect(request.getContextPath() + "/FornecedorController?acao=listar");
                 return;
             }
             
@@ -111,9 +111,29 @@ public class FornecedorController extends HttpServlet {
         String email = request.getParameter("email");
         String endereco = request.getParameter("endereco");
         String tipo = request.getParameter("tipo");
+        String descricao = request.getParameter("descricao");
         
-        Fornecedor fornecedor = new Fornecedor(nome, telefone, email, endereco, tipo);
+        Fornecedor fornecedor = new Fornecedor(nome, telefone, email, endereco, tipo, descricao);
         
-        return service.cadastrar(funcionario);
+        return service.cadastrarFornecedor(fornecedor);
+    }
+    
+    private void excluir(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{ 
+        Long id = Long.valueOf(request.getParameter("id"));
+        service.excluirFornecedor(id);
+    }
+    
+    private boolean editar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException, IOException, ServletException {
+        Long id = Long.valueOf(request.getParameter("id"));
+        String nome = request.getParameter("nome");
+        String telefone = request.getParameter("telefone");
+        String email = request.getParameter("email");
+        String endereco = request.getParameter("endereco");
+        String tipo = request.getParameter("tipo");
+        String descricao = request.getParameter("descricao");
+        
+        Fornecedor fornecedor = new Fornecedor(id, nome, telefone, email, endereco, tipo, descricao);
+        
+        return service.editarFornecedor(fornecedor);
     }
 }

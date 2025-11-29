@@ -8,22 +8,25 @@ public class Fornecedor {
     private String email;
     private String endereco;
     private FornecedorTipo tipo;
+    private String descricao;
     
-    public Fornecedor(String nome, String telefone, String email, String endereco, String tipo) {
+    public Fornecedor(String nome, String telefone, String email, String endereco, String tipo, String descricao) {
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
         this.endereco = endereco;
         this.tipo = FornecedorTipo.setTipo(tipo);
+        this.descricao = descricao;
     }
     
-    public Fornecedor(Long id, String nome, String telefone, String email, String endereco, String tipo) {
+    public Fornecedor(Long id, String nome, String telefone, String email, String endereco, String tipo, String descricao) {
         this.id = id;
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
         this.endereco = endereco;
         this.tipo = FornecedorTipo.setTipo(tipo);
+        this.descricao = descricao;
     }
 
     public Long getId() {
@@ -50,6 +53,14 @@ public class Fornecedor {
         return tipo.getTipo();
     }
 
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -69,4 +80,8 @@ public class Fornecedor {
     public void setTipo(String tipo) {
         this.tipo = FornecedorTipo.setTipo(tipo);
     }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    } 
 }

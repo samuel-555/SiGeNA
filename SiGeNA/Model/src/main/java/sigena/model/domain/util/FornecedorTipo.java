@@ -4,11 +4,12 @@ import java.text.Normalizer;
 public enum FornecedorTipo {
     ALIMENTO("ALIMENTO"),
     MEDICAMENTO("MEDICAMENTO"),
-    EQUIPAMENTO("CANCELADO"),
+    EQUIPAMENTO("EQUIPAMENTO"),
     HIGIENE_LIMPEZA("HIGIENE E LIMPEZA"),
     ACESSORIOS("ACESSÓRIOS"),
     SERVICOS("SERVIÇOS"),
-    OUTROS("OUTROS");
+    OUTROS("OUTROS"),
+    VARIADOS("VARIADOS");
     
     private String tipo;
     
@@ -29,10 +30,12 @@ public enum FornecedorTipo {
                  return HIGIENE_LIMPEZA;
              case "ACESSORIOS":
                  return ACESSORIOS;
-             case "SERCICOS":
+             case "SERVICOS":
                  return SERVICOS;
              case "OUTROS":
                  return OUTROS;
+             case "VARIADOS":
+                 return VARIADOS;
          }
          
          throw new IllegalArgumentException("Tipo não reconhecido");

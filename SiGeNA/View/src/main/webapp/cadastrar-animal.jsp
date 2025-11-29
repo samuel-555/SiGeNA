@@ -67,7 +67,7 @@
                     <label for="hostil">Animal hostil</label>
                 </div>
                 
-                <label for="especie">Habitat:*</label>
+                <label for="habitat">Habitat:*</label>
                 <select name="habitat" id="habitat">
                     <option value="">Selecione um habitat</option>
                     <c:forEach items="${habitats}" var="habitat">

@@ -33,19 +33,19 @@ public class InitDB {
 
     public void initAnimais() throws SQLException {
         String sql = """
-        CREATE TABLE IF NOT EXISTS animais (
-              id BIGINT AUTO_INCREMENT PRIMARY KEY,
-              nome VARCHAR(100) NOT NULL, 
-              id_especie INT NOT NULL,
-              sexo VARCHAR(20) NOT NULL,
-              data_de_nascimento DATE NOT NULL,
-              peso DOUBLE NOT NULL,
-              hostil BOOLEAN NOT NULL,
-              data_de_insercao DATETIME NOT NULL,
-              FOREIGN KEY (id_especie) REFERENCES especie(id)
-                 ON UPDATE CASCADE
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS animais (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  id_especie INT NOT NULL,
+                  sexo VARCHAR(20) NOT NULL,
+                  data_de_nascimento DATE NOT NULL,
+                  peso DOUBLE NOT NULL,
+                  hostil BOOLEAN NOT NULL,
+                  data_de_insercao DATETIME NOT NULL,
+                  FOREIGN KEY (id_especie) REFERENCES especie(id)
+                     ON UPDATE CASCADE
+            );
+            """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
@@ -181,91 +181,51 @@ public class InitDB {
 
     public void initTratamento() throws SQLException {
         String sql = """
-            CREATE TABLE IF NOT EXISTS tratamento(
-                 id INT AUTO_INCREMENT PRIMARY KEY,
-                 animal_id BIGINT NOT NULL,
-                 vet_id INT NOT NULL,
-                 diagnostico VARCHAR(255) NOT NULL,
-                 medicacao VARCHAR(255),
-                 frequencia INT,
-                 observacao TEXT,
-                 tipo varchar(100),
-                 status VARCHAR(100),
-                 data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                 data_final DATETIME NULL,
-                 
-                 CONSTRAINT fkAnimal FOREIGN KEY (animal_id)
-                 REFERENCES animais(id)
-                 ON DELETE CASCADE
-                 ON UPDATE CASCADE,
-                 
-                 CONSTRAINT fkVet FOREIGN KEY (vet_id)
-                 REFERENCES usuarios(id)
-                 ON DELETE CASCADE
-                 ON UPDATE CASCADE
-            );
-            """;
+                     
+                CREATE TABLE IF NOT EXISTS tratamento(
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     animal_id BIGINT NOT NULL,
+                     vet_id INT NOT NULL,
+                     diagnostico VARCHAR(255) NOT NULL,
+                     medicacao VARCHAR(255),
+                     frequencia INT,
+                     observacao TEXT,
+                     tipo varchar(100),
+                     status VARCHAR(100),
+                     data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     data_final DATETIME NULL,
+                     
+                     CONSTRAINT fkAnimal FOREIGN KEY (animal_id)
+                     REFERENCES animais(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE,
+                     
+                     CONSTRAINT fkVet FOREIGN KEY (vet_id)
+                     REFERENCES usuarios(id)
+                     ON DELETE CASCADE
+                     ON UPDATE CASCADE
+                );
+                """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
     }
 
-public void initDoacoes() throws SQLException {
-    String sql = """
-        CREATE TABLE IF NOT EXISTS doacoes (
-            id BIGINT PRIMARY KEY AUTO_INCREMENT,
-            nome_doador VARCHAR(150) NOT NULL,
-            tipo VARCHAR(50) NOT NULL,
-            valor_monetario DECIMAL(10,2),
-            descricao_outro VARCHAR(255),
-            observacoes TEXT,
-            status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
-            recibo_emitido BOOLEAN DEFAULT FALSE,
-            data_doacao DATE NOT NULL,
-            data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-    """;
-
-    try (Statement stmt = con.createStatement()) {
-        stmt.execute(sql);
-    }
-}
-
-
-    public void initRecibosDoacao() throws SQLException {
-    String sql = """
-        CREATE TABLE IF NOT EXISTS recibo_doacao (
-            id BIGINT PRIMARY KEY AUTO_INCREMENT,
-            doacao_id BIGINT NOT NULL,
-            data_emissao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (doacao_id) REFERENCES doacoes(id)
-                ON DELETE CASCADE
-        );
-        """;
-
-    try (Statement st = con.createStatement()) {
-        st.executeUpdate(sql);
-    }
-}
-
-
     public void initTodos() throws PersistenciaException {
         try {
+            
             initHabitats();
-            initEspecies();
+            initEspecies();            
             initFuncionarios();
             initUsuarios();
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
             initHabitat_animal();
-            initDoacoes();
-            initRecibosDoacao();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
             initEspecies();
-
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

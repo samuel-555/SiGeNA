@@ -34,6 +34,7 @@
             <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+            <a href="doacoes" class="btn">Gestão de Doações</a>
         </div>
     </body>
 </html>

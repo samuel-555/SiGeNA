@@ -1,11 +1,12 @@
 package sigena.model.domain;
 
+import java.time.LocalDate;
 import sigena.model.domain.util.TipoTratamento;
 import sigena.model.domain.util.StatusTratamento;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Tratamento {
-    
+
     private int id;
     private Animal animal;
     private Usuario veterinario;
@@ -15,99 +16,109 @@ public class Tratamento {
     private String observacao;
     private TipoTratamento tipoTratamento;
     private StatusTratamento statusTratamento;
-    private LocalDateTime dataFinal;
-    
-    
-    public Tratamento(Animal animal, Usuario veterinario, String diagnostico, String medicacao, int frequencia, 
-            String observacao, TipoTratamento tipoTratamento, StatusTratamento statusTratamento, LocalDateTime dataFinal){
+    private LocalDate dataFinal;
+    private LocalTime horario;
+
+    public Tratamento(Animal animal, Usuario veterinario, String diagnostico, String medicacao, int frequencia,
+            String observacao, TipoTratamento tipoTratamento, StatusTratamento statusTratamento, LocalDate dataFinal, LocalTime horario) {
         this.animal = animal;
         this.veterinario = veterinario;
         this.diagnostico = diagnostico;
         this.medicacao = medicacao;
         this.frequencia = frequencia;
-        this.observacao = observacao;      
+        this.observacao = observacao;
         this.tipoTratamento = tipoTratamento;
         this.statusTratamento = statusTratamento;
         this.dataFinal = dataFinal;
+        this.horario = horario;
     }
-    
+
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public int getId() {
         return id;
     }
-    
-    public void setAnimal(Animal animal){
+
+    public void setAnimal(Animal animal) {
         this.animal = animal;
     }
-    
-    public Animal getAnimal(){
+
+    public Animal getAnimal() {
         return animal;
     }
-    
-    public void setMedico(Usuario veterinario){
+
+    public void setMedico(Usuario veterinario) {
         this.veterinario = veterinario;
     }
-    
-    public Usuario getMedico(){
+
+    public Usuario getMedico() {
         return veterinario;
     }
-    
-    public void setDiagnostico(String diagnostico){
+
+    public void setDiagnostico(String diagnostico) {
         this.diagnostico = diagnostico;
     }
-    
-    public String getDiagnostico(){
+
+    public String getDiagnostico() {
         return diagnostico;
     }
-    
-    public void setMedicacao(String medicacao){
+
+    public void setMedicacao(String medicacao) {
         this.medicacao = medicacao;
     }
-    
-    public String getMedicacao(){
+
+    public String getMedicacao() {
         return medicacao;
     }
-    
-    public void setFrequencia(int frequencia){
+
+    public void setFrequencia(int frequencia) {
         this.frequencia = frequencia;
     }
-    
-    public int getFrequencia(){
+
+    public int getFrequencia() {
         return frequencia;
     }
-    
-    public void setObservacao(String observacao){
+
+    public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
-    
-    public String getObservacao(){
+
+    public String getObservacao() {
         return observacao;
     }
-    
+
     public String getTipoTratamento() {
         return tipoTratamento.getTipo();
     }
-    
+
     public void setTipoTratamento(TipoTratamento tipoTratamento) {
         this.tipoTratamento = tipoTratamento;
     }
-    
+
     public String getStatusTratamento() {
         return statusTratamento.getStatus();
     }
-    
+
     public void setStatusTratamento(StatusTratamento statusTratamento) {
         this.statusTratamento = statusTratamento;
     }
-    
-    public LocalDateTime getDataFinal() {
+
+    public LocalDate getDataFinal() {
         return dataFinal;
     }
-    
-    public void setDataFinal(LocalDateTime dataFinal) {
+
+    public void setDataFinal(LocalDate dataFinal) {
         this.dataFinal = dataFinal;
     }
+
+    public LocalTime getHorario() {
+        return horario;
+    }
+
+    public void setHorario(LocalTime hora) {
+        horario = hora;
+    }
+
 }

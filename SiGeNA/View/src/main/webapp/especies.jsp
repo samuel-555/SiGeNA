@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <title>SiGeNA - Gestão de Espécies</title>
     <link rel="stylesheet" href="CSS/styleespecies.css">
+    <link rel="stylesheet" href="CSS\style.css">
 </head>
 <body>
     <header><div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div></header>

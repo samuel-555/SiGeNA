@@ -214,13 +214,24 @@ th, td {
 }
 
 .acoes {
-    display: flex;
-    gap: 6px;
-    align-items: center;
+    text-align: center;
 }
 
-.acoes form {
+.acoes-wrapper {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.acoes-wrapper form {
     margin: 0;
+    display: inline-flex;
+}
+
+.acoes-header {
+    text-align: center;
 }
 
 .alert {

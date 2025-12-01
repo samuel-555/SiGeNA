@@ -130,7 +130,7 @@
                                     <th>Peso</th>
                                     <th>Condição</th>
                                     <th>Observações</th>
-                                    <th>Ações</th>
+                                    <th class="acoes-header">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -160,19 +160,21 @@
                                                     <c:out value='${relatorio.observacoes}'/>
                                                 </td>
                                                 <td class="acoes">
-                                                    <c:choose>
-                                                        <c:when test="${usuarioGerente}">
-                                                            <a class="btn editar" href="RelatorioSaudeController?acao=editar&id=${relatorio.id}">Editar</a>
-                                                            <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente excluir este relatório?');">
-                                                                <input type="hidden" name="acao" value="excluir">
-                                                                <input type="hidden" name="relatorioId" value="${relatorio.id}">
-                                                                <button type="submit" class="btn excluir">Excluir</button>
-                                                            </form>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="acao-restrita">Somente leitura</span>
-                                                        </c:otherwise>
-                                                    </c:choose>
+                                                    <div class="acoes-wrapper">
+                                                        <c:choose>
+                                                            <c:when test="${usuarioGerente}">
+                                                                <a class="btn editar" href="RelatorioSaudeController?acao=editar&id=${relatorio.id}">Editar</a>
+                                                                <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente excluir este relatório?');">
+                                                                    <input type="hidden" name="acao" value="excluir">
+                                                                    <input type="hidden" name="relatorioId" value="${relatorio.id}">
+                                                                    <button type="submit" class="btn excluir">Excluir</button>
+                                                                </form>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="acao-restrita">Somente leitura</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </c:forEach>

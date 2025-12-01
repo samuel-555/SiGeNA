@@ -210,6 +210,23 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
+    
+    public void initFornecedores() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS fornecedores (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  telefone VARCHAR(20),
+                  email VARCHAR(50),
+                  endereco VARCHAR(100),
+                  tipo VARCHAR(50) NOT NULL,
+                  descricao TEXT
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initTodos() throws PersistenciaException {
         try {
@@ -226,6 +243,7 @@ public class InitDB {
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
             initEspecies();
+            initFornecedores();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

@@ -33,19 +33,19 @@ public class InitDB {
 
     public void initAnimais() throws SQLException {
         String sql = """
-            CREATE TABLE IF NOT EXISTS animais (
-                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                  nome VARCHAR(100) NOT NULL, 
-                  id_especie INT NOT NULL,
-                  sexo VARCHAR(20) NOT NULL,
-                  data_de_nascimento DATE NOT NULL,
-                  peso DOUBLE NOT NULL,
-                  hostil BOOLEAN NOT NULL,
-                  data_de_insercao DATETIME NOT NULL,
-                  FOREIGN KEY (id_especie) REFERENCES especie(id)
-                     ON UPDATE CASCADE
-            );
-            """;
+        CREATE TABLE IF NOT EXISTS animais (
+              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+              nome VARCHAR(100) NOT NULL, 
+              id_especie INT NOT NULL,
+              sexo VARCHAR(20) NOT NULL,
+              data_de_nascimento DATE NOT NULL,
+              peso DOUBLE NOT NULL,
+              hostil BOOLEAN NOT NULL,
+              data_de_insercao DATETIME NOT NULL,
+              FOREIGN KEY (id_especie) REFERENCES especie(id)
+                 ON UPDATE CASCADE
+        );
+        """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
@@ -204,6 +204,45 @@ public class InitDB {
         }
     }
 
+public void initDoacoes() throws SQLException {
+    String sql = """
+        CREATE TABLE IF NOT EXISTS doacoes (
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+            nome_doador VARCHAR(150) NOT NULL,
+            tipo VARCHAR(50) NOT NULL,
+            valor_monetario DECIMAL(10,2),
+            descricao_outro VARCHAR(255),
+            observacoes TEXT,
+            status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
+            recibo_emitido BOOLEAN DEFAULT FALSE,
+            data_doacao DATE NOT NULL,
+            data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+    """;
+
+    try (Statement stmt = con.createStatement()) {
+        stmt.execute(sql);
+    }
+}
+
+
+    public void initRecibosDoacao() throws SQLException {
+    String sql = """
+        CREATE TABLE IF NOT EXISTS recibo_doacao (
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+            doacao_id BIGINT NOT NULL,
+            data_emissao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (doacao_id) REFERENCES doacoes(id)
+                ON DELETE CASCADE
+        );
+        """;
+
+    try (Statement st = con.createStatement()) {
+        st.executeUpdate(sql);
+    }
+}
+
+
     public void initProdutos() throws SQLException {
         String sql = """ 
                      CREATE TABLE IF NOT EXISTS produtos(
@@ -275,7 +314,6 @@ public class InitDB {
 
     public void initTodos() throws PersistenciaException {
         try {
-
             initHabitats();
             initEspecies();
             initFuncionarios();
@@ -286,6 +324,8 @@ public class InitDB {
             initEnriquecimentos();
             initEnriquecimento_habitat();
             initHabitat_animal();
+            initDoacoes();
+            initRecibosDoacao();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

@@ -18,6 +18,28 @@ p {
   margin-bottom: 25px;
 }
 
+header {
+    background-color: #149b5a;
+    height: 60px;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0 20px; 
+}
+
+.btn-sair {
+    background-color: #0e7142;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.btn-sair:hover {
+    background-color: #149b5a;
+}
 .grid-botoes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

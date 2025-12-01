@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SiGeNA - Gestão de Espécies</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
+        <link rel="stylesheet" href="CSS\style.css">
     </head>
     <body>
         <header>

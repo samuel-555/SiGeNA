@@ -6,6 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Detalhes da Espécie</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
+        <link rel="stylesheet" href="CSS\style.css">wqq2
     </head>
     <body>
         <header><div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div></header>

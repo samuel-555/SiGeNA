@@ -94,7 +94,7 @@ public class ProdutoDAO {
                 if (rs.next()) {
 
                     Produto produto = new Produto();
-                    Long fId = rs.getLong("id_fornecedor");
+                    Long fId = rs.getLong("fornecedor_id");
                     FornecedorDAO fDAO = new FornecedorDAO();
                     Fornecedor fornecedor = fDAO.buscarPorId(fId);
                     produto.setFornecedor(fornecedor);

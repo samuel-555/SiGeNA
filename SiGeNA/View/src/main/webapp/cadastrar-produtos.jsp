@@ -78,7 +78,7 @@
         document.getElementById("categoria").addEventListener("change", function() {
         let valor = this.value;
         
-        if (valor === "Perecivel") {
+        if (valor === "PERECIVEL") {
             document.getElementById("perecivel").style.display = "block";
         } else {
             document.getElementById("perecivel").style.display = "none";

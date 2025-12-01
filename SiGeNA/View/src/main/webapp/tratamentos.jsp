@@ -1,10 +1,4 @@
-<%-- 
-    Document   : tratamentos
-    Created on : 3 de nov. de 2025, 08:17:27
-    Author     : aluno
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+    <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="jakarta.servlet.http.HttpSession" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
@@ -31,7 +25,7 @@
     <h1>Gestão de Tratamentos Médicos</h1>
 
     <div class="botoes-acoes">
-        <button class="btn"><a href="novoTratamento.jsp">Registrar Novo Tratamento</a></button>
+        <button class="btn"><a href="cadastrar-tratamentos.jsp">Registrar Novo Tratamento</a></button>
     </div>
 
      <c:if test="${not empty mensagemSucesso}">

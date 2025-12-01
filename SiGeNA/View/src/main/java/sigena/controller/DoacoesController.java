@@ -122,7 +122,6 @@ public class DoacoesController extends HttpServlet {
         if (tipo == DoacaoTipo.MONETARIA) {
             String v = req.getParameter("valor");
             if (v != null && !v.isBlank()) {
-                v = v.replace(".", "").replace(",", ".");
                 d.setValorMonetario(Double.parseDouble(v));
             }
 

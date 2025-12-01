@@ -1,5 +1,6 @@
 package sigena.model.service;
 
+import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.TratamentoDAO;
 import sigena.model.domain.Animal;
 import sigena.model.domain.Tratamento;
@@ -8,7 +9,7 @@ import sigena.model.domain.Usuario;
 public class GestaoTratamentosService {
     TratamentoDAO dao = new TratamentoDAO();
     
-    public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento){
+    public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) throws PersistenciaException{
         dao.cadastrar(animal, usuario, tratamento);
     }
 }

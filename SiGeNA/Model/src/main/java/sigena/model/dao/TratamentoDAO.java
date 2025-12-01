@@ -15,7 +15,7 @@ import sigena.model.domain.util.TipoTratamento;
 
 public class TratamentoDAO {
 
-    public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) {
+    public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) throws PersistenciaException {
         String sql = "INSERT INTO tratamento(animal_id, vet_id, diagnostico, medicacao, frequencia, observacao, tipo, status, data_inicio, data_final, horario) values (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)";
 
         try {

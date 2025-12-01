@@ -17,8 +17,8 @@ import sigena.model.domain.util.TipoTratamento;
 import sigena.model.service.GestaoAnimalService;
 import sigena.model.service.GestaoTratamentosService;
 
-@WebServlet(name = "TratamentosServlet", urlPatterns = {"/TratamentosServlet"})
-public class TratamentosServlet extends HttpServlet {
+@WebServlet(name = "TratamentosController", urlPatterns = {"/TratamentosController"})
+public class TratamentosController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -27,10 +27,10 @@ public class TratamentosServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet TratamentosServlet</title>");
+            out.println("<title>Servlet TratamentosController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet TratamentosServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet TratamentosController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -46,7 +46,7 @@ public class TratamentosServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String acao = request.getParameter("acao");
-        if ("salvar".equalsIgnoreCase(acao)) {
+        if ("salvar".equals(acao)) {
             try {
                 cadastrar(request);
                 request.setAttribute("mensagemSucesso", "Tratamento cadastrado com sucesso!");

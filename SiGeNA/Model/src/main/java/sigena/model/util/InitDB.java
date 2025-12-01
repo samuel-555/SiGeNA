@@ -85,7 +85,7 @@ public class InitDB {
         String sql = """
             CREATE TABLE IF NOT EXISTS habitat_animal (
                 habitat_nome VARCHAR(100),
-                animal_id INT,
+                animal_id BIGINT,
                 PRIMARY KEY (habitat_nome, animal_id),
                 FOREIGN KEY (habitat_nome) REFERENCES habitat(nome)
                     ON DELETE CASCADE,
@@ -210,6 +210,23 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
+    
+    public void initFornecedores() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS fornecedores (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  telefone VARCHAR(20),
+                  email VARCHAR(50),
+                  endereco VARCHAR(100),
+                  tipo VARCHAR(50) NOT NULL,
+                  descricao TEXT
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initEnriquecimentos() throws SQLException {
         String sql = """
@@ -257,10 +274,12 @@ public class InitDB {
             initPlanosAlimentares();
             initEnriquecimentos();
             initEnriquecimento_habitat();
+            initHabitat_animal();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
             initEspecies();
+            initFornecedores();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

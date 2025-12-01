@@ -13,7 +13,8 @@ public class Habitat {
     private int tamanho;
     private boolean manutencao;
     private boolean disponivel;
-    private AnimaisAlocados animaisAlocados;
+    private boolean vazio;
+    private final AnimaisAlocados animaisAlocados;
             
     public Habitat(String tipo,String nome, int tamanho, boolean manutencao){
         this.tipo = tipo;
@@ -23,6 +24,7 @@ public class Habitat {
         disponivel = true;
         animaisAlocados = new AnimaisAlocados();
         capacidade = tamanho;
+        vazio = true;
     }
     
     public void setAnimalAlocado(Animal animal){
@@ -68,6 +70,9 @@ public class Habitat {
     }
     public int getCapacidade(){
         return capacidade;
+    }
+    public boolean getVazio(){
+        return vazio;
     }
     
 }

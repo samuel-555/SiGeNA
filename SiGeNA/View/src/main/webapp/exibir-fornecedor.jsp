@@ -18,7 +18,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SiGeNA - Gestão de Animais</title>
+  <title>SiGeNA - Gestão de Fornecedores</title>
   <link rel="stylesheet" href="CSS\styleanimais.css">
   <link rel="stylesheet" href="CSS\style.css">
 </head>
@@ -28,37 +28,33 @@
   </header>
 
   <div class="container">
-    <h1>Gestão de Animais</h1>
+    <h1>Gestão de Fornecedores</h1>
 
     <div class="botoes-acoes">
-        <a href="AnimalController?acao=listar" class="btn">Voltar</a>
+        <a href="FornecedorController?acao=listar" class="btn">Voltar</a>
     </div>
  
-    <c:if test="${empty animal}">
-        <p>Erro: Animal não encontrado</p>
+    <c:if test="${empty fornecedor}">
+        <p>Erro: Fornecedor não encontrado</p>
     </c:if>
     <c:if test="${not empty sessionScope.acaoBemSucedida}">
         <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
         <c:remove var="acaoBemSucedida" scope="session"/>
     </c:if>
-    <c:if test="${not empty animal}">
+    <c:if test="${not empty fornecedor}">
         <div class="ficha-animal">
-            <h3><c:out value="${animal.nome}"/></h3>
-            <p><strong>ID: </strong><c:out value="${animal.id}"/></p>
-            <p><strong>Espécie: </strong><c:out value="${animal.especieNome}"/></p>
-            <p><strong>Data de nascimento: </strong><c:out value="${animal.dataDeNascimentoFormat}"/> (<c:out value="${animal.idade}"/>)</p>
-            <p><strong>Sexo: </strong><c:out value="${animal.sexo}"/></p>
-            <p><strong>Peso: </strong><c:out value="${animal.peso}"/> Kg</p>
-            <p><strong>Hostil: </strong>
-                <c:if test="${not animal.hostilidade}">Não</c:if>
-                <c:if test="${animal.hostilidade}">Sim</c:if>
-            </p>
-            <p><strong>Habitat alocado: </strong><c:out value="${animal.habitatNome}"/></p>
+            <h3><c:out value="${fornecedor.nome}"/></h3>
+            <p><strong>ID: </strong><c:out value="${fornecedor.id}"/></p>
+            <p><strong>Email: </strong><c:out value="${fornecedor.email}"/></p>
+            <p><strong>Endereço: </strong><c:out value="${fornecedor.endereco}"/></p>
+            <p><strong>Tipo: </strong><c:out value="${fornecedor.tipo}"/></p>
+            <p><strong>Descrição: </strong><c:out value="${fornecedor.descricao}"/></p>
         </div>
     </c:if>
     <div class="botoes-acoes">
-        <a href="AnimalController?acao=editar&id=<c:out value="${animal.id}"/>" class="btn">Editar dados</a>
+        <a href="FornecedorController?acao=editar&id=<c:out value="${fornecedor.id}"/>" class="btn">Editar dados</a>
     </div>
   </div>
 </body>
 </html>
+

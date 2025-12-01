@@ -45,17 +45,20 @@
                 <select id="habitats" name="habitats" multiple size="5" required>
                     <%
                         if (habitats != null) {
+                            List<String> vinculados = e.getHabitats(); 
+
                             for (String h : habitats) {
+                                boolean selecionado = vinculados != null && vinculados.contains(h);
                     %>
-                    <option value="<%= h%>"><%= h%></option>
+                    <option value="<%= h%>" <%= selecionado ? "selected" : ""%> >
+                        <%= h%>
+                    </option>
                     <%
                         }
                     } else {
                     %>
-                    <option disabled> Nenhum habitat cadastrado </option>
-                    <%
-                        }
-                    %>
+                    <option disabled>Nenhum habitat cadastrado</option>
+                    <% }%>
                 </select>
 
                 <label>Observações:</label>

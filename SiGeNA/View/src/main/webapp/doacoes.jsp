@@ -86,7 +86,6 @@
                         <%
                             if (d.isReciboEmitido()) {
                                 ReciboDoacao r = (ReciboDoacao) request.getAttribute("reciboEdicao");
-                                // se o controller carregou o recibo para edição, mostra o código
                                 if (r != null && r.getDoacaoId() != null && r.getDoacaoId().equals(d.getId())) {
                                     out.print(r.getCodigo());
                                 } else {
@@ -116,7 +115,6 @@
     </div>
 
     <%
-        // Se houver doacaoEdicao, exibimos um bloco de edição com campos para atualizar
         Doacao ed = (Doacao) request.getAttribute("doacaoEdicao");
         if (ed != null) {
     %>

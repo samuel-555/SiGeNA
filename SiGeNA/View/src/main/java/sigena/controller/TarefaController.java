@@ -11,9 +11,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import sigena.model.common.exception.DataInvalidaException;
 import sigena.model.common.exception.DatabaseException;
 import sigena.model.domain.Funcionario;
 import sigena.model.service.GestaoTarefaService;
@@ -45,7 +48,8 @@ public class TarefaController extends HttpServlet {
             throws ServletException, IOException {
         
         GestaoTarefaService service = new GestaoTarefaService();
-            
+        HttpSession sessao = request.getSession(false);
+        
         String acao = request.getParameter("acao");
        
         if ("cadastrar".equals(acao)) {
@@ -61,11 +65,26 @@ public class TarefaController extends HttpServlet {
         if ("listar".equals(acao)) {
             listar(request, response);
         return;
-    }
+        }
+        Integer idUsuario = (Integer) sessao.getAttribute("idUsuario");
+        String cargo = (String) sessao.getAttribute("cargoUsuario");
         
-        List<Tarefa> tarefas = service.listarTarefas();
-        request.setAttribute("home", tarefas);
-        request.getRequestDispatcher("home-gerente.jsp").forward(request, response);
+        try {
+            List<Tarefa> tarefas;
+
+            if ("GERENTE".equalsIgnoreCase(cargo))
+                tarefas = service.listarTarefas();
+            else
+            tarefas = service.listarPorUsuario(idUsuario);
+        
+
+        request.setAttribute("tarefas", tarefas);
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+
+        } 
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -77,8 +96,19 @@ public class TarefaController extends HttpServlet {
                 cadastrar(request, response);
                 break;
             case "editar":
-                editar(request, response);
+            {
+                try {
+                    editar(request, response);
+                } catch (DataInvalidaException ex) {
+                    System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                } catch (SQLException ex) {
+                System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            } catch (DatabaseException ex) {
+                System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+            }
                 break;
+
             case "excluir":
                 excluir(request, response);
                 break;
@@ -101,29 +131,51 @@ public class TarefaController extends HttpServlet {
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
         int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
-        LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
+        String dataStr = request.getParameter("data-conclusao");
+        DateTimeFormatter dataForm = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime dataPConclusao = LocalDateTime.parse(dataStr, dataForm);
+
         
         GestaoTarefaService service = new GestaoTarefaService();
-        
-        if(!service.validarData(dataPConclusao))
-            //botar erro aqui ou try ali em baixo ver oq é melhor!
-        
-        service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao);
+      
+        try {
+            service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao);
+        } 
+        catch (DataInvalidaException ex) {    
+            request.setAttribute("msgErro",ex.getMessage());
+            request.getRequestDispatcher("/TarefaController?acao=cadastrar").forward(request, response);
+            return;
+        }
         response.sendRedirect("TarefaController");
         
     }
    
-   public void editar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+   public void editar(HttpServletRequest request, HttpServletResponse response) throws IOException, DataInvalidaException, ServletException, SQLException, DatabaseException{
 
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
         int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
-        LocalDateTime dataPConclusao = LocalDateTime.parse(request.getParameter("dataPConclusao"));
+        String dataStr = request.getParameter("data-conclusao");
+        DateTimeFormatter dataForm = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime dataPConclusao = LocalDateTime.parse(dataStr, dataForm);
 
+        FuncionarioService funcionarioService = new FuncionarioService();
+        Funcionario funcionario = funcionarioService.buscarPorId(id_destinatario);
+        String nomeFuncionario = funcionario.getNome();
+        
         long id = Integer.parseInt(request.getParameter("id"));
+        request.setAttribute("destinatario",nomeFuncionario);
 
         GestaoTarefaService service = new GestaoTarefaService();
-        service.editar(id, nome, texto, id_destinatario, dataPConclusao);
+        try{
+            service.editar(id, nome, texto, id_destinatario, dataPConclusao);
+        }
+        catch (DataInvalidaException ex) {    
+            request.setAttribute("msgErro",ex.getMessage());
+            request.getRequestDispatcher("cadastrar-tarefa.jsp").forward(request, response);
+            return;
+        }
+        
 
         response.sendRedirect("TarefaController");
     }
@@ -151,7 +203,7 @@ public class TarefaController extends HttpServlet {
         List<Tarefa> tarefas = service.listarTarefas();
         request.setAttribute("home", tarefas);
 
-        request.getRequestDispatcher("home-tarefas.jsp").forward(request, response);
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
 

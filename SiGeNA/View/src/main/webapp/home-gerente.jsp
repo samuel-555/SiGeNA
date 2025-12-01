@@ -38,6 +38,26 @@
         
         <div class="tarefas">
             <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
+            
+            <c:forEach var="tarefa" items="${tarefas}">
+            <tr>
+                <td>${tarefa.nome}</td>
+                <td>${tarefa.texto}</td>
+                <td>${tarefa.dataPConclusao}</td>
+
+                <td>
+                    <form method="post" action="TarefaController">
+                        <input type="hidden" name="acao" value="excluir">
+                        <input type="hidden" name="id" value="${tarefa.id}">
+                        <button class="btn-pequeno excluir">Excluir</button>
+                        
+                        <input type="hidden" name="acao" value="excluir">
+                        <input type="hidden" name="id" value="${tarefa.id}">
+                        <button class="btn-pequeno excluir">Editar</button>
+                    </form>
+                </td>
+            </tr>
+            </c:forEach>
         </div>
     </body>
 </html>

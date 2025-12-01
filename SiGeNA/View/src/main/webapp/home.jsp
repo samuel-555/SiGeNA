@@ -81,23 +81,23 @@
 
     <tbody>
         <c:forEach var="tarefa" items="${tarefas}">
-            <%--só aparecer as tarefas não concluidas--%>
-          <tr>
-            <td>${tarefa.nome}</td>
-            <td>${tarefa.dataPConclusao}</td>
-            <td>
-                
-                    <c:out value="${tarefa}"/>
+            <c:if test="${not tarefa.concluida}">
+                <tr>
                     
-                    <label for="manutencao">Precisa de Manutenção</label>
-                    <input type="checkbox" id="manutencao" name="manutencao" <c:if test="${habitat.manutencao}">checked</c:if> >
-                
-                    
-                    
-                <input type="hidden" name="acao" value="excluir">
-                <input type="hidden" name="nome" value="${tarefa.id}">
-                <button class="btn-pequeno excluir">Excluir</button>
+                <td>${tarefa.nome}</td>
+                <td>${tarefa.texto}</td>
+                <td>${tarefa.dataPConclusao}</td>
 
+                <td>
+                <form method="post" action="TarefaController">
+                    <input type="hidden" name="acao" value="concluida">
+                    <input type="hidden" name="id" value="${tarefa.id}">
+                    <input type="checkbox" name="concluida" onclick="this.form.submit()"<c:if test='${tarefa.concluida}'>checked</c:if>>
+                </form>
+                </td>
+                
+                </tr>
+            </c:if>
         </c:forEach>
                     
         </div>

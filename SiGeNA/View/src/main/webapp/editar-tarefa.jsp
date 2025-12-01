@@ -35,8 +35,12 @@
         <div class="formulario">
             <form action="${pageContext.request.contextPath}/TarefaController" method="post">
                 <input type="hidden" name="acao" value="editar">
-                <input type="hidden" name="id" value="${habitat.id}"/>                
-
+                <input type="hidden" name="id" value="${habitat.id}"/>    
+                
+                <c:if test="${not empty msgErro}">
+                    <p style="color:red;font-weight:bold">${msgErro}</p>
+                </c:if>
+                
                 <label for="nome">Nome da tarefa:</label>
                 <input type="text" id="nome" name="nome" placeholder="Ex: Limpar aquário">
 
@@ -46,7 +50,7 @@
                     <c:forEach items="${funcionarios}" var="funcionario">
                         
                         <c:if test="${funcionario.estado == 'ATIVO'}">
-                            <option value="${funcionario.id}">${funcionario.nome}:${funcionario.cargo}</option>
+                            <option value="${funcionario.id}">${funcionario.nome}:${funcionario.cargo.descricao}</option>
                         </c:if>
                     
                     </c:forEach>
@@ -54,7 +58,7 @@
                 </select>
                 
                 <label for="data-conclusao">Data para conclusão:</label>
-                <input type="date" name="data-conclusao" id="data-conclusao"placeholder="Ex: 10/10/2007">
+                <input type="datetime-local" name="data-conclusao" id="data-conclusao"placeholder="Ex: 10/10/2007">
                 
 
                 <button type="submit" class="btn-enviar">Salvar Alterações</button>

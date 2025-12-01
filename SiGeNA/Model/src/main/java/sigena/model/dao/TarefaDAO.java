@@ -9,6 +9,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Tarefa;
 import sigena.model.util.ConexaoDB;
 
@@ -63,8 +64,42 @@ public class TarefaDAO {
         return lista;
     }
      
+    public List<Tarefa> listarPorUsuario(int idUsuario) throws PersistenciaException {
+
+    List<Tarefa> lista = new ArrayList<>();
+    String sql = "SELECT id, nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao "
+               + "FROM tarefas WHERE funcionario_id = ? ORDER BY dataCadastro";
+
+    try (Connection con = ConexaoDB.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idUsuario);
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Tarefa tarefa = new Tarefa(
+                    rs.getString("nome"),
+                    rs.getString("texto"),
+                    rs.getBoolean("concluida"),
+                    rs.getInt("funcionario_id"),
+                    rs.getObject("dataCadastro", LocalDateTime.class),
+                    rs.getObject("dataPConclusao", LocalDateTime.class)
+                );
+                lista.add(tarefa);
+            }
+        }
+    }
+    catch (SQLException e) {
+        throw new PersistenciaException("Erro ao listar tarefas: " + e.getMessage());
+    }
+
+    return lista;
+}
+
+    
     public void editar(long id, Tarefa tarefa){
-        String sql = "UPDATE tarefa SET nome=?, texto=?, concluida=?, funcionario_id=?, dataCadastro=?, dataPConclusao=?, WHERE id=?";
+        String sql = "UPDATE tarefas SET nome=?, texto=?, concluida=?, funcionario_id=?, dataCadastro=?, dataPConclusao=? WHERE id=?";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){

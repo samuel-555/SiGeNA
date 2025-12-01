@@ -3,8 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package sigena.model.service;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import sigena.model.common.exception.DataInvalidaException;
+import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.TarefaDAO;
 import sigena.model.domain.Tarefa;
 
@@ -16,8 +19,11 @@ public class GestaoTarefaService {
         dao = new TarefaDAO();
     }
     
-    public void cadastrarTarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao){
-        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);//adicionar teste de validade da data    ! 
+    public void cadastrarTarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao) throws DataInvalidaException{
+        if(!validarData(dataPConclusao))
+            throw new DataInvalidaException("Data inválida!");
+        
+        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao); 
         dao.inserir(tarefa);
     }
     
@@ -25,9 +31,17 @@ public class GestaoTarefaService {
         return dao.listar();
     }
     
-    public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao) {
+    public List<Tarefa> listarPorUsuario(int id) throws PersistenciaException, SQLException{
+        return dao.listarPorUsuario(id);
+    }
+    
+    public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao) throws DataInvalidaException {
+        if(!validarData(dataPConclusao))
+            throw new DataInvalidaException("Data inválida!");
+        
         Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);
         
+        tarefa.setId(id);
         tarefa.setNome(nome);
         tarefa.setTexto(texto);
         tarefa.setIdDestinatario(id_destinatario);

@@ -205,24 +205,17 @@ public class InitDB {
                      id INT AUTO_INCREMENT PRIMARY KEY,
                      animal_id BIGINT NOT NULL,
                      vet_id INT NOT NULL,
-                     diagnostico VARCHAR(255) NOT NULL,
-                     medicacao VARCHAR(255),
+                     diagnostico TEXT NOT NULL,
+                     medicacao TEXT NOT NULL,
                      frequencia INT,
-                     observacao TEXT,
-                     tipo varchar(100),
-                     status VARCHAR(100),
-                     data_inicio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                     data_final DATETIME NULL,
+                     observacao LONGTEXT,
+                     tipo TEXT NOT NULL,
+                     status TEXT NOT NULL,
+                     data_inicio DATETIME NOT NULL,
+                     data_final DATE NOT NULL,
+                     horario TIME
                      
-                     CONSTRAINT fkAnimal FOREIGN KEY (animal_id)
-                     REFERENCES animais(id)
-                     ON DELETE CASCADE
-                     ON UPDATE CASCADE,
-                     
-                     CONSTRAINT fkVet FOREIGN KEY (vet_id)
-                     REFERENCES usuarios(id)
-                     ON DELETE CASCADE
-                     ON UPDATE CASCADE
+                    
                 );
                 """;
         try (Statement st = con.createStatement()) {
@@ -230,22 +223,94 @@ public class InitDB {
         }
     }
 
+    public void initProdutos() throws SQLException {
+        String sql = """ 
+                     CREATE TABLE IF NOT EXISTS produtos(
+                     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                     fornecedor_id BIGINT NOT NULL,
+                     quantidade INT NOT NULL,
+                     nome VARCHAR(255) NOT NULL,
+                     tipo VARCHAR(100) NOT NULL,
+                     lote DATE,
+                     validade DATE,
+                     disponivel BOOLEAN NOT NULL
+                     );
+                     """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initFornecedores() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS fornecedores (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  nome VARCHAR(100) NOT NULL, 
+                  telefone VARCHAR(20),
+                  email VARCHAR(50),
+                  endereco VARCHAR(100),
+                  tipo VARCHAR(50) NOT NULL,
+                  descricao TEXT
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initEnriquecimentos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS enriquecimento (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            especie_destinada VARCHAR(255),
+            frequencia VARCHAR(100),
+            observacoes TEXT,
+            data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initEnriquecimento_habitat() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS enriquecimento_habitat (
+            enriquecimento_id INT NOT NULL,
+            habitat_nome VARCHAR(255) NOT NULL,
+            PRIMARY KEY (enriquecimento_id, habitat_nome),
+            CONSTRAINT fk_enriq FOREIGN KEY (enriquecimento_id)
+                REFERENCES enriquecimento(id) ON DELETE CASCADE,
+            CONSTRAINT fk_hab FOREIGN KEY (habitat_nome)
+                REFERENCES habitat(nome) ON DELETE CASCADE
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
-            
+
             initHabitats();
-            initEspecies();            
+            initEspecies();
             initFuncionarios();
             initUsuarios();
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
+            initEnriquecimentos();
+            initEnriquecimento_habitat();
             initHabitat_animal();
             initRelatoriosSaude();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
-            initEspecies();
+            initFornecedores();
+            initProdutos();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

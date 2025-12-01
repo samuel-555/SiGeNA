@@ -16,8 +16,11 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sigena.model.common.exception.DataInvalidaException;
 import sigena.model.common.exception.DatabaseException;
+import sigena.model.domain.Cargo;
 import sigena.model.domain.Funcionario;
 import sigena.model.service.GestaoTarefaService;
 import sigena.model.domain.Tarefa;
@@ -67,17 +70,15 @@ public class TarefaController extends HttpServlet {
         return;
         }
         Integer idUsuario = (Integer) sessao.getAttribute("idUsuario");
-        String cargo = (String) sessao.getAttribute("cargoUsuario");
+        Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
         
         try {
             List<Tarefa> tarefas;
 
-            if ("GERENTE".equalsIgnoreCase(cargo))
+            if (cargo != null && cargo.getDescricao().equalsIgnoreCase("GERENTE"))
                 tarefas = service.listarTarefas();
-            else
-            tarefas = service.listarPorUsuario(idUsuario);
-        
-
+            else 
+                tarefas = service.listarPorUsuario(idUsuario);
         request.setAttribute("tarefas", tarefas);
         request.getRequestDispatcher("home.jsp").forward(request, response);
 
@@ -93,8 +94,17 @@ public class TarefaController extends HttpServlet {
         String acao = request.getParameter("acao");
         switch(acao){
             case "inserir":
-                cadastrar(request, response);
+            {
+                try {
+                    cadastrar(request, response);
+                } catch (SQLException ex) {
+                    Logger.getLogger(TarefaController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (DatabaseException ex) {
+                    Logger.getLogger(TarefaController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
                 break;
+
             case "editar":
             {
                 try {
@@ -127,7 +137,7 @@ public class TarefaController extends HttpServlet {
 
     }
     
-    public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+    public void cadastrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException, DatabaseException{
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
         int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
@@ -143,7 +153,7 @@ public class TarefaController extends HttpServlet {
         } 
         catch (DataInvalidaException ex) {    
             request.setAttribute("msgErro",ex.getMessage());
-            request.getRequestDispatcher("/TarefaController?acao=cadastrar").forward(request, response);
+            abrirFormulario(request, response);
             return;
         }
         response.sendRedirect("TarefaController");
@@ -201,7 +211,7 @@ public class TarefaController extends HttpServlet {
         GestaoTarefaService service = new GestaoTarefaService();
 
         List<Tarefa> tarefas = service.listarTarefas();
-        request.setAttribute("home", tarefas);
+        request.setAttribute("tarefas", tarefas);
 
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }

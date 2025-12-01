@@ -38,68 +38,37 @@
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
         </div>
         <div class="tarefas">
-            
-            <%--
-                <c:forEach var= "funcionario" items="${funcionarios}">
-                    
-                <c:set var="tarefas" value="${tarefa.destinatario.cpf == UsuarioLogado.cpf}"/>
-                <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui só pra cadastro -->
-                    
-                    <c:if test="${empty tarefas}">
-                        <p>Sem tarefas cadastradas para hoje></p>
-                    </c:if>
-                        
-                    <c:forEach var="tarefa" items="${tarefas}">
-                        <c:out value="${tarefa}"/>
-                    </c:forEach>
-                    
-                </c:if>
-                        
-                </c:forEach>
-            </c:if>
-            <!-- set user.cpf == funcionario.cpf? -->
-            
-            <c:forEach var= "funcionario" items="${funcionarios}">
-                <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario-cpf}"/>
-                
-                <c:if test="${empty tarefas}">
-                    <p>Sem tarefas cadastradas para hoje></p>
-                </c:if>
-                  
-                <c:if test="${not empty habitats}">--%>
-  <table>
+<table>
     <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Tipo</th>
-        <th>Tamanho</th>
-        <th>Precisa de Manutenção</th>
-        <th>Disponibilidade</th>
-        <th>Ações</th>
-      </tr>
+        <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Concluída</th>
+        </tr>
     </thead>
-
     <tbody>
         <c:forEach var="tarefa" items="${tarefas}">
             <c:if test="${not tarefa.concluida}">
                 <tr>
-                    
-                <td>${tarefa.nome}</td>
-                <td>${tarefa.texto}</td>
-                <td>${tarefa.dataPConclusao}</td>
-
-                <td>
-                <form method="post" action="TarefaController">
-                    <input type="hidden" name="acao" value="concluida">
-                    <input type="hidden" name="id" value="${tarefa.id}">
-                    <input type="checkbox" name="concluida" onclick="this.form.submit()"<c:if test='${tarefa.concluida}'>checked</c:if>>
-                </form>
-                </td>
-                
+                    <td>${tarefa.nome}</td>
+                    <td>${tarefa.texto}</td>
+                    <td>${tarefa.dataPConclusao}</td>
+                    <td>
+                        <form method="post" action="TarefaController">
+                            <input type="hidden" name="acao" value="concluida">
+                            <input type="hidden" name="id" value="${tarefa.id}">
+                            <input type="checkbox"
+                                   name="concluida"
+                                   onclick="this.form.submit()"
+                                   <c:if test="${tarefa.concluida}">checked</c:if>>
+                        </form>
+                    </td>
                 </tr>
             </c:if>
         </c:forEach>
-                    
-        </div>
-    </body>
+    </tbody>
+</table>
+</div>
+
 </html>

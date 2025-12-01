@@ -40,7 +40,7 @@ public class TarefaDAO {
 
         List<Tarefa> lista = new ArrayList<>();
 
-        String sql = "SELECT nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao FROM tarefas";
+        String sql = "SELECT id, nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao FROM tarefas";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
@@ -55,6 +55,7 @@ public class TarefaDAO {
                     rs.getObject("dataCadastro", LocalDateTime.class),
                     rs.getObject("dataPConclusao", LocalDateTime.class)
             );
+            tarefa.setId(rs.getLong("id"));
             lista.add(tarefa);
             }
         }
@@ -86,6 +87,7 @@ public class TarefaDAO {
                     rs.getObject("dataCadastro", LocalDateTime.class),
                     rs.getObject("dataPConclusao", LocalDateTime.class)
                 );
+                tarefa.setId(rs.getLong("id"));
                 lista.add(tarefa);
             }
         }
@@ -120,7 +122,7 @@ public class TarefaDAO {
     }
     
     public void editarConcluida(long id, boolean concluida){
-        String sql = "UPDATE tarefa SET concluida=? WHERE id=?";
+        String sql = "UPDATE tarefas SET concluida=? WHERE id=?";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
@@ -152,7 +154,8 @@ public class TarefaDAO {
     }
     
     public Tarefa buscar(Long id) { 
-        String sql = "SELECT nome=?, texto=?, concluida=?, funcionario_id=?, dataCadastro=?, dataPConclusao=?, WHERE id=?";
+        String sql = "SELECT nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao FROM tarefas";
+
 
 
         try(Connection con = ConexaoDB.getConnection();

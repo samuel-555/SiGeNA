@@ -208,6 +208,7 @@ public class InitDB {
         String sql = """ 
                      CREATE TABLE IF NOT EXISTS produtos(
                      id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                     fornecedor_id BIGINT NOT NULL,
                      quantidade INT NOT NULL,
                      nome VARCHAR(255) NOT NULL,
                      tipo VARCHAR(100) NOT NULL,

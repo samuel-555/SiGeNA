@@ -1,3 +1,6 @@
+<%@page import="sigena.model.domain.Fornecedor"%>
+<%@page import="java.util.List"%>
+<%@page import="sigena.model.service.GestaoFornecedorService"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="sigena.model.domain.util.TipoProduto"%>
 <%@page import="jakarta.servlet.http.HttpSession" %>
@@ -11,6 +14,9 @@
     }
     
     pageContext.setAttribute("tiposProduto", TipoProduto.values());
+    GestaoFornecedorService service = new GestaoFornecedorService();
+    List<Fornecedor> fornecedores = service.listarFornecedores();
+    pageContext.setAttribute("fornecedores", fornecedores);
     
 %>
 <!DOCTYPE html>
@@ -39,6 +45,13 @@
                     <select id="categoria" name="tipoProduto">
                         <c:forEach var="tipo" items="${tiposProduto}">
                             <option value="${tipo}">${fn:replace(tipo.tipo, "_", " ")}</option>
+                        </c:forEach>
+                    </select>
+                    
+                    <label for="fornecedor">Fornecedor:</label>
+                    <select id="fornecedor" name="fornecedor">
+                        <c:forEach var="fornecedor" items="${fornecedores}">
+                            <option value="${fornecedor.getId()}">${fornecedor.getNome()}</option>
                         </c:forEach>
                     </select>
 

@@ -11,8 +11,10 @@ import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
+import sigena.model.domain.Fornecedor;
 import sigena.model.domain.Produto;
 import sigena.model.domain.util.TipoProduto;
+import sigena.model.service.GestaoFornecedorService;
 import sigena.model.service.GestaoProdutoService;
 
 @WebServlet(name = "ProdutoController", urlPatterns = {"/ProdutoController"})
@@ -78,9 +80,9 @@ public class ProdutoController extends HttpServlet {
 
     public void cadastrar(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException, PersistenciaException{
-        /*GestaoFornecedorService serviceF = new GestaoFornecedorService();
+        GestaoFornecedorService serviceF = new GestaoFornecedorService();
         Long FornecedorId = Long.valueOf(request.getParameter("fornecedor"));
-        Fornecedor fornecedor = serviceF.buscarFornecedor(FornecedorId);*/
+        Fornecedor fornecedor = serviceF.buscarFornecedor(FornecedorId);
         String nome = request.getParameter("nome");
         
         int quantidade;
@@ -109,9 +111,9 @@ public class ProdutoController extends HttpServlet {
             }
         }
         
-        Produto produto = new Produto(nome, /*fornecedor,*/ quantidade, validade, lote, tipo);
+        Produto produto = new Produto(nome, fornecedor, quantidade, validade, lote, tipo);
         GestaoProdutoService service = new GestaoProdutoService();
-        service.cadastrar(produto);
+        service.cadastrar(produto, fornecedor);
         response.sendRedirect("ProdutoController?acao=listar");
     }
     
@@ -165,6 +167,7 @@ public class ProdutoController extends HttpServlet {
             throws ServletException, IOException, PersistenciaException {
 
         Long id = Long.parseLong(request.getParameter("id"));
+        Long idFornecedor = Long.parseLong(request.getParameter("fornecedor"));
         String nome = request.getParameter("nome");
 
         int quantidade;
@@ -193,8 +196,12 @@ public class ProdutoController extends HttpServlet {
 
         GestaoProdutoService service = new GestaoProdutoService();
         Produto produto = service.buscar(id);
-
+        
+        GestaoFornecedorService serviceF = new GestaoFornecedorService();
+        Fornecedor fornecedor = serviceF.buscarFornecedor(idFornecedor);
+        
         produto.setNome(nome);
+        produto.setFornecedor(fornecedor);
         produto.setQuantidade(quantidade);
         produto.setTipo(tipo);
         produto.setValidade(validade);

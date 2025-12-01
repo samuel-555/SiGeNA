@@ -7,16 +7,16 @@ public class Produto {
 
     private String nome;
     private Long id;
-    //private Fornecedor fornecedor;
+    private Fornecedor fornecedor;
     private int quantidade;
     private LocalDate validade;
     private LocalDate lote;
     private Boolean disponivel;
     private TipoProduto tipo;
 
-    public Produto(String nome,/* Fornecedor fornecedor,*/ int quantidade, LocalDate validade, LocalDate lote, Boolean disponivel, TipoProduto tipo) {
+    public Produto(String nome, Fornecedor fornecedor, int quantidade, LocalDate validade, LocalDate lote, Boolean disponivel, TipoProduto tipo) {
         this.nome = nome;
-        //this.fornecedor = fornecedor;
+        this.fornecedor = fornecedor;
         this.quantidade = quantidade;
         this.validade = validade;
         this.lote = lote;
@@ -24,9 +24,9 @@ public class Produto {
         this.tipo = tipo;
     }
     
-    public Produto(String nome,/* Fornecedor fornecedor,*/ int quantidade, LocalDate validade, LocalDate lote, TipoProduto tipo) {
+    public Produto(String nome, Fornecedor fornecedor, int quantidade, LocalDate validade, LocalDate lote, TipoProduto tipo) {
         this.nome = nome;
-        //this.fornecedor = fornecedor;
+        this.fornecedor = fornecedor;
         this.quantidade = quantidade;
         this.validade = validade;
         this.lote = lote;
@@ -44,13 +44,13 @@ public class Produto {
         return nome;
     }
     
-    /*public void setFornecedor(fornecedor fornecedor) {
+    public void setFornecedor(Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
     }
 
     public Fornecedor getFornecedor() {
         return fornecedor;
-    }*/
+    }
 
     public void setId(Long id) {
         this.id = id;

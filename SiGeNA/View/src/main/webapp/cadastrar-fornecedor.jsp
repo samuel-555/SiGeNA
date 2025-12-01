@@ -52,7 +52,7 @@
 
                 
                 
-                <label for="tipo">Habitat:*</label>
+                <label for="tipo">Tipo:*</label>
                 <select name="tipo" id="tipo">
                     <option value="">Selecione o tipo</option>
                     <option value="ALIMENTO">ALIMENTO</option>
@@ -69,7 +69,7 @@
                 <textarea name="descricao"></textarea>
                     
                 <input type="hidden" name="acao" value="salvar">
-                <button type="submit" class="btn-enviar">Salvar Animal</button>
+                <button type="submit" class="btn-enviar">Salvar Fornecedor</button>
             </form>
         </div>
         </div>

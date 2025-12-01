@@ -80,6 +80,25 @@ public class InitDB {
             st.executeUpdate(itensSql);
         }
     }
+    public void initRelatoriosSaude() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS relatorios_saude (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                animal_id BIGINT NOT NULL,
+                data_relatorio DATE NOT NULL,
+                peso DOUBLE,
+                status VARCHAR(255) NOT NULL,
+                observacoes TEXT,
+                data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (animal_id) REFERENCES animais(id)
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initHabitat_animal() throws SQLException {
         String sql = """
@@ -324,6 +343,7 @@ public void initDoacoes() throws SQLException {
             initEnriquecimentos();
             initEnriquecimento_habitat();
             initHabitat_animal();
+            initRelatoriosSaude();
             initDoacoes();
             initRecibosDoacao();
 

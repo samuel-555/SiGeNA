@@ -36,6 +36,7 @@
             <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+            <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
             <a href="doacoes" class="btn">Gestão de Doações</a>
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>

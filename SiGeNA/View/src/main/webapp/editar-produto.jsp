@@ -82,12 +82,17 @@
     </body>
 
     <script>
+        const inputLote = document.getElementById("lote");
+        const inputValidade = document.getElementById("validade");
+
         document.getElementById("categoria").addEventListener("change", function () {
             let valor = this.value;
-            if (valor === "Perecivel") {
+            if (valor === "PERECIVEL") {
                 document.getElementById("perecivel").style.display = "block";
             } else {
                 document.getElementById("perecivel").style.display = "none";
+                inputLote.value = "9999-12-31";
+                inputValidade.value = "9999-12-31";
             }
         });
     </script>

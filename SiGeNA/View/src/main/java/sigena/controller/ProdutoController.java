@@ -58,19 +58,19 @@ public class ProdutoController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String acao = request.getParameter("acao");
         try {
-            if(acao == null){
+            if (acao == null) {
                 throw new NullPointerException();
             }
             if ("salvar".equals(acao)) {
                 cadastrar(request, response);
-            }else if ("salvarEdicao".equals(acao)) {
+            } else if ("salvarEdicao".equals(acao)) {
                 editar(request, response);
             }
-        }catch(PersistenciaException e) {
-           response.sendRedirect(
+        } catch (PersistenciaException e) {
+            response.sendRedirect(
                     "ProdutoController?acao=listar&erro="
                     + URLEncoder.encode(e.getMessage(), "UTF-8")
             );
@@ -78,22 +78,22 @@ public class ProdutoController extends HttpServlet {
 
     }
 
-    public void cadastrar(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException, PersistenciaException{
+    public void cadastrar(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PersistenciaException {
         GestaoFornecedorService serviceF = new GestaoFornecedorService();
         Long FornecedorId = Long.valueOf(request.getParameter("fornecedor"));
         Fornecedor fornecedor = serviceF.buscarFornecedor(FornecedorId);
         String nome = request.getParameter("nome");
-        
+
         int quantidade;
         try {
             quantidade = Integer.parseInt(request.getParameter("quantidade"));
         } catch (NumberFormatException e) {
             quantidade = 0;
         }
-        
+
         TipoProduto tipo = TipoProduto.valueOf(request.getParameter("tipoProduto"));
-        
+
         String validadeStr = request.getParameter("validade");
         String loteStr = request.getParameter("lote");
 
@@ -109,14 +109,17 @@ public class ProdutoController extends HttpServlet {
             if (loteStr != null && !loteStr.isBlank()) {
                 lote = LocalDate.parse(loteStr);
             }
+        } else {
+            validade = LocalDate.of(9999, 12, 31);
+            lote = LocalDate.of(9999, 12, 31);
         }
-        
+
         Produto produto = new Produto(nome, fornecedor, quantidade, validade, lote, tipo);
         GestaoProdutoService service = new GestaoProdutoService();
         service.cadastrar(produto, fornecedor);
         response.sendRedirect("ProdutoController?acao=listar");
     }
-    
+
     private void listar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, PersistenciaException {
 
@@ -126,7 +129,8 @@ public class ProdutoController extends HttpServlet {
         LocalDate hoje = LocalDate.now();
 
         for (Produto p : lista) {
-            if (p.getValidade() != null && p.getValidade().isEqual(hoje) || p.getValidade().isBefore(hoje)) {
+            LocalDate validade = p.getValidade();
+            if (validade.isEqual(hoje) || validade.isBefore(hoje)) {
                 if (p.getDisponivel()) {
                     p.setDisponivel(false);
                     service.alterar(p);
@@ -162,12 +166,11 @@ public class ProdutoController extends HttpServlet {
         request.setAttribute("produto", p);
         request.getRequestDispatcher("editar-produto.jsp").forward(request, response);
     }
-    
+
     private void editar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, PersistenciaException {
 
-        Long id = Long.parseLong(request.getParameter("id"));
-        Long idFornecedor = Long.parseLong(request.getParameter("fornecedor"));
+        Long id = Long.valueOf(request.getParameter("id"));
         String nome = request.getParameter("nome");
 
         int quantidade;
@@ -191,17 +194,19 @@ public class ProdutoController extends HttpServlet {
             if (loteStr != null && !loteStr.isBlank()) {
                 lote = LocalDate.parse(loteStr);
             }
+        }else {
+            validade = LocalDate.of(9999, 12, 31);
+            lote = LocalDate.of(9999, 12, 31);
         }
+        
         boolean disponivel = request.getParameter("disponivel") != null;
 
         GestaoProdutoService service = new GestaoProdutoService();
         Produto produto = service.buscar(id);
-        
+
         GestaoFornecedorService serviceF = new GestaoFornecedorService();
-        Fornecedor fornecedor = serviceF.buscarFornecedor(idFornecedor);
-        
+
         produto.setNome(nome);
-        produto.setFornecedor(fornecedor);
         produto.setQuantidade(quantidade);
         produto.setTipo(tipo);
         produto.setValidade(validade);

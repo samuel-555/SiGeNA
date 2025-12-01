@@ -78,6 +78,10 @@
 
 
               <form action="${pageContext.request.contextPath}/HabitatController" method="POST" style="display:inline-block;">
+                <c:if test="${not empty msgErro}">
+                    <p style="color:red;font-weight:bold">${msgErro}</p>
+                </c:if>
+                    
                   <input type="hidden" name="acao" value="excluir">
                   <input type="hidden" name="nome" value="${habitat.nome}">
                   <button class="btn-pequeno excluir">Excluir</button>

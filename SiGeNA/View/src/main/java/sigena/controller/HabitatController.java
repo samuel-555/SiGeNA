@@ -11,8 +11,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
+import sigena.model.common.exception.HabitatVazioException;
 import sigena.model.domain.Habitat;
 import sigena.model.service.GestaoHabitatService;
 
@@ -75,8 +75,15 @@ public class HabitatController extends HttpServlet {
                 editar(request, response);
                 break;
             case "excluir":
-                excluir(request, response);
+            {
+                try {
+                    excluir(request, response);
+                } catch (HabitatVazioException ex) {
+                    System.getLogger(HabitatController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            }
                 break;
+
         }
     }
     
@@ -122,16 +129,22 @@ public class HabitatController extends HttpServlet {
     }
 
     
-    public void excluir(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void excluir(HttpServletRequest request, HttpServletResponse response) throws IOException, HabitatVazioException, ServletException {
         String nome = request.getParameter("nome");
 
+       
         GestaoHabitatService service = new GestaoHabitatService();
         Habitat habitat = new Habitat("","",0,false);
         habitat.setNome(nome);
+        
+        try {
+            service.excluir(habitat);
+        } 
+        catch (HabitatVazioException e) {
+            request.setAttribute("msgErro", e.getMessage());
+        }
 
-        service.excluir(habitat);
-
-        response.sendRedirect("HabitatController");
+        request.getRequestDispatcher("habitats.jsp").forward(request, response);
 }
             
 }

@@ -1,0 +1,60 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@taglib uri="jakarta.tags.functions" prefix="fn" %>
+<%@taglib uri="jakarta.tags.xml" prefix="x" %>
+<%@taglib uri="jakarta.tags.sql" prefix="sql"%>
+
+<%
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiGeNA - Gestão de Fornecedores</title>
+  <link rel="stylesheet" href="CSS\styleanimais.css">
+  <link rel="stylesheet" href="CSS\style.css">
+</head>
+<body>
+  <header>
+    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+  </header>
+
+  <div class="container">
+    <h1>Gestão de Fornecedores</h1>
+
+    <div class="botoes-acoes">
+        <a href="FornecedorController?acao=listar" class="btn">Voltar</a>
+    </div>
+ 
+    <c:if test="${empty fornecedor}">
+        <p>Erro: Fornecedor não encontrado</p>
+    </c:if>
+    <c:if test="${not empty sessionScope.acaoBemSucedida}">
+        <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
+        <c:remove var="acaoBemSucedida" scope="session"/>
+    </c:if>
+    <c:if test="${not empty fornecedor}">
+        <div class="ficha-animal">
+            <h3><c:out value="${fornecedor.nome}"/></h3>
+            <p><strong>ID: </strong><c:out value="${fornecedor.id}"/></p>
+            <p><strong>Email: </strong><c:out value="${fornecedor.email}"/></p>
+            <p><strong>Endereço: </strong><c:out value="${fornecedor.endereco}"/></p>
+            <p><strong>Tipo: </strong><c:out value="${fornecedor.tipo}"/></p>
+            <p><strong>Descrição: </strong><c:out value="${fornecedor.descricao}"/></p>
+        </div>
+    </c:if>
+    <div class="botoes-acoes">
+        <a href="FornecedorController?acao=editar&id=<c:out value="${fornecedor.id}"/>" class="btn">Editar dados</a>
+    </div>
+  </div>
+</body>
+</html>
+

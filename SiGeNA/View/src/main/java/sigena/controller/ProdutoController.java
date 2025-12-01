@@ -7,7 +7,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.time.LocalDate;
+import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Produto;
 import sigena.model.domain.util.TipoProduto;
@@ -35,48 +37,173 @@ public class ProdutoController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String acao = request.getParameter("acao");
+
+        try {
+            if (acao == null || acao.equals("listar")) {
+                listar(request, response);
+            } else if (acao.equals("excluir")) {
+                excluir(request, response);
+            } else if (acao.equals("ver")) {
+                ver(request, response);
+            }
+        } catch (PersistenciaException e) {
+            request.setAttribute("erro", e.getMessage());
+            request.getRequestDispatcher("produtos.jsp").forward(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        String acao = request.getParameter("acao");
         try {
-            String acao = request.getParameter("acao");
             if(acao == null){
                 throw new NullPointerException();
             }
             if ("salvar".equals(acao)) {
-                cadastrar(request);
-                
+                cadastrar(request, response);
+            }else if ("salvarEdicao".equals(acao)) {
+                editar(request, response);
             }
         }catch(PersistenciaException e) {
-            System.out.println(e.getMessage());
+           response.sendRedirect(
+                    "ProdutoController?acao=listar&erro="
+                    + URLEncoder.encode(e.getMessage(), "UTF-8")
+            );
         }
 
     }
 
-    public void cadastrar(HttpServletRequest request) throws PersistenciaException{
+    public void cadastrar(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, PersistenciaException{
         /*GestaoFornecedorService serviceF = new GestaoFornecedorService();
         Long FornecedorId = Long.valueOf(request.getParameter("fornecedor"));
         Fornecedor fornecedor = serviceF.buscarFornecedor(FornecedorId);*/
         String nome = request.getParameter("nome");
         
-        int quantidade = 0;
+        int quantidade;
         try {
             quantidade = Integer.parseInt(request.getParameter("quantidade"));
         } catch (NumberFormatException e) {
             quantidade = 0;
         }
-        LocalDate validade = LocalDate.parse(request.getParameter("validade"));
-        LocalDate lote = LocalDate.parse(request.getParameter("lote"));
+        
         TipoProduto tipo = TipoProduto.valueOf(request.getParameter("tipoProduto"));
         
+        String validadeStr = request.getParameter("validade");
+        String loteStr = request.getParameter("lote");
+
+        LocalDate validade = null;
+        LocalDate lote = null;
+
+        if (tipo.name().equalsIgnoreCase("Perecivel")) {
+
+            if (validadeStr != null && !validadeStr.isBlank()) {
+                validade = LocalDate.parse(validadeStr);
+            }
+
+            if (loteStr != null && !loteStr.isBlank()) {
+                lote = LocalDate.parse(loteStr);
+            }
+        }
         
         Produto produto = new Produto(nome, /*fornecedor,*/ quantidade, validade, lote, tipo);
         GestaoProdutoService service = new GestaoProdutoService();
         service.cadastrar(produto);
+        response.sendRedirect("ProdutoController?acao=listar");
+    }
+    
+    private void listar(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PersistenciaException {
+
+        GestaoProdutoService service = new GestaoProdutoService();
+
+        List<Produto> lista = service.listar();
+        LocalDate hoje = LocalDate.now();
+
+        for (Produto p : lista) {
+            if (p.getValidade() != null && p.getValidade().isEqual(hoje) || p.getValidade().isBefore(hoje)) {
+                if (p.getDisponivel()) {
+                    p.setDisponivel(false);
+                    service.alterar(p);
+                }
+            }
+        }
+
+        lista = service.listar();
+
+        request.setAttribute("lista", lista);
+        request.getRequestDispatcher("produtos.jsp").forward(request, response);
+    }
+
+    private void excluir(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PersistenciaException {
+
+        Long id = Long.parseLong(request.getParameter("id"));
+
+        GestaoProdutoService service = new GestaoProdutoService();
+        service.excluir(id);
+
+        response.sendRedirect("ProdutoController?acao=listar");
+    }
+
+    private void ver(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PersistenciaException {
+
+        Long id = Long.parseLong(request.getParameter("id"));
+
+        GestaoProdutoService service = new GestaoProdutoService();
+        Produto p = service.buscar(id);
+
+        request.setAttribute("produto", p);
+        request.getRequestDispatcher("editar-produto.jsp").forward(request, response);
+    }
+    
+    private void editar(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PersistenciaException {
+
+        Long id = Long.parseLong(request.getParameter("id"));
+        String nome = request.getParameter("nome");
+
+        int quantidade;
+        try {
+            quantidade = Integer.parseInt(request.getParameter("quantidade"));
+        } catch (Exception e) {
+            quantidade = 0;
+        }
+
+        TipoProduto tipo = TipoProduto.valueOf(request.getParameter("tipoProduto"));
+        String validadeStr = request.getParameter("validade");
+        String loteStr = request.getParameter("lote");
+
+        LocalDate validade = null;
+        LocalDate lote = null;
+
+        if (tipo.name().equalsIgnoreCase("Perecivel")) {
+            if (validadeStr != null && !validadeStr.isBlank()) {
+                validade = LocalDate.parse(validadeStr);
+            }
+            if (loteStr != null && !loteStr.isBlank()) {
+                lote = LocalDate.parse(loteStr);
+            }
+        }
+        boolean disponivel = request.getParameter("disponivel") != null;
+
+        GestaoProdutoService service = new GestaoProdutoService();
+        Produto produto = service.buscar(id);
+
+        produto.setNome(nome);
+        produto.setQuantidade(quantidade);
+        produto.setTipo(tipo);
+        produto.setValidade(validade);
+        produto.setLote(lote);
+        produto.setDisponivel(disponivel);
+
+        service.alterar(produto);
+
+        response.sendRedirect("ProdutoController?acao=listar");
     }
 
     @Override

@@ -29,16 +29,9 @@
         <div class="container">
             <h1>Gestão de Produtos / Estoque</h1>
 
-            <div class="botoes-acoes">
-                <button class="btn">Adicionar Item ao Estoque</button>
-                <button class="btn">Verificar Disponibilidade</button>
-                <button class="btn">Ajustar Quantidade / Validade</button>
-                <button class="btn">Excluir Item</button>
-            </div>
-
             <div class="formulario">
                 <h2>Adicionar Novo Item</h2>
-                <form method="POST">
+                <form method="POST" action="ProdutoController">
                     <label for="nome">Nome do Produto:</label>
                     <input type="text" id="nome" name="nome" placeholder="Ex: Ração Premium Cães 10kg">
 
@@ -61,13 +54,8 @@
                     </div>
                     
                     <input type="hidden" name="acao" value="salvar">
-                    <button type="submit" clasWs="btn-enviar">Salvar Item</button>
+                    <button type="submit" class="btn-enviar">Salvar Item</button>
                 </form>
-            </div>
-
-            <div class="historico">
-                <h2>Estoque Atual</h2>
-
             </div>
         </div>
     </body>

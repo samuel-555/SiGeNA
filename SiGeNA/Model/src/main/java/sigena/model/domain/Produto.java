@@ -32,6 +32,9 @@ public class Produto {
         this.lote = lote;
         this.tipo = tipo;
     }
+    
+    public Produto() {
+    }
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -93,7 +96,7 @@ public class Produto {
         this.tipo = tipo;
     }
 
-    public String getTipo() {
-        return tipo.getTipo();
+    public TipoProduto getTipo() {
+        return tipo;
     }
 }

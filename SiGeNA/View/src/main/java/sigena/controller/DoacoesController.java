@@ -79,8 +79,23 @@ public class DoacoesController extends HttpServlet {
                 Doacao d = construirDoacao(req, true);
 
                 if (doacaoExistente.getTipo() == DoacaoTipo.MONETARIA) {
-                    service.atualizarValor(d.getId(), d.getValorMonetario());
+
+                    Double valorNovo = d.getValorMonetario();
+
+                    if (valorNovo == null) {
+                        valorNovo = doacaoExistente.getValorMonetario();
+                    }
+
+
+                    if (valorNovo != null && valorNovo <= 0) {
+                        throw new sigena.model.common.exception.ValidationException(
+                                "O valor da doação deve ser maior que zero."
+                        );
+                    }
+
+                    service.atualizarValor(id, valorNovo);
                 } else if (doacaoExistente.getTipo() == DoacaoTipo.OUTRO) {
+
                     String descricao = (d.getDescricaoOutro() == null || d.getDescricaoOutro().isBlank())
                             ? doacaoExistente.getDescricaoOutro()
                             : d.getDescricaoOutro();
@@ -121,8 +136,13 @@ public class DoacoesController extends HttpServlet {
 
         if (tipo == DoacaoTipo.MONETARIA) {
             String v = req.getParameter("valor");
+
             if (v != null && !v.isBlank()) {
-                d.setValorMonetario(Double.parseDouble(v));
+                try {
+                    d.setValorMonetario(Double.parseDouble(v));
+                } catch (NumberFormatException e) {
+                    d.setValorMonetario(null); 
+                }
             }
 
             d.setDescricaoOutro(null);

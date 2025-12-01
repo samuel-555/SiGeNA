@@ -228,16 +228,52 @@ public class InitDB {
         }
     }
 
+    public void initEnriquecimentos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS enriquecimento (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            especie_destinada VARCHAR(255),
+            frequencia VARCHAR(100),
+            observacoes TEXT,
+            data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initEnriquecimento_habitat() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS enriquecimento_habitat (
+            enriquecimento_id INT NOT NULL,
+            habitat_nome VARCHAR(255) NOT NULL,
+            PRIMARY KEY (enriquecimento_id, habitat_nome),
+            CONSTRAINT fk_enriq FOREIGN KEY (enriquecimento_id)
+                REFERENCES enriquecimento(id) ON DELETE CASCADE,
+            CONSTRAINT fk_hab FOREIGN KEY (habitat_nome)
+                REFERENCES habitat(nome) ON DELETE CASCADE
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
-            
+
             initHabitats();
-            initEspecies();            
+            initEspecies();
             initFuncionarios();
             initUsuarios();
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
+            initEnriquecimentos();
+            initEnriquecimento_habitat();
             initHabitat_animal();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();

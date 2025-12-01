@@ -19,7 +19,9 @@
     </head>
     <body>
         <header>
+            <a style="visibility: hidden">.</a>
             <div class="titulo">SiGeNA</div>
+            <a href="index.jsp" class="btn-sair">Sair</a>
         </header>
         <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado") %>!</h1>
         <div class="grid-botoes">
@@ -30,6 +32,7 @@
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+            <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
         </div>
         <div class="tarefas">
             

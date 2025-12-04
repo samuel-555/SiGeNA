@@ -35,6 +35,7 @@
             <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
+            <a href="visitantes" class="btn">Gestão de Visitantes</a>
         </div>
         <div class="tarefas">
             
@@ -43,7 +44,7 @@
             
             <c:forEach var= "funcionario" items="${funcionarios}">
                 <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario.cpf}"/>
-                <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui só pra cadastro -->
+                <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui sÇü pra cadastro -->
                     
                     <c:if test="${empty tarefas}">
                         <p>Sem tarefas cadastradas para hoje></p>

@@ -33,7 +33,7 @@
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
             <a href="HabitatController" class="btn">Gestão de Habitat</a>
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
-            <a href="FuncionarioServlet" class="btn">Gestão de Funcionários</a>
+            <a href="FuncionarioServlet" class="btn">Gestão de Funcioná­rios</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
             <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
@@ -41,6 +41,7 @@
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
             <a href="FornecedorController?acao=listar" class="btn">Gestão de Fornecedores</a>
+            <a href="visitantes" class="btn">Gestão de Visitantes</a>
         </div>
     </body>
 </html>

@@ -1,0 +1,249 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #149b5a;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.titulo {
+    background-color: #0e7142;
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 24px 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+h1 {
+    text-align: center;
+    color: #149b5a;
+    margin-bottom: 20px;
+}
+
+.botoes-acoes {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.btn {
+    background-color: #149b5a;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #0e7142;
+}
+
+.btn.secundario {
+    background-color: #f0f0f0;
+    color: #0e7142;
+}
+
+.btn.secundario:hover {
+    background-color: #e4e4e4;
+}
+
+.btn.alerta {
+    background-color: #c0392b;
+}
+
+.btn.alerta:hover {
+    background-color: #992d22;
+}
+
+.filtros {
+    background: linear-gradient(135deg, #f7fbf8 0%, #ffffff 60%);
+    border: 1px solid #dcefe4;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 8px rgba(20, 155, 90, 0.08);
+    position: relative;
+}
+
+.filtros::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    border-top: 4px solid #149b5a;
+    pointer-events: none;
+}
+
+.filtro-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 18px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.campo-filtro label {
+    margin-right: 6px;
+    font-weight: bold;
+    color: #0e7142;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.campo-filtro input,
+.campo-filtro select {
+    padding: 9px 10px;
+    border: 1px solid #c7e2d3;
+    border-radius: 8px;
+    min-width: 180px;
+    background: #fff;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo-filtro input:focus,
+.campo-filtro select:focus {
+    outline: none;
+    border-color: #149b5a;
+    box-shadow: 0 0 0 3px rgba(20, 155, 90, 0.15);
+}
+
+.campo-filtro .separador {
+    margin: 0 6px;
+    color: #6b7a70;
+}
+
+.mensagem {
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.mensagem.sucesso {
+    background-color: #e8f6f0;
+    color: #0e7142;
+    border: 1px solid #b7e1cd;
+}
+
+.mensagem.erro {
+    background-color: #fdecea;
+    color: #b23c2a;
+    border: 1px solid #f5c6c2;
+}
+
+.formulario, .historico {
+    margin-bottom: 28px;
+}
+
+h2 {
+    color: #0e7142;
+    margin-bottom: 14px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 9px 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.acoes-form {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #149b5a;
+    color: #fff;
+}
+
+.btn-pequeno {
+    background-color: #0e7142;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.btn-pequeno.excluir {
+    background-color: #c0392b;
+}
+
+.btn-pequeno:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 720px) {
+    .filtro-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .campo-filtro input,
+    .campo-filtro select {
+        width: 100%;
+    }
+
+    .botoes-acoes {
+        justify-content: flex-start;
+    }
+}

@@ -331,6 +331,23 @@ public void initDoacoes() throws SQLException {
         }
     }
 
+    public void initVisitas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS visitas (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                nome_visitante VARCHAR(150) NOT NULL,
+                documento VARCHAR(50),
+                motivo VARCHAR(255) NOT NULL,
+                data_visita DATE NOT NULL,
+                observacoes TEXT,
+                data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
@@ -346,6 +363,7 @@ public void initDoacoes() throws SQLException {
             initRelatoriosSaude();
             initDoacoes();
             initRecibosDoacao();
+            initVisitas();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

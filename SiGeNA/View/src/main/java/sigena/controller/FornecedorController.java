@@ -9,9 +9,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import sigena.controller.util.ListOrdener;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Fornecedor;
 import sigena.model.service.GestaoFornecedorService;
+import sigena.model.common.util.StringUtils;
+import sigena.controller.util.ListOrdener;
 
 @WebServlet(name = "FornecedorController", urlPatterns = {"/FornecedorController"})
 public class FornecedorController extends HttpServlet {
@@ -25,7 +28,16 @@ public class FornecedorController extends HttpServlet {
                 
                 if("listar".equals(acao)) {
                     List<Fornecedor> fornecedores = null;
-                    fornecedores = service.listarFornecedores();
+                    
+                    String busca = StringUtils.conferNull(request.getParameter("busca"));
+                    String filtro = StringUtils.conferNull(request.getParameter("filtro"));
+                    String sequencia = StringUtils.conferNull(request.getParameter("sequencia"));
+                    String ordem = StringUtils.conferNull(request.getParameter("ordem"));
+                    
+                    fornecedores = service.listarFornecedores(busca, filtro);
+                    
+                    ListOrdener.ordenarBusca(fornecedores, sequencia, ordem, Fornecedor::getNome);
+                    
                     request.setAttribute("fornecedores", fornecedores);
                     request.getRequestDispatcher("fornecedores.jsp").forward(request, response);
                 }

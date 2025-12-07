@@ -23,8 +23,12 @@ public class GestaoAnimalService {
         return true;
     }
     
+    public List<Animal> listarAnimais(String busca, String filtro) throws PersistenciaException{
+        return animalDAO.listar(busca, filtro);
+    }
+    
     public List<Animal> listarAnimais() throws PersistenciaException{
-        return animalDAO.listar();
+        return animalDAO.listar("", "");
     }
     
     public void excluirAnimal(Long id) throws PersistenciaException{

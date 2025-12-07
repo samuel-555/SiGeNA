@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.function.Function;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Animal;
 import sigena.model.domain.Especie;
@@ -17,29 +20,14 @@ import sigena.model.domain.Habitat;
 import sigena.model.service.GestaoAnimalService;
 import sigena.model.service.GestaoEspeciesService;
 import sigena.model.service.GestaoHabitatService;
+import sigena.model.common.util.StringUtils;
+import sigena.controller.util.ListOrdener;
 
 @WebServlet(name = "AnimalController", urlPatterns = {"/AnimalController"})
 public class AnimalController extends HttpServlet {
     private final GestaoAnimalService service = new GestaoAnimalService();
     private final GestaoHabitatService consultaHabitat = new GestaoHabitatService();
     private final GestaoEspeciesService consultaEspecie = new GestaoEspeciesService();
-    
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AnimalController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AnimalController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -50,7 +38,14 @@ public class AnimalController extends HttpServlet {
                 
                 if("listar".equals(acao)) {
                     List<Animal> animais = null;
-                    animais = service.listarAnimais();
+                    String busca = StringUtils.conferNull(request.getParameter("busca"));
+                    String filtro = StringUtils.conferNull(request.getParameter("filtro"));
+                    String sequencia = StringUtils.conferNull(request.getParameter("sequencia"));
+                    String ordem = StringUtils.conferNull(request.getParameter("ordem"));
+                    
+                    animais = service.listarAnimais(busca, filtro);
+                    
+                    ListOrdener.ordenarBusca(animais, sequencia, ordem, Animal::getNome);
                     List<Especie> especies = null;
                     List<Habitat> habitats = null;
                     
@@ -201,10 +196,5 @@ public class AnimalController extends HttpServlet {
         Animal editadoAnimal = new Animal(id, nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
             
         return service.editarAnimal(editadoAnimal);
-    }
-    
-    @Override
-    public String getServletInfo() {
-        return "Short description";
     }
 }

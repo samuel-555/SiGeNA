@@ -289,7 +289,8 @@ public void initDoacoes() throws SQLException {
                   email VARCHAR(50),
                   endereco VARCHAR(100),
                   tipo VARCHAR(50) NOT NULL,
-                  descricao TEXT
+                  descricao TEXT,
+                  data_de_insercao DATETIME NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {

@@ -33,8 +33,31 @@
     <div class="botoes-acoes">
         <a href="FornecedorController?acao=cadastrar" class="btn">Cadastrar Novo Fornecedor</a>
     </div>
+    <div class="pesquisa">
+          Pesquaisar: <input type="text" placeholder="Digite o ID ou o nome"><br>
+          Filtrar tipo: <select class="filtro">
+                    <option value="">Todos</option>
+                    <option value="ALIMENTO">ALIMENTO</option>
+                    <option value="MEDICAMENTO">MEDICAMENTO</option>
+                    <option value="EQUIPAMENTO">EQUIPAMENTO</option>
+                    <option value="HIGIENE E LIMPEZA">HIGIENE E LIMPEZA</option>
+                    <option value="ACESSORIOS">ACESSÓRIOS</option>
+                    <option value="SERVICOS">SERVIÇOS</option>
+                    <option value="VARIADOS">VARIADOS</option>
+                    <option value="OUTROS">OUTROS</option>
+                </select><br>
+                </select>
+          
+          Ordenar por: <select class="sequencia">
+            <option value="adicionado" data-ordem="crescente">Adicionado recentemente</option>
+            <option value="adicionado" data-ordem="decrescente">Mais antigo</option>
+            <option value="alfabetica" data-ordem="crescente">Alfabética A-Z</option>
+            <option value="alfabetica" data-ordem="decrescente">Alfabética Z-A</option>
+          </select>
+
+    </div>
     <c:if test="${empty fornecedores}">
-        <p>Nenhum fornecedor cadastrado.</p>
+        <p>Nenhum fornecedor encontrado.</p>
     </c:if>
     <c:if test="${not empty sessionScope.acaoBemSucedida}">
         <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
@@ -76,5 +99,7 @@
     </c:if>
     
   </div>
+      <script src="JS/pesquisa.js">
+    </script>
 </body>
 </html>

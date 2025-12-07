@@ -10,8 +10,8 @@ import sigena.model.util.ConexaoDB;
 public class FornecedorDAO {
 
     public void cadastrar(Fornecedor fornecedor) throws PersistenciaException {
-        String sql = "INSERT INTO fornecedores (nome, telefone, email, endereco, tipo, descricao) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO fornecedores (nome, telefone, email, endereco, tipo, descricao, data_de_insercao) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
         try (Connection con = ConexaoDB.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -31,15 +31,27 @@ public class FornecedorDAO {
         }
     }
 
-    public List<Fornecedor> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM fornecedores";
+    public List<Fornecedor> listar(String busca, String filtro) throws PersistenciaException {
+        String sql = "SELECT * FROM fornecedores "
+                + "WHERE (id LIKE ? OR nome LIKE ?) ";
+        
+        if(filtro != null && !filtro.isEmpty())
+            sql += "AND STRCMP(tipo, ?) = 0";
+        
+        sql += " ORDER BY data_de_insercao ASC;";
 
         List<Fornecedor> fornecedores = new ArrayList<>();
 
         try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            
+            stmt.setString(1, "%" + busca + "%");
+            stmt.setString(2, "%" + busca + "%");
+            
+            if(filtro != null && !filtro.isEmpty())
+                stmt.setString(3, filtro);
+            
+            ResultSet rs = stmt.executeQuery();
             while (rs.next())
                 fornecedores.add(consultaToFornecedor(rs));
 

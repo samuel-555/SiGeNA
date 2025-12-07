@@ -37,19 +37,31 @@ public class AnimalDAO {
         System.out.println(animal.getHabitatNome());
     }
     
-    public List<Animal> listar() throws PersistenciaException{
+    public List<Animal> listar(String busca, String filtro) throws PersistenciaException{
         String sql = "SELECT "
                 + "animais.*, "
                 + "habitat_animal.habitat_nome "
                 + "FROM animais "
                 + "JOIN habitat_animal "
-                + "ON animais.id = habitat_animal.animal_id;";
+                + "ON animais.id = habitat_animal.animal_id "
+                + "WHERE (id LIKE ? OR nome LIKE ?)";
+        
+        if(filtro != null && !filtro.isEmpty())
+            sql += " AND id_especie = ?";
+        
+        sql += " ORDER BY data_de_insercao ASC;";
         
         List<Animal> animais = new ArrayList<>();
         
         try (Connection con = ConexaoDB.getConnection();
-                PreparedStatement stmt = con.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()){
+                PreparedStatement stmt = con.prepareStatement(sql);){
+            stmt.setString(1, "%" + busca + "%");
+            stmt.setString(2, "%" + busca + "%");
+            
+            if(filtro != null && !filtro.isEmpty())
+                stmt.setString(3, filtro);
+            
+            ResultSet rs = stmt.executeQuery();
             while(rs.next())
                 animais.add(consultaToAnimal(rs));
             
@@ -58,6 +70,10 @@ public class AnimalDAO {
         }
         
         return animais;
+    }
+    
+    public List<Animal> listar() throws PersistenciaException {
+        return listar("", "");
     }
     
     public void excluir(Long id) throws PersistenciaException {

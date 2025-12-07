@@ -32,6 +32,8 @@
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+            <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
+            <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
         </div>
         <div class="tarefas">

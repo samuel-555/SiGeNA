@@ -1,11 +1,12 @@
 package sigena.model.dao;
 
 import java.sql.*;
+import java.time.LocalDate;
 import sigena.model.domain.Animal;
 import sigena.model.domain.Tratamento;
 import sigena.model.domain.Usuario;
 import sigena.model.util.ConexaoDB;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
@@ -14,8 +15,8 @@ import sigena.model.domain.util.TipoTratamento;
 
 public class TratamentoDAO {
 
-    public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) {
-        String sql = "INSERT INTO tratamentos(animal_id, vet_id, diagnostico, medicacao, frequencia, observacao, tipo, status, data_inicial, data_final) values (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
+    public void cadastrar(Animal animal, Usuario usuario, Tratamento tratamento) throws PersistenciaException {
+        String sql = "INSERT INTO tratamento(animal_id, vet_id, diagnostico, medicacao, frequencia, observacao, tipo, status, data_inicio, data_final, horario) values (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)";
 
         try {
             Connection con = ConexaoDB.getConnection();
@@ -30,10 +31,17 @@ public class TratamentoDAO {
             ps.setString(7, tratamento.getTipoTratamento());
             ps.setString(8, tratamento.getStatusTratamento());
             if (tratamento.getDataFinal() != null) {
-                ps.setTimestamp(9, java.sql.Timestamp.valueOf(tratamento.getDataFinal()));
+                ps.setDate(9, java.sql.Date.valueOf(tratamento.getDataFinal()));
             } else {
-                ps.setNull(9, Types.TIMESTAMP);
+                ps.setNull(9, Types.DATE);
             }
+            
+            if(tratamento.getHorario() != null){
+                ps.setTime(10, java.sql.Time.valueOf(tratamento.getHorario()));
+            }else{
+                ps.setNull(10, Types.TIME);
+            }
+            
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,7 +49,7 @@ public class TratamentoDAO {
     }
 
     public List<Tratamento> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM tratamentos";
+        String sql = "SELECT * FROM tratamento";
         List<Tratamento> tratamentos = new ArrayList<>();
 
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -71,12 +79,13 @@ public class TratamentoDAO {
         String observacao = rs.getString("observacao");
         String tipoStr = rs.getString("tipo");
         String statusStr = rs.getString("status");
-        LocalDateTime dataFinal = rs.getTimestamp("data_final").toLocalDateTime();
+        LocalDate dataFinal = rs.getDate("data_final").toLocalDate();
+        LocalTime horario = rs.getTime("horario").toLocalTime();
 
         TipoTratamento tipo = Enum.valueOf(TipoTratamento.class, tipoStr.toUpperCase());
         StatusTratamento status = Enum.valueOf(StatusTratamento.class, statusStr.toUpperCase());
 
-        return new Tratamento(animal, vet, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal);
+        return new Tratamento(animal, vet, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal, horario);
     }
 
 }

@@ -3,8 +3,8 @@ package sigena.model.domain.util;
 public enum TipoTratamento {
     
     REMEDIO("Remedio"), 
-    CIRURGIA("Cirugia"), 
-    REABILITACAO("Reabilitação"),
+    CIRURGIA("Cirurgia"), 
+    REABILITACAO("Reabilitacao"),
     PREVENTIVO("Preventivo");
     
     private String tipo;

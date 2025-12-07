@@ -7,18 +7,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import sigena.model.domain.Animal;
 import sigena.model.domain.Tratamento;
 import sigena.model.domain.Usuario;
 import sigena.model.domain.util.StatusTratamento;
 import sigena.model.domain.util.TipoTratamento;
-import java.time.format.DateTimeFormatter;
-import sigena.model.dao.TratamentoDAO;
 import sigena.model.service.GestaoAnimalService;
+import sigena.model.service.GestaoTratamentosService;
 
-@WebServlet(name = "TratamentosServlet", urlPatterns = {"/TratamentosServlet"})
-public class TratamentosServlet extends HttpServlet {
+@WebServlet(name = "TratamentosController", urlPatterns = {"/TratamentosController"})
+public class TratamentosController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -27,10 +27,10 @@ public class TratamentosServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet TratamentosServlet</title>");
+            out.println("<title>Servlet TratamentosController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet TratamentosServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet TratamentosController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -46,7 +46,7 @@ public class TratamentosServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String acao = request.getParameter("acao");
-        if ("salvar".equalsIgnoreCase(acao)) {
+        if ("salvar".equals(acao)) {
             try {
                 cadastrar(request);
                 request.setAttribute("mensagemSucesso", "Tratamento cadastrado com sucesso!");
@@ -54,8 +54,6 @@ public class TratamentosServlet extends HttpServlet {
                 e.printStackTrace();
                 request.setAttribute("mensagemErro", "Erro ao cadastrar tratamento: " + e.getMessage());
             }
-
-            // Encaminha de volta para a página JSP
             request.getRequestDispatcher("tratamentos.jsp").forward(request, response);
         } else {
             request.setAttribute("mensagemErro", "Ação inválida");
@@ -76,24 +74,34 @@ public class TratamentosServlet extends HttpServlet {
         }
         String diagnostico = request.getParameter("diagnostico");
         String medicacao = request.getParameter("medicacao");
-        //int frequencia = Integer.valueOf(request.getParameter("frequencia"));
         int frequencia = 0;
         try {
             frequencia = Integer.parseInt(request.getParameter("frequencia"));
         } catch (NumberFormatException e) {
-            frequencia = 0; // ou trate de forma adequada
+            frequencia = 0;
         }
 
         String obs = request.getParameter("observacoes");
-        TipoTratamento tipo = TipoTratamento.valueOf(request.getParameter("tipoTratamento").toUpperCase());
+
+        TipoTratamento tipo = TipoTratamento.valueOf(request.getParameter("tipoTratamento"));
         StatusTratamento status = StatusTratamento.EM_ANDAMENTO;
+        LocalTime horario;
+        if(request.getParameter("horario") != null && !request.getParameter("horario").isBlank()){
+            horario = LocalTime.parse(request.getParameter("horario"));
+        }else{
+            horario = null;
+        }
+        
+        LocalDate dataFinal = LocalDate.parse(request.getParameter("data"));
+        
+        Tratamento tratamento = new Tratamento(animal, usuario, diagnostico, medicacao, frequencia, obs, tipo, status, dataFinal, horario);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        LocalDateTime dataFinal = LocalDateTime.parse(request.getParameter("data"), formatter);
-        Tratamento tratamento = new Tratamento(animal, usuario, diagnostico, medicacao, frequencia, obs, tipo, status, dataFinal);
-
-        TratamentoDAO dao = new TratamentoDAO();
-        dao.cadastrar(animal, usuario, tratamento);
+        GestaoTratamentosService tratamentoService = new GestaoTratamentosService();
+        tratamentoService.cadastrar(animal, usuario, tratamento);
+    }
+    
+    public void exibir(HttpServletResponse response){
+    
     }
 
     @Override

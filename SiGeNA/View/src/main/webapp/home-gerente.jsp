@@ -25,9 +25,9 @@
         <header>
             <a style="visibility: hidden">.</a>
             <div class="titulo">SiGeNA</div>
-            <a href="index.jsp" class="btn-sair">Sair</a>
+            <a href="LogoutServlet" class="btn-sair">Sair</a>
         </header>
-        <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado")%>!</h1>
+        <h1>Bem-vindo, <%= sessao.getAttribute("NomeLogado") != null ? sessao.getAttribute("NomeLogado") : sessao.getAttribute("CpfLogado") %>!</h1>
 
         <div class="grid-botoes">
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>

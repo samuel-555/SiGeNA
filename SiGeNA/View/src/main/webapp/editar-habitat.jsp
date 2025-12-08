@@ -18,8 +18,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>SiGeNA - Gestão de Animais</title>
-        <link rel="stylesheet" href="CSS\styleanimais.css">
+        <title>SiGeNA - Gestão de Habitat</title>
         <link rel="stylesheet" href="CSS\style.css">
     </head>
     <body>

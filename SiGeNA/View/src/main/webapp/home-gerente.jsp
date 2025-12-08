@@ -28,7 +28,7 @@
             <a href="index.jsp" class="btn-sair">Sair</a>
         </header>
         <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado")%>!</h1>
-
+        <h2>oi, <%= sessao.getAttribute("cargoUsuario")%></h2>
         <div class="grid-botoes">
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
             <a href="HabitatController" class="btn">Gestão de Habitat</a>
@@ -41,6 +41,30 @@
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
             <a href="FornecedorController?acao=listar" class="btn">Gestão de Fornecedores</a>
+        </div>
+        
+        <div class="tarefas">
+            <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
+            
+            <c:forEach var="tarefa" items="${tarefas}">
+            <tr>
+                <td>${tarefa.nome}</td>
+                <td>${tarefa.texto}</td>
+                <td>${tarefa.dataPConclusao}</td>
+
+                <td>
+                    <form method="post" action="TarefaController">
+                        <input type="hidden" name="acao" value="excluir">
+                        <input type="hidden" name="id" value="${tarefa.id}">
+                        <button class="btn-pequeno excluir">Excluir</button>
+                        
+                        <input type="hidden" name="acao" value="excluir">
+                        <input type="hidden" name="id" value="${tarefa.id}">
+                        <button class="btn-pequeno excluir">Editar</button>
+                    </form>
+                </td>
+            </tr>
+            </c:forEach>
         </div>
     </body>
 </html>

@@ -60,3 +60,10 @@ header {
 .btn:hover {
   background-color: #0e7142;
 }
+
+.tarefas{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  justify-content: center;
+}

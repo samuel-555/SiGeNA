@@ -35,14 +35,15 @@ public class GestaoHabitatService {
         Habitat habitatAntigo = dao.buscar(nomeAntigo);
         
         if(habitatAntigo.getTamanho() != tamanho){
-            if (tamanho > habitatAntigo.getTamanho())
-                habitat.setCapacidade(habitatAntigo.getCapacidade()+ tamanho);
-            else{
-                if((habitatAntigo.getCapacidade() - tamanho)< habitatAntigo.getCapacidade()){
+            int novaCapacidade = tamanho;
+            int ocupadoAntigo = (habitatAntigo.getTamanho() - habitatAntigo.getCapacidade());
+            
+            if(ocupadoAntigo > novaCapacidade){
                     habitat.setCapacidade(0);
                     habitat.setDisponivel(false);
                 }
-                habitat.setCapacidade(habitatAntigo.getCapacidade() - tamanho);
+            else{
+                habitat.setCapacidade(novaCapacidade - ocupadoAntigo);
             }
         }
         else

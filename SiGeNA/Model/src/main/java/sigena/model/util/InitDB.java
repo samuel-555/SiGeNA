@@ -347,7 +347,21 @@ public void initDoacoes() throws SQLException {
             st.executeUpdate(sql);
         }
     }
-
+    
+    public void initHistorico() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS historico (
+            funcionario_id INT NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            descricao VARCHAR(255) NOT NULL,
+            data DATETIME NOT NULL,
+            id BIGINT AUTO_INCREMENT PRIMARY KEY
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
@@ -359,6 +373,7 @@ public void initDoacoes() throws SQLException {
             initTratamento();
             initPlanosAlimentares();
             initTarefas();
+            initHistorico();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

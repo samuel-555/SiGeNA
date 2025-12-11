@@ -148,7 +148,11 @@ public class InitDB {
             UNION ALL
             SELECT * FROM (SELECT 'Roberto Lima', '33333333344', '123', 'VETERINARIO', 
                     'Saúde Animal', 'NOITE', 'FERIAS', 'Veterinário de plantão noturno') AS tmp3
-            WHERE NOT EXISTS (SELECT 1 FROM funcionarios WHERE nome='Roberto Lima');
+            WHERE NOT EXISTS (SELECT 1 FROM funcionarios WHERE nome='Roberto Lima')
+            UNION ALL
+            SELECT * FROM (SELECT 'Administrador Sistema', '11111111111', '123', 'GERENTE',
+                    'Administracao', 'MANHA', 'ATIVO', 'Usuario padrao do sistema') AS tmp4
+            WHERE NOT EXISTS (SELECT 1 FROM funcionarios WHERE cpf='11111111111');
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(insertExemplo);

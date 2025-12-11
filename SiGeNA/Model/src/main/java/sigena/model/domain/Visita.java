@@ -2,6 +2,7 @@ package sigena.model.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import sigena.model.domain.Turno;
 
 public class Visita {
 
@@ -12,6 +13,10 @@ public class Visita {
     private LocalDate dataVisita;
     private String observacoes;
     private LocalDateTime dataRegistro;
+    private boolean vip;
+    private boolean necessidadeEspecial;
+    private String descricaoNecessidade;
+    private Turno turno;
 
     public Visita() {
     }
@@ -83,5 +88,37 @@ public class Visita {
 
     public void setDataRegistro(LocalDateTime dataRegistro) {
         this.dataRegistro = dataRegistro;
+    }
+
+    public boolean isVip() {
+        return vip;
+    }
+
+    public void setVip(boolean vip) {
+        this.vip = vip;
+    }
+
+    public boolean isNecessidadeEspecial() {
+        return necessidadeEspecial;
+    }
+
+    public void setNecessidadeEspecial(boolean necessidadeEspecial) {
+        this.necessidadeEspecial = necessidadeEspecial;
+    }
+
+    public String getDescricaoNecessidade() {
+        return descricaoNecessidade;
+    }
+
+    public void setDescricaoNecessidade(String descricaoNecessidade) {
+        this.descricaoNecessidade = descricaoNecessidade;
+    }
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
     }
 }

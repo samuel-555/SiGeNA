@@ -18,8 +18,8 @@ public class VisitaDAO {
 
     public void salvar(Visita visita) throws DatabaseException {
         String sql = """
-            INSERT INTO visitas (nome_visitante, documento, motivo, data_visita, observacoes)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO visitas (nome_visitante, documento, motivo, data_visita, observacoes, vip, necessidade_especial, descricao_necessidade, turno)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
         try (Connection con = ConexaoDB.getConnection();
@@ -33,6 +33,18 @@ public class VisitaDAO {
                 ps.setNull(5, Types.VARCHAR);
             } else {
                 ps.setString(5, visita.getObservacoes());
+            }
+            ps.setBoolean(6, visita.isVip());
+            ps.setBoolean(7, visita.isNecessidadeEspecial());
+            if (visita.getDescricaoNecessidade() == null || visita.getDescricaoNecessidade().isBlank()) {
+                ps.setNull(8, Types.VARCHAR);
+            } else {
+                ps.setString(8, visita.getDescricaoNecessidade());
+            }
+            if (visita.getTurno() != null) {
+                ps.setString(9, visita.getTurno().name());
+            } else {
+                ps.setNull(9, Types.VARCHAR);
             }
 
             ps.executeUpdate();
@@ -50,7 +62,7 @@ public class VisitaDAO {
     public void atualizar(Visita visita) throws DatabaseException {
         String sql = """
             UPDATE visitas
-            SET nome_visitante=?, documento=?, motivo=?, data_visita=?, observacoes=?
+            SET nome_visitante=?, documento=?, motivo=?, data_visita=?, observacoes=?, vip=?, necessidade_especial=?, descricao_necessidade=?, turno=?
             WHERE id=?
             """;
 
@@ -66,7 +78,19 @@ public class VisitaDAO {
             } else {
                 ps.setString(5, visita.getObservacoes());
             }
-            ps.setLong(6, visita.getId());
+            ps.setBoolean(6, visita.isVip());
+            ps.setBoolean(7, visita.isNecessidadeEspecial());
+            if (visita.getDescricaoNecessidade() == null || visita.getDescricaoNecessidade().isBlank()) {
+                ps.setNull(8, Types.VARCHAR);
+            } else {
+                ps.setString(8, visita.getDescricaoNecessidade());
+            }
+            if (visita.getTurno() != null) {
+                ps.setString(9, visita.getTurno().name());
+            } else {
+                ps.setNull(9, Types.VARCHAR);
+            }
+            ps.setLong(10, visita.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Erro ao atualizar visita: " + e.getMessage());
@@ -101,7 +125,7 @@ public class VisitaDAO {
         return null;
     }
 
-    public List<Visita> listar(String ordenacao, LocalDate inicio, LocalDate fim) throws DatabaseException {
+    public List<Visita> listar(String ordenacao, LocalDate inicio, LocalDate fim, String buscaTexto) throws DatabaseException {
         List<Visita> visitas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM visitas WHERE 1=1");
 
@@ -110,6 +134,9 @@ public class VisitaDAO {
         }
         if (fim != null) {
             sql.append(" AND data_visita <= ?");
+        }
+        if (buscaTexto != null && !buscaTexto.isBlank()) {
+            sql.append(" AND (LOWER(nome_visitante) LIKE ? OR LOWER(documento) LIKE ?)");
         }
 
         if ("antigas".equalsIgnoreCase(ordenacao)) {
@@ -126,7 +153,12 @@ public class VisitaDAO {
                 ps.setDate(idx++, java.sql.Date.valueOf(inicio));
             }
             if (fim != null) {
-                ps.setDate(idx, java.sql.Date.valueOf(fim));
+                ps.setDate(idx++, java.sql.Date.valueOf(fim));
+            }
+            if (buscaTexto != null && !buscaTexto.isBlank()) {
+                String like = "%" + buscaTexto.toLowerCase() + "%";
+                ps.setString(idx++, like);
+                ps.setString(idx, like);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -140,6 +172,34 @@ public class VisitaDAO {
         return visitas;
     }
 
+    public long contarTodas() throws DatabaseException {
+        String sql = "SELECT COUNT(*) FROM visitas";
+        try (Connection con = ConexaoDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao contar visitas: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public long contarHoje() throws DatabaseException {
+        String sql = "SELECT COUNT(*) FROM visitas WHERE data_visita = CURRENT_DATE";
+        try (Connection con = ConexaoDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao contar visitas de hoje: " + e.getMessage());
+        }
+        return 0;
+    }
+
     private Visita mapear(ResultSet rs) throws SQLException {
         Visita v = new Visita();
         v.setId(rs.getLong("id"));
@@ -150,6 +210,16 @@ public class VisitaDAO {
             v.setDataVisita(rs.getDate("data_visita").toLocalDate());
         }
         v.setObservacoes(rs.getString("observacoes"));
+        v.setVip(rs.getBoolean("vip"));
+        v.setNecessidadeEspecial(rs.getBoolean("necessidade_especial"));
+        v.setDescricaoNecessidade(rs.getString("descricao_necessidade"));
+        String turnoStr = rs.getString("turno");
+        if (turnoStr != null && !turnoStr.isBlank()) {
+            try {
+                v.setTurno(sigena.model.domain.Turno.valueOf(turnoStr));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
         Timestamp ts = rs.getTimestamp("data_registro");
         if (ts != null) {
             v.setDataRegistro(ts.toLocalDateTime());

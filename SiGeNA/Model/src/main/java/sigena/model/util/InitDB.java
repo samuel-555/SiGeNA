@@ -340,6 +340,10 @@ public void initDoacoes() throws SQLException {
                 motivo VARCHAR(255) NOT NULL,
                 data_visita DATE NOT NULL,
                 observacoes TEXT,
+                vip BOOLEAN NOT NULL DEFAULT FALSE,
+                necessidade_especial BOOLEAN NOT NULL DEFAULT FALSE,
+                descricao_necessidade TEXT,
+                turno VARCHAR(15),
                 data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """;

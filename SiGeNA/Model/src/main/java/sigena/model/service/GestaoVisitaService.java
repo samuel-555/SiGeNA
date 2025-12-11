@@ -29,9 +29,25 @@ public class GestaoVisitaService {
         }
     }
 
-    public List<Visita> listar(String ordenacao, LocalDate inicio, LocalDate fim) throws PersistenciaException {
+    public List<Visita> listar(String ordenacao, LocalDate inicio, LocalDate fim, String busca) throws PersistenciaException {
         try {
-            return dao.listar(ordenacao, inicio, fim);
+            return dao.listar(ordenacao, inicio, fim, busca);
+        } catch (DatabaseException e) {
+            throw new PersistenciaException(e.getMessage());
+        }
+    }
+
+    public long contarTotal() throws PersistenciaException {
+        try {
+            return dao.contarTodas();
+        } catch (DatabaseException e) {
+            throw new PersistenciaException(e.getMessage());
+        }
+    }
+
+    public long contarHoje() throws PersistenciaException {
+        try {
+            return dao.contarHoje();
         } catch (DatabaseException e) {
             throw new PersistenciaException(e.getMessage());
         }
@@ -82,6 +98,9 @@ public class GestaoVisitaService {
         }
         if (visita.getDataVisita() == null) {
             throw new ValidationException("Informe a data da visita.");
+        }
+        if (visita.getTurno() == null) {
+            throw new ValidationException("Selecione o turno da visita.");
         }
     }
 }

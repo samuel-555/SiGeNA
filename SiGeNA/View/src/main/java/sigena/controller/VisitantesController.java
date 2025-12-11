@@ -88,25 +88,32 @@ public class VisitantesController extends HttpServlet {
     }
 
     private void carregarVisitas(HttpServletRequest req) throws PersistenciaException {
-        String ordenacao = req.getParameter("ordenacao");
-        if (ordenacao == null || ordenacao.isBlank()) {
-            ordenacao = "recentes";
-        }
+        HttpSession session = req.getSession();
+        String ordenacao = paramOuSessao(req, session, "ordenacao", "recentes");
+        LocalDate inicio = parseDataOuSessao(req, session, "inicio");
+        LocalDate fim = parseDataOuSessao(req, session, "fim");
+        String busca = paramOuSessao(req, session, "busca", "");
 
-        LocalDate inicio = parseData(req.getParameter("inicio"));
-        LocalDate fim = parseData(req.getParameter("fim"));
+        List<Visita> visitas = service.listar(ordenacao, inicio, fim, busca);
 
-        List<Visita> visitas = service.listar(ordenacao, inicio, fim);
+        session.setAttribute("filtroVisitantes_ordenacao", ordenacao);
+        session.setAttribute("filtroVisitantes_inicio", inicio);
+        session.setAttribute("filtroVisitantes_fim", fim);
+        session.setAttribute("filtroVisitantes_busca", busca);
 
         req.setAttribute("visitas", visitas);
         req.setAttribute("ordenacaoSelecionada", ordenacao);
         req.setAttribute("inicioFiltro", inicio);
         req.setAttribute("fimFiltro", fim);
+        req.setAttribute("buscaFiltro", busca);
+        req.setAttribute("totalVisitas", service.contarTotal());
+        req.setAttribute("visitasHoje", service.contarHoje());
+        req.setAttribute("totalFiltrado", visitas != null ? visitas.size() : 0);
 
-        Object dados = req.getSession().getAttribute("dadosFormulario");
+        Object dados = session.getAttribute("dadosFormulario");
         if (dados != null) {
             req.setAttribute("dadosFormulario", dados);
-            req.getSession().removeAttribute("dadosFormulario");
+            session.removeAttribute("dadosFormulario");
         }
     }
 
@@ -135,6 +142,22 @@ public class VisitantesController extends HttpServlet {
         visita.setMotivo(req.getParameter("motivo"));
         visita.setDataVisita(parseData(req.getParameter("dataVisita")));
         visita.setObservacoes(req.getParameter("observacoes"));
+        visita.setVip(req.getParameter("vip") != null);
+        boolean necessidade = req.getParameter("necessidadeEspecial") != null;
+        visita.setNecessidadeEspecial(necessidade);
+        if (necessidade) {
+            visita.setDescricaoNecessidade(req.getParameter("descricaoNecessidade"));
+        } else {
+            visita.setDescricaoNecessidade(null);
+        }
+        try {
+            String turnoParam = req.getParameter("turno");
+            if (turnoParam != null && !turnoParam.isBlank()) {
+                visita.setTurno(sigena.model.domain.Turno.valueOf(turnoParam));
+            }
+        } catch (Exception ignored) {
+            visita.setTurno(null);
+        }
         return visita;
     }
 
@@ -157,5 +180,30 @@ public class VisitantesController extends HttpServlet {
         v.setDataVisita(parseData(req.getParameter("dataVisita")));
         v.setObservacoes(req.getParameter("observacoes"));
         return v;
+    }
+
+    private String paramOuSessao(HttpServletRequest req, HttpSession session, String nomeParam, String padrao) {
+        String p = req.getParameter(nomeParam);
+        if (p != null) {
+            return p;
+        }
+        Object salvo = session.getAttribute("filtroVisitantes_" + nomeParam);
+        return salvo != null ? String.valueOf(salvo) : padrao;
+    }
+
+    private LocalDate parseDataOuSessao(HttpServletRequest req, HttpSession session, String nomeParam) {
+        LocalDate data = parseData(req.getParameter(nomeParam));
+        if (data != null) return data;
+        Object salvo = session.getAttribute("filtroVisitantes_" + nomeParam);
+        if (salvo instanceof LocalDate) {
+            return (LocalDate) salvo;
+        }
+        try {
+            if (salvo != null) {
+                return LocalDate.parse(String.valueOf(salvo));
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 }

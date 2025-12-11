@@ -79,6 +79,35 @@ h1 {
     background-color: #992d22;
 }
 
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.card-resumo {
+    background: #ffffff;
+    border: 1px solid #dcefe4;
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.card-resumo .titulo-card {
+    display: block;
+    color: #6b7a70;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+}
+
+.card-resumo strong {
+    color: #0e7142;
+    font-size: 22px;
+}
+
 .filtros {
     background: linear-gradient(135deg, #f7fbf8 0%, #ffffff 60%);
     border: 1px solid #dcefe4;
@@ -184,6 +213,22 @@ textarea {
 
 textarea {
     resize: vertical;
+}
+
+.checks-linha {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+    color: #333;
 }
 
 .acoes-form {

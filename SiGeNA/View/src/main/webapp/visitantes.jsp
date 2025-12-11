@@ -136,7 +136,6 @@
                 <input type="text" name="busca" id="busca" placeholder="Nome ou documento" value="<%= request.getAttribute("buscaFiltro") != null ? request.getAttribute("buscaFiltro") : "" %>">
             </div>
             <button type="submit" class="btn">Filtrar</button>
-            <a class="btn secundario" href="visitantes">Limpar</a>
         </form>
     </div>
 

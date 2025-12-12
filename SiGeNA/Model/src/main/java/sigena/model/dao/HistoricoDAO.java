@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import sigena.model.domain.Historico;
@@ -49,10 +50,13 @@ public class HistoricoDAO {
             ps.setInt(1,id_funcionario);
             
             while(rs.next()){
+                
+                TipoHistorico tipo = TipoHistorico.valueOf(rs.getString("tipo")); 
+                 
                 Historico historico = new Historico(
-                    TipoHistorico.valueOf(rs.getString("tipo")),
                     rs.getString("descricao"),
-                    rs.getObject("data")
+                    rs.getObject("data", LocalDateTime.class),
+                    tipo
             );
             lista.add(historico);
             }
@@ -63,27 +67,27 @@ public class HistoricoDAO {
         return lista;
     }
 
-
-//fazer isso aqui com filtro de pesquisa por tipo bem ninja    
-    public Historico buscar(int id_funcionario) { 
+   
+    public List<Historico> buscarPorTipo(TipoHistorico tipo) { 
         String sql = "SELECT tipo, descricao, data FROM historico WHERE funcionario_id = ?";
 
-
+        List<Historico> lista = new ArrayList<>();
+        
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
 
-            ps.setInt(1,id_funcionario);
+            ps.setString(1,tipo.name());
 
             ResultSet rs = ps.executeQuery();
 
-            if(rs.next()){
+            while(rs.next()){
                 Historico historico = new Historico(
-                        rs.getString("tipo"),
                         rs.getString("descricao"),
-                        rs.getObjetc("data")
+                        rs.getObject("data", LocalDateTime.class),
+                        tipo
                 );
                
-                return historico;
+                lista.add(historico);
             }
         }
         catch(SQLException e){

@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 public class Historico {
     
-    private final long id;
+    private long id;
     private final String descricao;
-    private final int id_funcionario;
+    private int id_funcionario;
     private final LocalDateTime data;
     private final TipoHistorico tipo;
     
@@ -25,6 +25,13 @@ public class Historico {
         this.descricao = descricao;
         this.data = data;
         this.tipo = tipo;
+    }
+    
+    public Historico(int id, String descricao, LocalDateTime data, TipoHistorico tipo) {
+        this.descricao = descricao;
+        this.data = data;
+        this.tipo = tipo;
+        this.id_funcionario = id;
     }
     
     public long getId(){

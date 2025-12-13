@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%
@@ -35,6 +35,7 @@
             <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
+            <a href="AgendamentoController?acao=listar" class="btn">Gestão de Agendamentos</a>
         </div>
         <div class="tarefas">
             

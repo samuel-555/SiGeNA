@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="sigena.model.domain.Cargo" %>
 <%
@@ -41,6 +41,7 @@
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
             <a href="FornecedorController?acao=listar" class="btn">Gestão de Fornecedores</a>
+            <a href="AgendamentoController?acao=listar" class="btn">Gestão de Agendamentos</a>
         </div>
     </body>
 </html>

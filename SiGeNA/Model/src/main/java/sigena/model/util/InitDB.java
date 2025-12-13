@@ -335,6 +335,31 @@ public void initDoacoes() throws SQLException {
         }
     }
 
+    public void initAgendamentos() throws SQLException {
+        String tabelaSql = """
+            CREATE TABLE IF NOT EXISTS agendamentos (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                tipo VARCHAR(100) NOT NULL,
+                data_agendamento DATE NOT NULL,
+                hora_agendamento TIME NOT NULL,
+                responsavel VARCHAR(120) NOT NULL,
+                local VARCHAR(120) NOT NULL,
+                observacoes TEXT,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
+                criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                cancelado_em DATETIME
+            );
+            """;
+
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(tabelaSql);
+        }
+
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_data_hora ON agendamentos(data_agendamento, hora_agendamento)");
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_responsavel ON agendamentos(responsavel)");
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_local ON agendamentos(local)");
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
@@ -355,8 +380,24 @@ public void initDoacoes() throws SQLException {
 
             initFornecedores();
             initProdutos();
+            initAgendamentos();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
+        }
+    }
+
+    private void criarIndiceSeNaoExiste(String sql) throws SQLException {
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        } catch (SQLException e) {
+            String mensagem = e.getMessage();
+            if (mensagem != null) {
+                mensagem = mensagem.toLowerCase();
+                if (mensagem.contains("duplicate key name") || mensagem.contains("already exists")) {
+                    return;
+                }
+            }
+            throw e;
         }
     }
 

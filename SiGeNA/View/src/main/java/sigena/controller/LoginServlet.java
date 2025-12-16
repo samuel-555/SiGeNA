@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("NomeLogado", nomeParaSessao);
                 session.setAttribute("cargoUsuario", usuario.getCargo());
                 session.setAttribute("UsuarioLogado", usuario1);
-                response.sendRedirect("home-gerente.jsp");
+                response.sendRedirect("home.jsp");
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");
                 request.getRequestDispatcher("index.jsp").forward(request, response);

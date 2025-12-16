@@ -131,6 +131,25 @@ th {
 .btn-pequeno:hover {
   opacity: 0.85;
 }
+.acoes-agendamento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.acoes-agendamento .botao-acao {
+  margin: 0;
+}
+
+.acoes-agendamento .btn-pequeno {
+  white-space: nowrap;
+}
+
+table th:nth-child(7),
+table td:nth-child(7) {
+  width: 150px;
+}
 .checkbox-group {
   display: flex;
   align-items: center;

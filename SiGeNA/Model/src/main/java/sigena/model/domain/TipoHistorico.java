@@ -142,5 +142,15 @@ public enum TipoHistorico {
                 "Este tipo não suporta descrição com descrição da ocorrência"
         );
     }
+    
+    public static TipoHistorico from(String valor) {
+        if (valor == null) return null;
+
+        try {
+            return TipoHistorico.valueOf(valor.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }
 

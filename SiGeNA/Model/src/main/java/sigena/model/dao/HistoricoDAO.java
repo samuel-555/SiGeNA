@@ -42,26 +42,28 @@ public class HistoricoDAO {
 
         List<Historico> lista = new ArrayList<>();
 
-        String sql = "SELECT tipo, descricao, data FROM historico WHERE id_funcionario = ?";
+        String sql = "SELECT tipo, descricao, data FROM historico WHERE funcionario_id = ? ORDER BY data DESC;";
 
-        try(Connection con = ConexaoDB.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
-            ps.setInt(1,id_funcionario);
-            
-            while(rs.next()){
-                
-                TipoHistorico tipo = TipoHistorico.valueOf(rs.getString("tipo")); 
-                 
+        try (Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id_funcionario);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                TipoHistorico tipo = TipoHistorico.valueOf(rs.getString("tipo"));
+
                 Historico historico = new Historico(
                     rs.getString("descricao"),
                     rs.getObject("data", LocalDateTime.class),
                     tipo
-            );
-            lista.add(historico);
+                );
+                lista.add(historico);
             }
-        }
-        catch(SQLException e){
+
+        } 
+        catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return lista;
@@ -69,24 +71,22 @@ public class HistoricoDAO {
 
    
     public List<Historico> buscarPorTipo(TipoHistorico tipo) { 
-        String sql = "SELECT tipo, descricao, data FROM historico WHERE funcionario_id = ?";
+        String sql = "SELECT tipo, descricao, data FROM historico WHERE tipo = ? ORDER BY data DESC;";
 
         List<Historico> lista = new ArrayList<>();
         
-        try(Connection con = ConexaoDB.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)){
+    try (Connection con = ConexaoDB.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1,tipo.name());
-
+            ps.setString(1, tipo.name());
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 Historico historico = new Historico(
-                        rs.getString("descricao"),
-                        rs.getObject("data", LocalDateTime.class),
-                        tipo
+                    rs.getString("descricao"),
+                    rs.getObject("data", LocalDateTime.class),
+                    TipoHistorico.valueOf(rs.getString("tipo"))
                 );
-               
                 lista.add(historico);
             }
         }
@@ -94,7 +94,52 @@ public class HistoricoDAO {
             throw new RuntimeException(e);
         }   
 
-        return null;
+        return lista;
+    }
+
+    public List<Historico> buscarPorFuncionario(String nome) {
+
+        String sql = """
+            SELECT h.tipo, h.descricao, h.data
+            FROM historico h
+            JOIN funcionarios f ON f.id = h.funcionario_id
+            WHERE LOWER(f.nome) LIKE ?
+            OR LOWER(f.cargo) LIKE ?
+            ORDER BY h.data DESC
+        """;
+
+        List<Historico> lista = new ArrayList<>();
+
+        try (Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+
+            String termoLower = "%" + nome.toLowerCase() + "%";
+            ps.setString(1, termoLower);
+            ps.setString(2, termoLower); 
+            
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                TipoHistorico tipo = TipoHistorico.valueOf(
+                    rs.getString("tipo")
+                );
+
+                Historico historico = new Historico(
+                    rs.getString("descricao"),
+                    rs.getObject("data", LocalDateTime.class),
+                    tipo
+                );
+
+                lista.add(historico);
+            }
+
+        } 
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return lista;
     }
 
 }

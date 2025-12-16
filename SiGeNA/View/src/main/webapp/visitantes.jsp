@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="sigena.model.domain.Cargo" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
@@ -8,8 +9,8 @@
         return;
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
-    boolean usuarioGerente = cargo != null && cargo == Cargo.GERENTE;
-    request.setAttribute("usuarioGerente", usuarioGerente);
+    boolean podeGerenciarVisitantes = temPermissaoCadastro(cargo, "visitantes");
+    request.setAttribute("podeGerenciarVisitantes", podeGerenciarVisitantes);
     sigena.model.domain.Visita visitaEdicao = (sigena.model.domain.Visita) request.getAttribute("visitaEdicao");
     sigena.model.domain.Visita dadosFormulario = (sigena.model.domain.Visita) request.getAttribute("dadosFormulario");
 %>
@@ -17,19 +18,19 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>SiGeNA - Gestao de Visitantes</title>
+    <title>SiGeNA - Gestão de Visitantes</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/stylevisitantes.css">
 </head>
 <body>
 <header>
     <div class="titulo">
-        <a href="<%= request.getContextPath() + (cargo == Cargo.GERENTE ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a>
+        <a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a>
     </div>
 </header>
 
 <div class="container">
-    <h1>Gestao de Visitantes</h1>
+    <h1>Gestão de Visitantes</h1>
 
     <c:if test="${not empty mensagemSucesso}">
         <div class="mensagem sucesso">${mensagemSucesso}</div>
@@ -41,7 +42,7 @@
     <div class="formulario" id="form-visita">
         <h2><c:choose><c:when test="${visitaEdicao != null}">Editar Registro de Visita</c:when><c:otherwise>Registrar Novo Visitante</c:otherwise></c:choose></h2>
         <c:choose>
-            <c:when test="${usuarioGerente}">
+            <c:when test="${podeGerenciarVisitantes}">
                 <form action="visitantes" method="post">
                     <input type="hidden" name="acao" value="${visitaEdicao != null ? 'atualizar' : 'cadastrar'}">
                     <c:if test="${visitaEdicao != null}">
@@ -60,13 +61,13 @@
                     <label>Data da Visita:</label>
                     <input type="date" name="dataVisita" required value="<%= visitaEdicao != null && visitaEdicao.getDataVisita() != null ? visitaEdicao.getDataVisita().toString() : (dadosFormulario != null && dadosFormulario.getDataVisita() != null ? dadosFormulario.getDataVisita().toString() : "") %>">
 
-                    <label>Observacoes:</label>
+                    <label>Observações:</label>
                     <textarea name="observacoes" rows="3" placeholder="Observacoes adicionais"><%= visitaEdicao != null ? (visitaEdicao.getObservacoes() != null ? visitaEdicao.getObservacoes() : "") : (dadosFormulario != null && dadosFormulario.getObservacoes() != null ? dadosFormulario.getObservacoes() : "") %></textarea>
 
                     <label>Turno:</label>
                     <select name="turno" required>
                         <option value="">Selecione</option>
-                        <option value="MANHA" <%= (visitaEdicao != null && sigena.model.domain.Turno.MANHA.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.MANHA.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Manhã</option>
+                        <option value="MANHA" <%= (visitaEdicao != null && sigena.model.domain.Turno.MANHA.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.MANHA.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Manhï¿½</option>
                         <option value="TARDE" <%= (visitaEdicao != null && sigena.model.domain.Turno.TARDE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.TARDE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Tarde</option>
                         <option value="NOITE" <%= (visitaEdicao != null && sigena.model.domain.Turno.NOITE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.NOITE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Noite</option>
                     </select>
@@ -84,7 +85,7 @@
 
                     <div id="campoNecessidade" style="<%= (visitaEdicao != null && visitaEdicao.isNecessidadeEspecial()) || (dadosFormulario != null && dadosFormulario.isNecessidadeEspecial()) ? "" : "display:none;" %>">
                         <label>Descreva a necessidade especial:</label>
-                        <textarea name="descricaoNecessidade" rows="2" placeholder="Ex: cadeirante, acompanhamento médico"><%= visitaEdicao != null ? (visitaEdicao.getDescricaoNecessidade() != null ? visitaEdicao.getDescricaoNecessidade() : "") : (dadosFormulario != null && dadosFormulario.getDescricaoNecessidade() != null ? dadosFormulario.getDescricaoNecessidade() : "") %></textarea>
+                        <textarea name="descricaoNecessidade" rows="2" placeholder="Ex: cadeirante, acompanhamento mï¿½dico"><%= visitaEdicao != null ? (visitaEdicao.getDescricaoNecessidade() != null ? visitaEdicao.getDescricaoNecessidade() : "") : (dadosFormulario != null && dadosFormulario.getDescricaoNecessidade() != null ? dadosFormulario.getDescricaoNecessidade() : "") %></textarea>
                     </div>
 
                     <div class="acoes-form">
@@ -164,14 +165,14 @@
                 <td><%= v.getNomeVisitante() %></td>
                 <td><%= v.getDocumento() != null ? v.getDocumento() : "-" %></td>
                 <td><%= v.getMotivo() %></td>
-                <td><%= v.isVip() ? "Sim" : "Não" %></td>
-                <td><%= v.isNecessidadeEspecial() ? (v.getDescricaoNecessidade() != null ? v.getDescricaoNecessidade() : "Sim") : "Não" %></td>
+                <td><%= v.isVip() ? "Sim" : "Nï¿½o" %></td>
+                <td><%= v.isNecessidadeEspecial() ? (v.getDescricaoNecessidade() != null ? v.getDescricaoNecessidade() : "Sim") : "Nï¿½o" %></td>
                 <td><%= v.getDataVisita() != null ? v.getDataVisita().toString() : "-" %></td>
                 <td>
                     <c:choose>
-                        <c:when test="${usuarioGerente}">
+                        <c:when test="${podeGerenciarVisitantes}">
                             <a class="btn-pequeno editar" href="visitantes?acao=editar&id=<%= v.getId() %>">Editar</a>
-                            <form action="visitantes" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclusão?');">
+                            <form action="visitantes" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclusï¿½o?');">
                                 <input type="hidden" name="acao" value="excluir">
                                 <input type="hidden" name="id" value="<%= v.getId() %>">
                                 <button type="submit" class="btn-pequeno excluir">Excluir</button>

@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -19,6 +20,8 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "habitats");
 %>
 
 
@@ -33,14 +36,16 @@
 </head>
 <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
     <h1>Gestão de Habitat</h1>
 
     <div class="botoes-acoes">
+      <% if (podeCadastrar) { %>
       <a href="cadastrar-habitat.jsp" class="btn">Cadastrar Novo Habitat</a>
+      <% } %>
     </div>
 
     
@@ -97,4 +102,3 @@
   </div>
 </body>
 </html>
-

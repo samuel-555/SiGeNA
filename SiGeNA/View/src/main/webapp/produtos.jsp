@@ -1,10 +1,20 @@
 <%@page import="java.util.List"%>
 <%@page import="sigena.model.domain.Produto"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 
 <%
-    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) 
-        ? "home-gerente.jsp" 
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "produtos");
+
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")))
+        ? "home.jsp"
         : "home.jsp";
 
     String paginaHomeComContexto = request.getContextPath() + "/" + paginaHome;
@@ -28,8 +38,10 @@
     <h1>Gestão de Produtos e Estoque</h1>
 
     <div class="botoes-acoes">
+        <% if (podeCadastrar) { %>
         <a href="cadastrar-produtos.jsp" class="btn">Adicionar Novo Produto</a>
-        <a href="<%= paginaHomeComContexto %>" class="btn">Voltar à Home</a>
+        <% } %>
+        <a href="<%= paginaHomeComContexto %>" class="btn">Voltar para Home</a>
     </div>
 
     <div class="historico">
@@ -50,7 +62,7 @@
                 <th>Quantidade</th>
                 <th>Lote</th>
                 <th>Validade</th>
-                <th>Disponível?</th>
+                <th>Disponível</th>
                 <th>Ações</th>
             </tr>
 
@@ -68,7 +80,7 @@
                 <td><%= p.getQuantidade() %></td>
                 <td><%= p.getLote() != null ? p.getLote() : "-" %></td>
                 <td><%= p.getValidade() != null ? p.getValidade() : "-" %></td>
-                <td><%= p.getDisponivel() ? "Sim" : "Não" %></td>
+                <td><%= p.getDisponivel() ? "Sim" : "NÇœo" %></td>
 
                 <td>
                     <a href="ProdutoController?acao=ver&id=<%= p.getId() %>" class="btn-pequeno ver">Ver</a>

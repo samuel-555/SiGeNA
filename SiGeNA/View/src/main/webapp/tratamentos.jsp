@@ -1,5 +1,6 @@
     <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
     HttpSession sessao = request.getSession(false);
@@ -7,6 +8,8 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "tratamentos");
 %>
 <!DOCTYPE html>
 <html>
@@ -18,14 +21,16 @@
     </head>
     <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
     <h1>Gestão de Tratamentos Médicos</h1>
 
     <div class="botoes-acoes">
+        <% if (podeCadastrar) { %>
         <button class="btn"><a href="cadastrar-tratamentos.jsp">Registrar Novo Tratamento</a></button>
+        <% } %>
     </div>
 
      <c:if test="${not empty mensagemSucesso}">

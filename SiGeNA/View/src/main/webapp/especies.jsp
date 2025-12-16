@@ -1,6 +1,17 @@
 <%@page import="java.util.List"%>
 <%@page import="sigena.model.domain.Especie"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
+<%
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "especies");
+%>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,16 +21,18 @@
     <link rel="stylesheet" href="CSS\style.css">
 </head>
 <body>
-    <header><div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div></header>
+    <header><div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div></header>
 
     <div class="container">
         <h1>Gestão de Espécies</h1>
         <div class="botoes-acoes">
+            <% if (podeCadastrar) { %>
             <a href="cadastrar-especie.jsp" class="btn">Cadastrar Nova Espécie</a>
+            <% } %>
         </div>
 
         <div class="historico">
-            <h2>Catálogo de Espécies</h2>
+            <h2>Catá­logo de Espécies</h2>
 
             <% String erro = (String) request.getAttribute("erro");
                if (erro != null) { %>

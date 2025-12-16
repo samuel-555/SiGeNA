@@ -204,8 +204,8 @@ public class InitDB {
         }
     }
 
-public void initDoacoes() throws SQLException {
-    String sql = """
+    public void initDoacoes() throws SQLException {
+        String sql = """
         CREATE TABLE IF NOT EXISTS doacoes (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             nome_doador VARCHAR(150) NOT NULL,
@@ -220,14 +220,13 @@ public void initDoacoes() throws SQLException {
         );
     """;
 
-    try (Statement stmt = con.createStatement()) {
-        stmt.execute(sql);
+        try (Statement stmt = con.createStatement()) {
+            stmt.execute(sql);
+        }
     }
-}
-
 
     public void initRecibosDoacao() throws SQLException {
-    String sql = """
+        String sql = """
         CREATE TABLE IF NOT EXISTS recibo_doacao (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             doacao_id BIGINT NOT NULL,
@@ -237,11 +236,10 @@ public void initDoacoes() throws SQLException {
         );
         """;
 
-    try (Statement st = con.createStatement()) {
-        st.executeUpdate(sql);
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
     }
-}
-
 
     public void initProdutos() throws SQLException {
         String sql = """ 
@@ -312,6 +310,22 @@ public void initDoacoes() throws SQLException {
         }
     }
 
+    public void initOcorrencias() throws SQLException {
+        String sql = """
+    CREATE TABLE IF NOT EXISTS ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        descricao TEXT,
+        tipo VARCHAR(30) NOT NULL,
+        status VARCHAR(30) NOT NULL,
+        data DATETIME NOT NULL
+    );
+    """;
+
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
@@ -326,6 +340,7 @@ public void initDoacoes() throws SQLException {
             initHabitat_animal();
             initDoacoes();
             initRecibosDoacao();
+            initOcorrencias();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

@@ -34,15 +34,14 @@
             <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
+            <a href="ocorrencias" class="btn"> Fazer ocorrencia</a>
         </div>
         <div class="tarefas">
             
-            <!--  if user = gerente -> cadastrar tarefas -->
-            <!-- set user.cpf == funcionario.cpf? -->
             
             <c:forEach var= "funcionario" items="${funcionarios}">
                 <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario.cpf}"/>
-                <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui só pra cadastro -->
+                <c:if test="${funcionario.estado == ATIVO}"> 
                     
                     <c:if test="${empty tarefas}">
                         <p>Sem tarefas cadastradas para hoje></p>

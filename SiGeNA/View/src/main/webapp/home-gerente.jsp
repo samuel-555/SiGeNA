@@ -40,6 +40,7 @@
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
             <a href="FornecedorController?acao=listar" class="btn">Gestão de Fornecedores</a>
+            <a href="ocorrencias" class="btn"> Fazer ocorrencia</a>
         </div>
     </body>
 </html>

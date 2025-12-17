@@ -67,7 +67,7 @@
                     <label>Turno:</label>
                     <select name="turno" required>
                         <option value="">Selecione</option>
-                        <option value="MANHA" <%= (visitaEdicao != null && sigena.model.domain.Turno.MANHA.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.MANHA.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Manhï¿½</option>
+                        <option value="MANHA" <%= (visitaEdicao != null && sigena.model.domain.Turno.MANHA.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.MANHA.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Manhã</option>
                         <option value="TARDE" <%= (visitaEdicao != null && sigena.model.domain.Turno.TARDE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.TARDE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Tarde</option>
                         <option value="NOITE" <%= (visitaEdicao != null && sigena.model.domain.Turno.NOITE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.NOITE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Noite</option>
                     </select>
@@ -165,8 +165,8 @@
                 <td><%= v.getNomeVisitante() %></td>
                 <td><%= v.getDocumento() != null ? v.getDocumento() : "-" %></td>
                 <td><%= v.getMotivo() %></td>
-                <td><%= v.isVip() ? "Sim" : "Nï¿½o" %></td>
-                <td><%= v.isNecessidadeEspecial() ? (v.getDescricaoNecessidade() != null ? v.getDescricaoNecessidade() : "Sim") : "Nï¿½o" %></td>
+                <td><%= v.isVip() ? "Sim" : "Não" %></td>
+                <td><%= v.isNecessidadeEspecial() ? (v.getDescricaoNecessidade() != null ? v.getDescricaoNecessidade() : "Sim") : "Não" %></td>
                 <td><%= v.getDataVisita() != null ? v.getDataVisita().toString() : "-" %></td>
                 <td>
                     <c:choose>

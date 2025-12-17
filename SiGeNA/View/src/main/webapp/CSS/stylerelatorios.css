@@ -146,9 +146,9 @@ header {
 }
 
 .btn.editar {
-    background-color: #1d4ed8;
+    background-color: #149b5a;
     color: #fff;
-    padding: 6px 12px;
+    padding: 3px 6px;
     border-radius: 6px;
     text-decoration: none;
     display: inline-block;
@@ -157,7 +157,7 @@ header {
 .btn.excluir {
     background-color: #dc2626;
     color: #fff;
-    padding: 6px 12px;
+    padding: 3px 6px;
     border: none;
     border-radius: 6px;
     cursor: pointer;

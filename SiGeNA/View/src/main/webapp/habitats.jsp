@@ -22,6 +22,8 @@
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
     boolean podeCadastrar = temPermissaoCadastro(cargo, "habitats");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "habitats");
+    request.setAttribute("podeGerenciarHabitats", podeGerenciar);
 %>
 
 
@@ -79,18 +81,20 @@
             <td>${habitat.disponivel ? "Disponível":"Indisponível"}</td>
             <td>
                 
-              <a href="HabitatController?acao=editar&nome=${habitat.nome}" class="btn-pequeno editar">Editar</a>
+              <c:if test="${podeGerenciarHabitats}">
+                  <a href="HabitatController?acao=editar&nome=${habitat.nome}" class="btn-pequeno editar">Editar</a>
 
 
-              <form action="${pageContext.request.contextPath}/HabitatController" method="POST" style="display:inline-block;">
-                <c:if test="${not empty msgErro}">
-                    <p style="color:red;font-weight:bold">${msgErro}</p>
-                </c:if>
-                    
-                  <input type="hidden" name="acao" value="excluir">
-                  <input type="hidden" name="nome" value="${habitat.nome}">
-                  <button class="btn-pequeno excluir">Excluir</button>
-             </form>
+                  <form action="${pageContext.request.contextPath}/HabitatController" method="POST" style="display:inline-block;">
+                    <c:if test="${not empty msgErro}">
+                        <p style="color:red;font-weight:bold">${msgErro}</p>
+                    </c:if>
+                        
+                      <input type="hidden" name="acao" value="excluir">
+                      <input type="hidden" name="nome" value="${habitat.nome}">
+                      <button class="btn-pequeno excluir">Excluir</button>
+                 </form>
+              </c:if>
             </td>
           </tr>
         </c:forEach>

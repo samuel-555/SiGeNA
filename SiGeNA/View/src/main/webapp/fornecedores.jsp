@@ -15,6 +15,7 @@
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
     boolean podeCadastrar = temPermissaoCadastro(cargo, "fornecedores");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "fornecedores");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -64,12 +65,14 @@
                 <td><c:out value="${fornecedor.nome}"/></td>
                 <td><c:out value="${fornecedor.tipo}"/></td>
                 <td>
+                    <% if (podeGerenciar) { %>
                     <form action="FornecedorController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${fornecedor.id}"/>">
                         <button type="submit" class="btn-pequeno excluir">Remover</button>
                     </form>
-                        <a href="FornecedorController?acao=exibir&id=<c:out value="${fornecedor.id}"/>" class="btn-pequeno">Exibir</a>
+                    <% } %>
+                    <a href="FornecedorController?acao=exibir&id=<c:out value="${fornecedor.id}"/>" class="btn-pequeno">Exibir</a>
                     
                 </td>
                 </tr>

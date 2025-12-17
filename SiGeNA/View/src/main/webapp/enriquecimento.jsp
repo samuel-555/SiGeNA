@@ -11,6 +11,7 @@
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
     boolean podeCadastrar = temPermissaoCadastro(cargo, "enriquecimento");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "enriquecimento");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -66,11 +67,13 @@
                                     <button type="submit" class="btn-pequeno">Ver</button>
                                 </form>
                                     
+                                <% if (podeGerenciar) { %>
                                 <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;">
                                     <input type="hidden" name="action" value="deletar"/>
                                     <input type="hidden" name="id" value="<%= en.getId()%>"/>
                                     <button type="submit" class="btn-pequeno excluir">Desalocar</button>
                                 </form>
+                                <% } %>
                             </td>
                         </tr>
                         <%

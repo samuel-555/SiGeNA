@@ -12,6 +12,7 @@
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
     boolean podeCadastrar = temPermissaoCadastro(cargo, "produtos");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "produtos");
 
     String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")))
         ? "home.jsp"
@@ -83,10 +84,12 @@
                 <td><%= p.getDisponivel() ? "Sim" : "NÇœo" %></td>
 
                 <td>
+                    <% if (podeGerenciar) { %>
                     <a href="ProdutoController?acao=ver&id=<%= p.getId() %>" class="btn-pequeno ver">Ver</a>
                     <a href="ProdutoController?acao=excluir&id=<%= p.getId() %>" 
                        onclick="return confirm('Excluir este produto?');" 
                        class="btn-pequeno excluir">Excluir</a>
+                    <% } %>
                 </td>
             </tr>
 

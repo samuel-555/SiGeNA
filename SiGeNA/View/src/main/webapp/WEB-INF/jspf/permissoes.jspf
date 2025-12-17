@@ -9,13 +9,17 @@
         }
 
         return switch (funcionalidade) {
-            case "planos" -> cargo == Cargo.ZOOTECNISTA; // veterinário sem criação/edição de planos
+            case "planos" -> cargo == Cargo.ZOOTECNISTA; 
             case "ocorrencias" -> cargo == Cargo.ZOOTECNISTA || cargo == Cargo.VETERINARIO || cargo == Cargo.TRATADOR;
             case "enriquecimento" -> cargo == Cargo.ZOOTECNISTA || cargo == Cargo.VETERINARIO;
             case "animais", "especies", "tratamentos" -> cargo == Cargo.VETERINARIO;
             case "relatorios" -> cargo == Cargo.VETERINARIO;
-            case "visitantes" -> false; // somente gerente
+            case "visitantes" -> false; 
             default -> false;
         };
+    }
+
+    boolean temPermissaoGerenciamento(Cargo cargo, String funcionalidade) {
+        return temPermissaoCadastro(cargo, funcionalidade);
     }
 %>

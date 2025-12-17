@@ -11,6 +11,7 @@
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
     boolean podeCadastrar = temPermissaoCadastro(cargo, "especies");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "especies");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -62,7 +63,9 @@
                     <td><%= e.isPredador() ? "Sim" : "Não" %></td>
                     <td>
                         <a href="EspeciesController?acao=ver&id=<%= e.getId() %>" class="btn-pequeno ver">Ver</a>
+                        <% if (podeGerenciar) { %>
                         <a href="EspeciesController?acao=excluir&id=<%= e.getId() %>" class="btn-pequeno excluir">Excluir</a>
+                        <% } %>
                     </td>
                 </tr>
                 <%

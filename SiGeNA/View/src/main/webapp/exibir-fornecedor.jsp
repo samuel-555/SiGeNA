@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
 <%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@taglib uri="jakarta.tags.functions" prefix="fn" %>
@@ -12,6 +13,8 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "fornecedores");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -52,9 +55,10 @@
         </div>
     </c:if>
     <div class="botoes-acoes">
+        <% if (podeGerenciar) { %>
         <a href="FornecedorController?acao=editar&id=<c:out value="${fornecedor.id}"/>" class="btn">Editar dados</a>
+        <% } %>
     </div>
   </div>
 </body>
 </html>
-

@@ -1,5 +1,7 @@
 <%@page import="sigena.model.domain.Especie"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,6 +16,10 @@
         <div class="container">
             <h1>Detalhes da Espécie</h1>
             <%
+                HttpSession sessao = request.getSession(false);
+                Cargo cargo = (sessao != null) ? (Cargo) sessao.getAttribute("cargoUsuario") : null;
+                boolean podeGerenciar = temPermissaoGerenciamento(cargo, "especies");
+
                 Especie e = (Especie) request.getAttribute("especie");
                 if (e != null) {
             %>
@@ -35,7 +41,9 @@
             %>
 
             <div class="botoes-acoes">
+                <% if (podeGerenciar) { %>
                 <a href="EspeciesController?acao=editar&id=<%= e.getId() %>" class="btn">Editar</a>
+                <% } %>
                 <a href="EspeciesController" class="btn">Voltar</a>
             </div>
         </div>

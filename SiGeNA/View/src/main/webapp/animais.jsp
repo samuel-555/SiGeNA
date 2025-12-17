@@ -15,6 +15,7 @@
     }
     Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
     boolean podeCadastrar = temPermissaoCadastro(cargo, "animais");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "animais");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -67,12 +68,14 @@
                 <td><c:out value="${animal.nome}"/></td>
                 <td><c:out value="${animal.especieNome}"/></td>
                 <td>
+                    <% if (podeGerenciar) { %>
                     <form action="AnimalController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${animal.id}"/>">
                         <button type="submit" class="btn-pequeno excluir">Remover</button>
                     </form>
-                        <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn-pequeno">Exibir</a>
+                    <% } %>
+                    <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn-pequeno">Exibir</a>
                     
                 </td>
                 </tr>

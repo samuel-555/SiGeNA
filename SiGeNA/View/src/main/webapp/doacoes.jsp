@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="sigena.model.domain.Cargo" %>
 <%@ page import="sigena.model.domain.Doacao" %>
@@ -17,6 +17,7 @@
         return;
     }
     boolean podeCadastrar = temPermissaoCadastro(cargo, "doacoes");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "doacoes");
 %>
 
 <!DOCTYPE html>
@@ -103,6 +104,7 @@
                         %>
                     </td>
                     <td>
+                        <% if (podeGerenciar) { %>
                         <a class="btn-pequeno editar" href="doacoes?acao=editar&id=<%= d.getId() %>">Editar</a>
 
                         <form action="doacoes" method="post" style="display:inline" onsubmit="return confirm('Confirmar cancelamento?');">
@@ -110,6 +112,7 @@
                             <input type="hidden" name="id" value="<%= d.getId() %>"/>
                             <button class="btn-pequeno excluir" type="submit">Cancelar</button>
                         </form>
+                        <% } %>
                     </td>
                 </tr>
                 <%
@@ -122,7 +125,7 @@
 
     <%
         Doacao ed = (Doacao) request.getAttribute("doacaoEdicao");
-        if (ed != null) {
+        if (ed != null && podeGerenciar) {
     %>
     <div class="editar-bloco" style="margin-top:20px;">
         <h2>Editando Doa‡Æo: ID <%= ed.getId() %></h2>

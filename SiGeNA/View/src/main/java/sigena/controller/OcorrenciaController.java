@@ -54,7 +54,11 @@ public class OcorrenciaController extends HttpServlet {
             Long id = Long.parseLong(request.getParameter("id"));
 
             Ocorrencia oc = service.buscar(id);
-            List<Ocorrencia> lista = service.listar();
+            String tipo = request.getParameter("tipo");
+            String status = request.getParameter("status");
+            String texto = request.getParameter("texto");
+
+            List<Ocorrencia> lista = service.buscarComFiltro(tipo, status, texto);
 
             request.setAttribute("ocorrencias", lista);
             request.setAttribute("ocorrenciaEdicao", oc);
@@ -138,6 +142,10 @@ public class OcorrenciaController extends HttpServlet {
 
         LocalDate data = LocalDate.parse(dataStr);
         LocalTime hora = LocalTime.parse(horaStr);
+
+        if (data.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("A data da ocorrência não pode ser futura.");
+        }
 
         Ocorrencia oc = new Ocorrencia();
         oc.setTipo(OcorrenciaTipo.valueOf(tipoStr));

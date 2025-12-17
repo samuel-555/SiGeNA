@@ -56,6 +56,58 @@ public class OcorrenciaDAO {
         return lista;
     }
 
+    public List<Ocorrencia> buscarComFiltro(String tipo, String status, String texto) {
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT * FROM ocorrencia
+        WHERE status <> 'CANCELADA'
+    """);
+
+        List<Object> params = new ArrayList<>();
+
+        if (tipo != null && !tipo.isBlank()) {
+            sql.append(" AND tipo = ?");
+            params.add(tipo);
+        }
+
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND status = ?");
+            params.add(status);
+        }
+
+        if (texto != null && !texto.isBlank()) {
+            sql.append(" AND descricao LIKE ?");
+            params.add("%" + texto + "%");
+        }
+
+        sql.append(" ORDER BY data DESC");
+
+        try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            List<Ocorrencia> lista = new ArrayList<>();
+
+            while (rs.next()) {
+                Ocorrencia o = new Ocorrencia();
+                o.setId(rs.getLong("id"));
+                o.setDescricao(rs.getString("descricao"));
+                o.setTipo(OcorrenciaTipo.valueOf(rs.getString("tipo")));
+                o.setStatus(StatusOcorrencia.valueOf(rs.getString("status")));
+                o.setData(rs.getTimestamp("data").toLocalDateTime());
+                lista.add(o);
+            }
+
+            return lista;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar ocorrências.", e);
+        }
+    }
+
     public Ocorrencia buscarPorId(Long id) {
         String sql = "SELECT * FROM ocorrencia WHERE id = ?";
 

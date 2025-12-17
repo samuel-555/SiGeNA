@@ -48,7 +48,7 @@
                 </select>
 
                 <label>Data:</label>
-                <input type="date" name="data" value="${oc != null ? oc.data.toLocalDate() : ''}" required>
+                <input type="date" name="data" max="<%= java.time.LocalDate.now() %>" value="${oc != null ? oc.data.toLocalDate() : ''}" required>
 
                 <label>Hora:</label>
                 <input type="time" name="hora"

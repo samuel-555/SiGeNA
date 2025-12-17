@@ -20,6 +20,10 @@ public class GestaoOcorrenciaService {
         return dao.listar();
     }
 
+    public List<Ocorrencia> buscarComFiltro(String tipo, String status, String texto) {
+        return dao.buscarComFiltro(tipo, status, texto);
+    }
+
     public Ocorrencia buscar(Long id) {
         return dao.buscarPorId(id);
     }

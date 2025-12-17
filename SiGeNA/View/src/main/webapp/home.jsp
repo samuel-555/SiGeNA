@@ -159,7 +159,7 @@
 
         <footer class="footer" style="background:#1c1c1c;color:#f5f5f5;padding:16px 24px;margin-top:18px;box-shadow:0 -4px 12px rgba(0,0,0,0.18);">
             <div class="footer-content" style="display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:wrap;">
-                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo SiGeNA" style="height:48px;width:auto;display:block;">
+                <img src="IMG's/logoSiGeNA-Branco.png" alt="Logo SiGeNA" style="height:48px;width:auto;display:block;">
                 <div>
                     <p class="footer-title" style="font-weight:700;margin-bottom:4px;font-size:16px;">SiGeNA - Sistema de Gerenciamento de Animais</p>
                     <p class="footer-text" style="font-size:14px;color:#d0d0d0;">Informacoes institucionais e links uteis ficam disponiveis aqui.</p>

@@ -1,5 +1,5 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ page import="sigena.model.domain.Doacao" %>
 <%@ page import="sigena.model.domain.ReciboDoacao" %>
 <%

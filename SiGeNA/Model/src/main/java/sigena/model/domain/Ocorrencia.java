@@ -1,5 +1,7 @@
 package sigena.model.domain;
 
+import sigena.model.domain.util.OcorrenciaTipo;
+import sigena.model.domain.util.StatusOcorrencia;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

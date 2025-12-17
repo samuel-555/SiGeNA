@@ -1,5 +1,6 @@
+<%@page import="sigena.model.domain.util.StatusOcorrencia"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ page import="sigena.model.domain.Ocorrencia" %>
 
 <%
@@ -49,27 +50,27 @@
                     <%
                         }
                     %>
-            
+
             <form method="get" action="ocorrencias" class="filtro">
-                        <select name="tipo">
-                            <option value="">Todos os tipos</option>
-                            <option value="FUGA">Fuga</option>
-                            <option value="ACIDENTE">Acidente</option>
-                            <option value="TECNICA">Técnica</option>
-                            <option value="OUTRO">Outro</option>
-                        </select>
+                <select name="tipo">
+                    <option value="">Todos os tipos</option>
+                    <option value="FUGA">Fuga</option>
+                    <option value="ACIDENTE">Acidente</option>
+                    <option value="TECNICA">Técnica</option>
+                    <option value="OUTRO">Outro</option>
+                </select>
 
-                        <select name="status">
-                            <option value="">Todos os status</option>
-                            <option value="PENDENTE">Pendente</option>
-                            <option value="EM_ANALISE">Em análise</option>
-                            <option value="RESOLVIDO">Resolvido</option>
-                        </select>
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    <option value="PENDENTE">Pendente</option>
+                    <option value="EM_ANALISE">Em análise</option>
+                    <option value="RESOLVIDO">Resolvido</option>
+                </select>
 
-                        <input type="text" name="texto" placeholder="Buscar descrição">
+                <input type="text" name="texto" placeholder="Buscar descrição">
 
-                        <button type="submit" class="btn">Pesquisar</button>
-                    </form>
+                <button type="submit" class="btn">Pesquisar</button>
+            </form>
 
             <div class="historico">
                 <h2>Histórico de Ocorrências</h2>
@@ -93,34 +94,43 @@
                                 for (Ocorrencia oc : lista) {
                         %>
 
-                    
 
-                    <tr>
-                        <td><%= oc.getTipo().name()%></td>
-                        <td><%= oc.getData() != null ? oc.getData().toLocalDate() : "-"%></td>
-                        <td><%= oc.getData() != null ? oc.getData().toLocalTime() : "-"%></td>
-                        <td><%= oc.getDescricao() != null ? oc.getDescricao() : "-"%></td>
 
-                        <td>
-                            <a class="btn-pequeno editar"
-                               href="ocorrencias?acao=editar&id=<%= oc.getId()%>">
-                                Editar
-                            </a>
+                        <tr>
+                            <td><%= oc.getTipo().name()%></td>
+                            <td><%= oc.getData() != null ? oc.getData().toLocalDate() : "-"%></td>
+                            <td><%= oc.getData() != null ? oc.getData().toLocalTime() : "-"%></td>
+                            <td><%= oc.getDescricao() != null ? oc.getDescricao() : "-"%></td>
 
-                            <form action="ocorrencias" method="post" style="display:inline"
-                                  onsubmit="return confirm('Cancelar ocorrência?');">
-                                <input type="hidden" name="acao" value="cancelar">
-                                <input type="hidden" name="id" value="<%= oc.getId()%>">
-                                <button class="btn-pequeno excluir" type="submit">
-                                    Cancelar
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <%
+                            
+                            <td>
+                                <%
+                                    boolean resolvida = oc.getStatus() == StatusOcorrencia.RESOLVIDO;
+                                %>
+
+                                <% if (!resolvida) {%>
+                                <a class="btn-pequeno editar"
+                                   href="ocorrencias?acao=editar&id=<%= oc.getId()%>">
+                                    Editar
+                                </a>
+
+                                <form action="ocorrencias" method="post" style="display:inline">
+                                    <input type="hidden" name="acao" value="cancelar">
+                                    <input type="hidden" name="id" value="<%= oc.getId()%>">
+                                    <button class="btn-pequeno excluir" type="submit">
+                                        Cancelar
+                                    </button>
+                                </form>
+                                <% } else { %>
+                                <span style="color: gray;">Encerrada</span>
+                                <% } %>
+                            </td>
+
+                        </tr>
+                        <%
+                                }
                             }
-                        }
-                    %>
+                        %>
 
                     </tbody>
                 </table>
@@ -135,6 +145,15 @@
                 <h2>Editando Ocorrência: ID <%= ocEd.getId()%></h2>
 
                 <form action="ocorrencias" method="post">
+
+                    <label>Status:</label>
+                    <select name="status" required>
+                        <option value="PENDENTE"   <%= ocEd.getStatus() == StatusOcorrencia.PENDENTE ? "selected" : ""%>>Pendente</option>
+                        <option value="EM_ANALISE" <%= ocEd.getStatus() == StatusOcorrencia.EM_ANALISE ? "selected" : ""%>>Em análise</option>
+                        <option value="RESOLVIDO"  <%= ocEd.getStatus() == StatusOcorrencia.RESOLVIDO ? "selected" : ""%>>Resolvido</option>
+                    </select>
+
+
                     <input type="hidden" name="acao" value="atualizar"/>
                     <input type="hidden" name="id" value="<%= ocEd.getId()%>"/>
 

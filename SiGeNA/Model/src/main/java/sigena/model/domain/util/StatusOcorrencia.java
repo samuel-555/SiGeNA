@@ -1,4 +1,4 @@
-package sigena.model.domain;
+package sigena.model.domain.util;
 
 public enum StatusOcorrencia {
     PENDENTE,

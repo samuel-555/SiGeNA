@@ -13,8 +13,8 @@ import java.util.List;
 
 import sigena.model.common.exception.DatabaseException;
 import sigena.model.domain.Doacao;
-import sigena.model.domain.DoacaoTipo;
-import sigena.model.domain.StatusDoacao;
+import sigena.model.domain.util.DoacaoTipo;
+import sigena.model.domain.util.StatusDoacao;
 import sigena.model.util.ConexaoDB;
 
 public class DoacaoDAO {

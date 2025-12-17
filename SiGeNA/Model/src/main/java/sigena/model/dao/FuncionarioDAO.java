@@ -1,9 +1,9 @@
 package sigena.model.dao;
 
 import sigena.model.domain.Funcionario;
-import sigena.model.domain.Cargo;
-import sigena.model.domain.Turno;
-import sigena.model.domain.EstadoFuncionario;
+import sigena.model.domain.util.Cargo;
+import sigena.model.domain.util.Turno;
+import sigena.model.domain.util.EstadoFuncionario;
 import sigena.model.util.ConexaoDB;
 import sigena.model.common.exception.DatabaseException;
 

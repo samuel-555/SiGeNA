@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("cargoUsuario", usuario.getCargo());
                 session.setAttribute("UsuarioLogado", usuario1);
 
-                if (usuario.getCargo() == sigena.model.domain.Cargo.GERENTE) {
+                if (usuario.getCargo() == sigena.model.domain.util.Cargo.GERENTE) {
                     response.sendRedirect("home-gerente.jsp");
                 } else {
                     response.sendRedirect("home.jsp");

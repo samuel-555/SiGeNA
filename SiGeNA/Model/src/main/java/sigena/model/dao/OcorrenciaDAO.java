@@ -1,5 +1,7 @@
 package sigena.model.dao;
 
+import sigena.model.domain.util.OcorrenciaTipo;
+import sigena.model.domain.util.StatusOcorrencia;
 import sigena.model.domain.*;
 import java.sql.*;
 import java.util.*;

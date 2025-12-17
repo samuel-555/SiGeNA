@@ -1,7 +1,7 @@
 package sigena.controller;
 
 import sigena.model.domain.Doacao;
-import sigena.model.domain.DoacaoTipo;
+import sigena.model.domain.util.DoacaoTipo;
 import sigena.model.service.GestaoDoacaoService;
 
 import jakarta.servlet.ServletException;
@@ -12,7 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import sigena.model.domain.StatusDoacao;
+import sigena.model.domain.util.StatusDoacao;
 import java.util.List;
 
 @WebServlet("/doacoes")

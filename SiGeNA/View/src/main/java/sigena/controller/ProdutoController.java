@@ -204,8 +204,6 @@ public class ProdutoController extends HttpServlet {
         GestaoProdutoService service = new GestaoProdutoService();
         Produto produto = service.buscar(id);
 
-        GestaoFornecedorService serviceF = new GestaoFornecedorService();
-
         produto.setNome(nome);
         produto.setQuantidade(quantidade);
         produto.setTipo(tipo);

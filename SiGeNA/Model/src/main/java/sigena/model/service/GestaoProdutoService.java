@@ -26,7 +26,6 @@ public class GestaoProdutoService {
     }
 
     public void alterar(Produto p) throws PersistenciaException {
-        ProdutoDAO dao = new ProdutoDAO();
         dao.alterar(p);
     }
 }

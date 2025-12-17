@@ -1,4 +1,7 @@
-    <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="sigena.model.domain.Tratamento"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.List"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="jakarta.servlet.http.HttpSession" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
@@ -17,32 +20,80 @@
         <link rel="stylesheet" href="CSS/style.css">
     </head>
     <body>
-  <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
-  </header>
+        <header>
+            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a></div>
+        </header>
 
-  <div class="container">
-    <h1>Gestão de Tratamentos Médicos</h1>
+        <div class="container">
+            <h1>Gestão de Tratamentos Médicos</h1>
 
-    <div class="botoes-acoes">
-        <button class="btn"><a href="cadastrar-tratamentos.jsp">Registrar Novo Tratamento</a></button>
-    </div>
+            <div class="botoes-acoes">
+                <button class="btn"><a href="cadastrar-tratamentos.jsp">Registrar Novo Tratamento</a></button>
+                
+            </div>
 
-     <c:if test="${not empty mensagemSucesso}">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ${mensagemSucesso}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <c:if test="${not empty mensagemSucesso}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ${mensagemSucesso}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
+
+            <c:if test="${not empty mensagemErro}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${mensagemErro}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
+
+            <div class="historico">
+                <h2>Lista de Tratamentos</h2>
+                <%
+                    String erro = (String) request.getAttribute("erro");
+                    if (erro != null) {
+                %>
+                <p style="color:red;"><%= erro%></p>
+                <% } %>
+                <table>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Animal</th>
+                        <th>Veterinario</th>
+                        <th>Medicação</th>
+                        <th>Status</th>
+                    </tr>
+
+                    <%
+                        List<Tratamento> lista = (List<Tratamento>) request.getAttribute("lista");
+
+                        if (lista != null && !lista.isEmpty()) {
+                            for (Tratamento t : lista) {
+                            if(t.getStatusTratamento() != "Cancelado"){
+                    %>
+
+                    <tr>
+                        <td><%= t.getTipoTratamento()%></td>
+                        <td><%= t.getAnimal().getNome()%></td>
+                        <td><%= (t.getMedico() != null)
+                                ? t.getMedico().getCpf()
+                                : "Sem médico"%></td>
+                        <td><%= t.getMedicacao()%></td>
+                        <td><%= t.getStatusTratamento().replace("_", " ")%></td>
+                        <td>
+                    <a href="TratamentosController?acao=ver&id=<%= t.getId()%>" class="btn-pequeno ver">Ver</a>
+                    <a href="TratamentosController?acao=cancelar&id=<%= t.getId()%>" onclick="return confirm('Deseja cancelar esse tratamento?');" class="btn-pequeno cancelar">Cancelar</a>
+                    
+                </td>
+                    </tr>
+                    <% }
+                        }
+                    } else {
+                    %>
+
+                    <tr><td colspan="8">Nenhum tratamento cadastrado.</td></tr>
+                    <%}%>
+                </table>
+            </div>
         </div>
-    </c:if>
-
-    <c:if test="${not empty mensagemErro}">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ${mensagemErro}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
-
-    </div>
-  </div>
-</body>
+    </body>
 </html>

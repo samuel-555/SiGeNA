@@ -9,7 +9,9 @@ import sigena.model.util.ConexaoDB;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
+import sigena.model.domain.Funcionario;
 import sigena.model.domain.util.StatusTratamento;
 import sigena.model.domain.util.TipoTratamento;
 
@@ -35,24 +37,27 @@ public class TratamentoDAO {
             } else {
                 ps.setNull(9, Types.DATE);
             }
-            
-            if(tratamento.getHorario() != null){
+
+            if (tratamento.getHorario() != null) {
                 ps.setTime(10, java.sql.Time.valueOf(tratamento.getHorario()));
-            }else{
+            } else {
                 ps.setNull(10, Types.TIME);
             }
-            
+
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Tratamento> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM tratamento";
+    public List<Tratamento> listar() throws PersistenciaException, DatabaseException {
+        String sql = "SELECT * FROM tratamento WHERE";
         List<Tratamento> tratamentos = new ArrayList<>();
 
-        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (
+            Connection con = ConexaoDB.getConnection(); 
+            PreparedStatement ps = con.prepareStatement(sql); 
+            ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 tratamentos.add(consultaToTratamento(rs));
@@ -65,14 +70,21 @@ public class TratamentoDAO {
         return tratamentos;
     }
 
-    private Tratamento consultaToTratamento(ResultSet rs) throws SQLException, PersistenciaException {
+    private Tratamento consultaToTratamento(ResultSet rs) throws SQLException, PersistenciaException, DatabaseException {
 
         Long animalId = rs.getLong("animal_id");
         AnimalDAO animalDAO = new AnimalDAO();
         Animal animal = animalDAO.buscarPorId(animalId);
         int vetId = rs.getInt("vet_id");
-        UsuarioDAO vetDAO = new UsuarioDAO();
-        Usuario vet = vetDAO.buscaPorId(vetId);
+        FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
+        Funcionario funcionario = funcionarioDAO.buscarPorId(vetId);
+        Usuario vet = null;
+        if (funcionario != null) {
+            vet = new Usuario();
+            vet.setId(funcionario.getId());     
+            vet.setCpf(funcionario.getCpf());    
+            vet.setCargo(funcionario.getCargo()); 
+        }
         String diagnostico = rs.getString("diagnostico");
         String medicacao = rs.getString("medicacao");
         int frequencia = rs.getInt("frequencia");
@@ -80,12 +92,82 @@ public class TratamentoDAO {
         String tipoStr = rs.getString("tipo");
         String statusStr = rs.getString("status");
         LocalDate dataFinal = rs.getDate("data_final").toLocalDate();
-        LocalTime horario = rs.getTime("horario").toLocalTime();
-
+        LocalTime horario = rs.getTime("horario") != null
+                ? rs.getTime("horario").toLocalTime()
+                : null;
+        int id = rs.getInt("id");
         TipoTratamento tipo = Enum.valueOf(TipoTratamento.class, tipoStr.toUpperCase());
         StatusTratamento status = Enum.valueOf(StatusTratamento.class, statusStr.toUpperCase());
-
-        return new Tratamento(animal, vet, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal, horario);
+        
+        Tratamento t = new Tratamento(animal, vet, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal, horario);
+        t.setId(id);
+        return t;
     }
 
+    public void editar(Tratamento tratamento) throws PersistenciaException {
+        String sql = "UPDATE tratamento SET animal_id = ?, diagnostico = ?, medicacao = ?, frequencia = ?, observacao = ?, tipo = ?, status = ?, data_final = ?, horario = ? WHERE id = ?";
+        try {
+            Connection con = ConexaoDB.getConnection();
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, tratamento.getAnimal().getId());
+            ps.setString(2, tratamento.getDiagnostico());
+            ps.setString(3, tratamento.getMedicacao());
+            ps.setInt(4, tratamento.getFrequencia());
+            ps.setString(5, tratamento.getObservacao());
+            ps.setString(6, tratamento.getTipoTratamento());
+            ps.setString(7, tratamento.getStatusTratamento());
+            if (tratamento.getDataFinal() != null) {
+                ps.setDate(8, java.sql.Date.valueOf(tratamento.getDataFinal()));
+            } else {
+                ps.setNull(8, Types.DATE);
+            }
+
+            if (tratamento.getHorario() != null) {
+                ps.setTime(9, java.sql.Time.valueOf(tratamento.getHorario()));
+            } else {
+                ps.setNull(9, Types.TIME);
+            }
+            ps.setInt(10, tratamento.getId());
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public Tratamento buscarPorId(int id) throws PersistenciaException, DatabaseException{
+        String sql = "SELECT * FROM tratamento WHERE id = ?";
+        try{
+            Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                Tratamento t = new Tratamento();
+                t = consultaToTratamento(rs);
+                
+                return t;
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+        
+    }
+    
+    public void cancelar(int id) throws PersistenciaException, DatabaseException{
+        String sql = "UPDATE tratamento SET status = ? WHERE id = ?";
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            Tratamento t = buscarPorId(id);
+            t.setStatusTratamento(StatusTratamento.CANCELADO);
+            ps.setString(1, t.getStatusTratamento());
+            ps.setInt(2, id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao cancelar tratamento: " + e.getMessage());
+        }
+        
+    }
 }

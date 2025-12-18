@@ -226,6 +226,23 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
+    
+    public void initTarefas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS tarefas (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL,
+                texto VARCHAR(255),
+                concluida BOOLEAN NOT NULL,
+                funcionario_id INT NOT NULL,
+                dataCadastro DATETIME NOT NULL,
+                dataPConclusao DATETIME NOT NULL
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
 public void initDoacoes() throws SQLException {
     String sql = """
@@ -351,6 +368,17 @@ public void initDoacoes() throws SQLException {
                 data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """;
+    
+    public void initHistorico() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS historico (
+            funcionarioCpf VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            descricao VARCHAR(255) NOT NULL,
+            data DATETIME NOT NULL,
+            id BIGINT AUTO_INCREMENT PRIMARY KEY
+        );
+        """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
@@ -363,6 +391,7 @@ public void initDoacoes() throws SQLException {
             initFuncionarios();
             initUsuarios();
             initAnimais();
+            initHabitat_animal();
             initTratamento();
             initPlanosAlimentares();
             initEnriquecimentos();
@@ -372,6 +401,8 @@ public void initDoacoes() throws SQLException {
             initDoacoes();
             initRecibosDoacao();
             initVisitas();
+            initTarefas();
+            initHistorico();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

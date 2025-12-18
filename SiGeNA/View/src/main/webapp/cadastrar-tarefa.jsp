@@ -5,6 +5,14 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@taglib uri="jakarta.tags.functions" prefix="fn" %>
+<%@taglib uri="jakarta.tags.xml" prefix="x" %>
+<%@taglib uri="jakarta.tags.sql" prefix="sql"%>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -24,7 +32,7 @@
     <h1>Cadastrar Tarefa</h1>
 
     <div class="botoes-acoes">
-      <a href="home.jsp" class="btn">Voltar</a>
+      <a href="home-gerente.jsp" class="btn">Voltar</a>
     </div>
     
     <div class="formulario">
@@ -39,13 +47,24 @@
         
         <label for="nome">Nome da tarefa:</label>
         <input type="text" id="nome" name="nome" placeholder="Ex: Limpar aquário">
+        
+        <label for="texto">Descrição da tarefa:</label>
+        <input type="text" id="texto" name="texto" placeholder="Ex: Limpar os aquários dos pinguins">
+        
+        <label for="destinatario">Funcionario encarregado:</label>
+            <select name="destinatario" id="destinatario">
 
-        <!-- possivelmente colocar selecao de tipo pra separar os funcionarios que vao aparecer -->
-        <label for="encarregado">Funcionario encarregado:</label> <!--  campo de seleção apenas com os funcionarios ativos -->
-        <input type="text" id="encarregado" name="encarregado" placeholder="Ex: Jorge veterinário">
+                <c:forEach items="${funcionarios}" var="funcionario">
+                    <c:if test="${funcionario.estado.name() eq 'ATIVO'}">
+                        <option value="${funcionario.id}">${funcionario.nome}: ${funcionario.cargo.name()}</option>
+                    </c:if>
+                </c:forEach>
+
+            </select>
+
 
         <label for="data-conclusao">Data para conclusão:</label>
-        <input type="date" name="data-conclusao" id="data-conclusao"placeholder="Ex: 10/10/2007">
+        <input type="datetime-local" name="data-conclusao" id="data-conclusao"placeholder="Ex: 10/10/2007">
         
         
         <button type="submit" class="btn-enviar">Enviar tarefa</button>

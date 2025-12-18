@@ -54,7 +54,6 @@
                     <option value="LICENCA_MATERNIDADE">Licença maternidade</option>
                     <option value="LICENCA_PATERNIDADE">Licença paternidade</option>
                     <option value="AFASTADO">Afastado</option>
-                    <option value="CANCELADO">Cancelado</option>
                 </select>
 
                 <button type="submit" class="btn">Pesquisar</button>

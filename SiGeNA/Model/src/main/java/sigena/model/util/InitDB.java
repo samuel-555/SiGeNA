@@ -210,7 +210,7 @@ public class InitDB {
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             nome_doador VARCHAR(150) NOT NULL,
             tipo VARCHAR(50) NOT NULL,
-            valor_monetario DECIMAL(10,2),
+            valor_monetario DECIMAL(15,2),
             descricao_outro VARCHAR(255),
             observacoes TEXT,
             status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',

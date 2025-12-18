@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import sigena.model.common.exception.PersistenciaException;
-import sigena.model.domain.util.DataConverter;
+import sigena.model.common.util.DataConverter;
 import sigena.model.domain.Animal;
 import sigena.model.domain.Especie;
 import sigena.model.domain.Habitat;
@@ -33,8 +33,6 @@ public class AnimalDAO {
         } catch (SQLException e) {
             throw new PersistenciaException("Não foi possível cadastrar animal: " + e.getMessage());
         }
-        
-        System.out.println(animal.getHabitatNome());
     }
     
     public List<Animal> listar(String busca, String filtro) throws PersistenciaException{

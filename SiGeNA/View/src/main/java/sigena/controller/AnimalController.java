@@ -35,6 +35,8 @@ public class AnimalController extends HttpServlet {
         
             try {
                 String acao = request.getParameter("acao");
+                if(acao == null)
+                    throw new NullPointerException();
                 
                 if("listar".equals(acao)) {
                     List<Animal> animais = null;

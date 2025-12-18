@@ -1,8 +1,10 @@
-package sigena.model.domain.util;
+package sigena.model.common.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.Period;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class DataConverter {
     public static LocalDate toLocalDate(String data) {
@@ -13,6 +15,14 @@ public class DataConverter {
         return dataOb;
     }
     
+    public static LocalDateTime toLocalDateTime(String data) {
+        if(data == null || data.isBlank())
+            return null;
+        
+        LocalDateTime dataOb = LocalDateTime.parse(data);
+        return dataOb;
+    }
+    
     public static String toStringFormat(LocalDate data) {
         if(data == null)
             return null;
@@ -20,6 +30,15 @@ public class DataConverter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String dataString = data.format(formatter);
         return dataString;
+    }
+    
+    public static String toStringFormat(LocalTime tempo) {
+        if(tempo == null)
+            return null;
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String tempoString = tempo.format(formatter);
+        return tempoString;
     }
     
     public static String toAge(LocalDate data) {

@@ -331,6 +331,23 @@ public void initDoacoes() throws SQLException {
             st.executeUpdate(sql);
         }
     }
+    
+    public void initEventos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS eventos (
+              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+              titulo VARCHAR(100) NOT NULL, 
+              descricao TEXT,
+              data_programada DATETIME NOT NULL,
+              ocorrido BOOLEAN NOT NULL,
+              data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initTodos() throws PersistenciaException {
         try {
@@ -352,6 +369,7 @@ public void initDoacoes() throws SQLException {
 
             initFornecedores();
             initProdutos();
+            initEventos();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

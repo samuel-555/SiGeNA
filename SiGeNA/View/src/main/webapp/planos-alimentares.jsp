@@ -1,8 +1,17 @@
 <%@page import="java.util.List"%>
 <%@page import="sigena.model.domain.PlanoAlimentar"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
-    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
+    HttpSession sessao = request.getSession(false);
+    if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "planos");
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home.jsp" : "home.jsp";
     String paginaHomeComContexto = request.getContextPath() + "/" + paginaHome;
 %>
 <!DOCTYPE html>
@@ -19,8 +28,10 @@
     <div class="container">
         <h1>Gestão de Planos Alimentares</h1>
         <div class="botoes-acoes">
+            <% if (podeCadastrar) { %>
             <a href="PlanosAlimentaresController?acao=cadastrar" class="btn">Cadastrar Novo Plano</a>
-            <a href="<%= paginaHomeComContexto %>" class="btn">Voltar à Home</a>
+            <% } %>
+            <a href="<%= paginaHomeComContexto %>" class="btn">Voltar para Home</a>
         </div>
 
         <div class="historico">
@@ -64,7 +75,9 @@
                     </td>
                     <td>
                         <a href="PlanosAlimentaresController?acao=ver&id=<%= p.getId() %>" class="btn-pequeno ver">Ver</a>
+                        <% if (podeCadastrar) { %>
                         <a href="PlanosAlimentaresController?acao=excluir&id=<%= p.getId() %>" class="btn-pequeno excluir">Excluir</a>
+                        <% } %>
                     </td>
                 </tr>
                 <%

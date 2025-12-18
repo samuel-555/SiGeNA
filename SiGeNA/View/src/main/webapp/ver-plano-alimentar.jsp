@@ -1,7 +1,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
-    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
+    HttpSession sessao = request.getSession(false);
+    Cargo cargo = (sessao != null) ? (Cargo) sessao.getAttribute("cargoUsuario") : null;
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "planos");
+    request.setAttribute("podeGerenciarPlano", podeGerenciar);
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home.jsp" : "home.jsp";
 %>
 <!DOCTYPE html>
 <html>
@@ -38,7 +44,9 @@
                     </c:if>
                 </ul>
 
-                <a href="PlanosAlimentaresController?acao=editar&id=${plano.id}" class="btn">Editar</a>
+                <c:if test="${podeGerenciarPlano}">
+                    <a href="PlanosAlimentaresController?acao=editar&id=${plano.id}" class="btn">Editar</a>
+                </c:if>
             </div>
         </div>
     </body>

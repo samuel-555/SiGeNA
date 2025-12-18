@@ -1,7 +1,10 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="sigena.model.domain.Cargo" %>
 <%@ page import="sigena.model.domain.Doacao" %>
 <%@ page import="sigena.model.domain.ReciboDoacao" %>
+<%@taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
@@ -13,26 +16,30 @@
         response.sendRedirect("home.jsp");
         return;
     }
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "doacoes");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "doacoes");
 %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>SiGeNA - Doações</title>
+    <title>SiGeNA - DoaÃ§Ãµes</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/stylefuncionario.css">
 </head>
 <body>
 <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + (cargo == Cargo.GERENTE ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
 </header>
 
 <div class="container">
-    <h1>Gestão de Doações</h1>
+    <h1>GestÃ£o de DoaÃ§Ãµes</h1>
 
     <div class="botoes-acoes">
-        <a href="cadastrar-doacao.jsp" class="btn">Cadastrar Nova Doação</a>
+        <% if (podeCadastrar) { %>
+        <a href="cadastrar-doacao.jsp" class="btn">Cadastrar Nova DoaÃ§Ã£o</a>
+        <% } %>
     </div>
 
     <c:if test="${not empty mensagemSucesso}">
@@ -49,17 +56,17 @@
     </c:if>
 
     <div class="historico">
-        <h2>Lista de Doações</h2>
+        <h2>Lista de DoaÃ§Ãµes</h2>
         <table>
             <thead>
                 <tr>
                     <th>Doador</th>
                     <th>Tipo</th>
-                    <th>Valor/Descrição</th>
+                    <th>Valor/DescriÃ§Ã£o</th>
                     <th>Data</th>
                     <th>Status</th>
                     <th>Recibo</th>
-                    <th>Ações</th>
+                    <th>AÃ§Ãµes</th>
                 </tr>
             </thead>
             <tbody>
@@ -97,6 +104,7 @@
                         %>
                     </td>
                     <td>
+                        <% if (podeGerenciar) { %>
                         <a class="btn-pequeno editar" href="doacoes?acao=editar&id=<%= d.getId() %>">Editar</a>
 
                         <form action="doacoes" method="post" style="display:inline" onsubmit="return confirm('Confirmar cancelamento?');">
@@ -104,6 +112,7 @@
                             <input type="hidden" name="id" value="<%= d.getId() %>"/>
                             <button class="btn-pequeno excluir" type="submit">Cancelar</button>
                         </form>
+                        <% } %>
                     </td>
                 </tr>
                 <%
@@ -116,10 +125,10 @@
 
     <%
         Doacao ed = (Doacao) request.getAttribute("doacaoEdicao");
-        if (ed != null) {
+        if (ed != null && podeGerenciar) {
     %>
     <div class="editar-bloco" style="margin-top:20px;">
-        <h2>Editando Doação: ID <%= ed.getId() %></h2>
+        <h2>Editando Doaâ€¡Ã†o: ID <%= ed.getId() %></h2>
 
         <form action="doacoes" method="post">
             <input type="hidden" name="acao" value="atualizar" />
@@ -133,11 +142,11 @@
                 <input type="text" name="valorAtualizacao" value="<%= ed.getValorMonetario() != null ? ed.getValorMonetario() : "" %>" />
             </c:if>
             <c:if test="${ed.tipo != 'MONETARIA'}">
-                <label>Nova Descrição:</label>
+                <label>Nova Descriâ€¡Ã†o:</label>
                 <input type="text" name="descricaoAtualizacao" value="<%= ed.getDescricaoOutro() != null ? ed.getDescricaoOutro() : "" %>" />
             </c:if>
 
-            <button type="submit" class="btn">Salvar Alterações</button>
+            <button type="submit" class="btn">Salvar Alteraâ€¡Ã¤es</button>
             <a href="doacoes" class="btn cancelar">Voltar</a>
         </form>
 
@@ -146,7 +155,7 @@
             if (recibo != null) {
         %>
             <div style="margin-top:12px;">
-                <strong>Recibo:</strong> Código: <%= recibo.getCodigo() %> - Emitido em: <%= recibo.getDataEmissao() %>
+                <strong>Recibo:</strong> CÂ¢digo: <%= recibo.getCodigo() %> - Emitido em: <%= recibo.getDataEmissao() %>
             </div>
         <%
             }

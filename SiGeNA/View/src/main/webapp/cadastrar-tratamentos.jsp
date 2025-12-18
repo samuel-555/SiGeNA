@@ -15,7 +15,7 @@
     GestaoAnimalService service = new GestaoAnimalService();
     List<Animal> animais = service.listarAnimais();
     pageContext.setAttribute("animais", animais);
-    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home.jsp" : "home.jsp";
 %>
 <!DOCTYPE html>
 <html>
@@ -35,7 +35,7 @@
             </div>
             <div class="formulario">
                 <h2>Registrar Novo Tratamento</h2>
-                <form action="TratamentosServlet" method="POST">
+                <form action="TratamentosController" method="POST">
                     <label for="tipoTratamento" >Tipo do Tratamento</label>
                     <select id="tipoTratamento" name="tipoTratamento">
                         <c:forEach var="tipo" items="${tiposTratamento}">

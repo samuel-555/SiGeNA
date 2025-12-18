@@ -2,6 +2,7 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="sigena.model.domain.Cargo" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
@@ -9,9 +10,9 @@
         return;
     }
     Cargo cargoUsuario = (Cargo) sessao.getAttribute("cargoUsuario");
-    boolean usuarioGerente = cargoUsuario != null && cargoUsuario == Cargo.GERENTE;
-    request.setAttribute("usuarioGerente", usuarioGerente);
-    String homeDestino = request.getContextPath() + (usuarioGerente ? "/home-gerente.jsp" : "/home.jsp");
+    boolean podeEditarRelatorio = temPermissaoCadastro(cargoUsuario, "relatorios");
+    request.setAttribute("podeEditarRelatorio", podeEditarRelatorio);
+    String homeDestino = request.getContextPath() + "/home.jsp";
 %>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -20,7 +21,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Gestão de Relatórios de Saúde</title>
         <link rel="stylesheet" href="CSS/style.css">
-        <link rel="stylesheet" href="CSS/stylehome.css">
         <link rel="stylesheet" href="CSS/stylerelatorios.css">
     </head>
     <body>
@@ -48,7 +48,7 @@
                         </c:choose>
                     </h2>
                     <c:choose>
-                        <c:when test="${usuarioGerente}">
+                        <c:when test="${podeEditarRelatorio}">
                             <form method="post" action="RelatorioSaudeController" class="formulario">
                                 <input type="hidden" name="acao" value="${empty relatorioEdicao ? 'criar' : 'atualizar'}">
                                 <c:if test="${not empty relatorioEdicao}">
@@ -97,7 +97,7 @@
                             </form>
                         </c:when>
                         <c:otherwise>
-                            <p class="aviso-permissao">Apenas usuários com perfil de gerente podem cadastrar ou editar relatórios. Utilize o histórico abaixo para consulta.</p>
+                            <p class="aviso-permissao">Apenas gestores e veterinários podem cadastrar ou editar relatórios. Utilize o histórico abaixo para consulta.</p>
                         </c:otherwise>
                     </c:choose>
             </section>
@@ -162,7 +162,7 @@
                                                 <td class="acoes">
                                                     <div class="acoes-wrapper">
                                                         <c:choose>
-                                                            <c:when test="${usuarioGerente}">
+                                                            <c:when test="${podeEditarRelatorio}">
                                                                 <a class="btn editar" href="RelatorioSaudeController?acao=editar&id=${relatorio.id}">Editar</a>
                                                                 <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente excluir este relatório?');">
                                                                     <input type="hidden" name="acao" value="excluir">
@@ -188,7 +188,7 @@
             <section class="card" id="observacoes" style="display: block;">
                     <h2>Acrescentar Observações</h2>
                     <c:choose>
-                        <c:when test="${usuarioGerente}">
+                        <c:when test="${podeEditarRelatorio}">
                             <form method="post" action="RelatorioSaudeController" class="formulario">
                                 <input type="hidden" name="acao" value="adicionarObservacao">
                                 <label>Relatório:</label>

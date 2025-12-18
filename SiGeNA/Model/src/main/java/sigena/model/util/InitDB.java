@@ -108,7 +108,7 @@ public class InitDB {
                 cargo VARCHAR(30) NOT NULL,
                 area_atuacao VARCHAR(120) NOT NULL,
                 turno ENUM('MANHA','TARDE','NOITE') NOT NULL DEFAULT 'MANHA',
-                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO') 
+                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO','CANCELADO') 
                     NOT NULL DEFAULT 'ATIVO',
                 observacoes TEXT
             );
@@ -317,6 +317,7 @@ public class InitDB {
         descricao TEXT,
         tipo VARCHAR(30) NOT NULL,
         status VARCHAR(30) NOT NULL,
+        cpf_cadastrador VARCHAR(14) NOT NULL,
         data DATETIME NOT NULL
     );
     """;
@@ -325,6 +326,26 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
+    
+
+    public void initHistoricoStatusOcorrencia() throws SQLException {
+    String sql = """
+    CREATE TABLE IF NOT EXISTS historico_status_ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        ocorrencia_id BIGINT NOT NULL,
+        status_anterior VARCHAR(20) NULL,
+        status_novo VARCHAR(20) NOT NULL,
+        cpf_responsavel VARCHAR(14) NOT NULL,
+        data_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (ocorrencia_id) REFERENCES ocorrencia(id)
+    );
+    """;
+
+    try (Statement st = con.createStatement()) {
+        st.executeUpdate(sql);
+    }
+}
+
 
     public void initTodos() throws PersistenciaException {
         try {
@@ -341,6 +362,7 @@ public class InitDB {
             initDoacoes();
             initRecibosDoacao();
             initOcorrencias();
+            initHistoricoStatusOcorrencia();
 
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 

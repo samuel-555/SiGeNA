@@ -16,18 +16,25 @@ public class OcorrenciaDAO {
 
     public void criar(Ocorrencia o) {
         String sql = """
-        INSERT INTO ocorrencia (descricao, tipo, status, data)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO ocorrencia (descricao, tipo, status, data, cpf_cadastrador)
+        VALUES (?, ?, ?, ?, ?)
     """;
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(
+                sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, o.getDescricao());
             ps.setString(2, o.getTipo().name());
             ps.setString(3, o.getStatus().name());
             ps.setTimestamp(4, Timestamp.valueOf(o.getData()));
+            ps.setString(5, o.getCpfCadastrador());
 
             ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                o.setId(rs.getLong(1));
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao salvar ocorrência.", e);

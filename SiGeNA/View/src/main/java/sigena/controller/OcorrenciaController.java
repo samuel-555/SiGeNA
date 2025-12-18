@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import sigena.model.dao.OcorrenciaDAO;
 import sigena.model.domain.Ocorrencia;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.List;
+import sigena.model.dao.HistoricoOcorrenciaDAO;
 
 @WebServlet("/ocorrencias")
 public class OcorrenciaController extends HttpServlet {
@@ -104,15 +106,24 @@ public class OcorrenciaController extends HttpServlet {
 
             if ("cadastrar".equals(acao)) {
 
-                Ocorrencia oc = montarOcorrencia(request);
+                HttpSession sessao = request.getSession(false);
+                String cpf = (String) sessao.getAttribute("CpfLogado");
 
-                System.out.println("DEBUG OCORRENCIA:");
-                System.out.println("Descricao: " + oc.getDescricao());
-                System.out.println("Tipo: " + oc.getTipo());
-                System.out.println("Status: " + oc.getStatus());
-                System.out.println("Data: " + oc.getData());
+                Ocorrencia oc = montarOcorrencia(request);
+                oc.setCpfCadastrador(cpf);
+
+                StatusOcorrencia statusInicial = oc.getStatus();
 
                 service.criar(oc);
+
+                HistoricoOcorrenciaDAO historicoDAO = new HistoricoOcorrenciaDAO(sigena.model.util.ConexaoDB.getConnection());
+
+                historicoDAO.registrar(
+                        oc.getId(),
+                        null,
+                        statusInicial,
+                        cpf
+                );
 
                 response.sendRedirect("ocorrencias");
                 return;
@@ -131,6 +142,27 @@ public class OcorrenciaController extends HttpServlet {
                     request.setAttribute("ocorrencias", service.listar());
                     request.getRequestDispatcher("ocorrencias.jsp").forward(request, response);
                     return;
+                }
+
+                StatusOcorrencia statusAnterior = atual.getStatus();
+                StatusOcorrencia novoStatus = oc.getStatus();
+
+                if (statusAnterior != novoStatus) {
+
+                    HttpSession sessao = request.getSession(false);
+                    String cpf = (String) sessao.getAttribute("CpfLogado");
+
+                    HistoricoOcorrenciaDAO historicoDAO
+                            = new HistoricoOcorrenciaDAO(
+                                    sigena.model.util.ConexaoDB.getConnection()
+                            );
+
+                    historicoDAO.registrar(
+                            atual.getId(),
+                            statusAnterior,
+                            novoStatus,
+                            cpf
+                    );
                 }
 
                 service.atualizar(oc);

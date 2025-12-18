@@ -6,7 +6,8 @@ public enum EstadoFuncionario {
     FERIAS("Férias"),
     LICENCA_MATERNIDADE("Licença Maternidade"),
     LICENCA_PATERNIDADE("Licença Paternidade"),
-    AFASTADO("Afastado");
+    AFASTADO("Afastado"),
+    CANCELADO("Cancelado");
 
     private final String descricao;
 

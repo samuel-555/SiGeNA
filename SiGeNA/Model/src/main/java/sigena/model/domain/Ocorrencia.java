@@ -14,8 +14,10 @@ public class Ocorrencia {
     private OcorrenciaTipo tipo;
     private StatusOcorrencia status;
     private LocalDateTime data;
+    private String cpfCadastrador;
 
-    public Ocorrencia() {}
+    public Ocorrencia() {
+    }
 
     public Long getId() {
         return id;
@@ -73,11 +75,10 @@ public class Ocorrencia {
         this.data = data;
     }
 
-
     public String getHora() {
         if (data != null) {
             return data.toLocalTime()
-                       .format(DateTimeFormatter.ofPattern("HH:mm"));
+                    .format(DateTimeFormatter.ofPattern("HH:mm"));
         }
         return null;
     }
@@ -85,8 +86,17 @@ public class Ocorrencia {
     public String getDataFormatada() {
         if (data != null) {
             return data.toLocalDate()
-                       .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
         return null;
     }
+
+    public String getCpfCadastrador() {
+        return cpfCadastrador;
+    }
+
+    public void setCpfCadastrador(String cpfCadastrador) {
+        this.cpfCadastrador = cpfCadastrador;
+    }
+
 }

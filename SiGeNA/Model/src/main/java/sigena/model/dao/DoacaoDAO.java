@@ -66,7 +66,10 @@ public class DoacaoDAO {
     public List<Doacao> listarTodas() throws DatabaseException {
 
         List<Doacao> lista = new ArrayList<>();
-        String sql = "SELECT * FROM doacoes ORDER BY data_doacao DESC, id DESC";
+        String sql = """
+            SELECT * FROM doacoes
+            WHERE status <> 'CANCELADA'
+            ORDER BY data_doacao DESC, id DESC""";
 
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -83,7 +86,10 @@ public class DoacaoDAO {
 
     public Doacao buscarPorId(Long id) throws DatabaseException {
 
-        String sql = "SELECT * FROM doacoes WHERE id=?";
+        String sql = """
+        SELECT * FROM doacoes 
+        WHERE id=?
+    """;
 
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -100,6 +106,65 @@ public class DoacaoDAO {
         }
 
         return null;
+    }
+
+    public List<Doacao> pesquisar(
+            String nomeDoador,
+            DoacaoTipo tipo,
+            LocalDate dataInicio,
+            LocalDate dataFim
+    ) throws DatabaseException {
+
+        List<Doacao> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT * FROM doacoes
+        WHERE status <> 'CANCELADA'
+    """);
+
+        if (nomeDoador != null && !nomeDoador.isEmpty()) {
+            sql.append(" AND nome_doador LIKE ?");
+        }
+        if (tipo != null) {
+            sql.append(" AND tipo = ?");
+        }
+        if (dataInicio != null) {
+            sql.append(" AND data_doacao >= ?");
+        }
+        if (dataFim != null) {
+            sql.append(" AND data_doacao <= ?");
+        }
+
+        sql.append(" ORDER BY data_doacao DESC, id DESC");
+
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int i = 1;
+
+            if (nomeDoador != null && !nomeDoador.isEmpty()) {
+                ps.setString(i++, "%" + nomeDoador + "%");
+            }
+            if (tipo != null) {
+                ps.setString(i++, tipo.name());
+            }
+            if (dataInicio != null) {
+                ps.setDate(i++, java.sql.Date.valueOf(dataInicio));
+            }
+            if (dataFim != null) {
+                ps.setDate(i++, java.sql.Date.valueOf(dataFim));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapear(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao pesquisar doações: " + e.getMessage());
+        }
+
+        return lista;
     }
 
     public void atualizar(Doacao doacao) throws DatabaseException {

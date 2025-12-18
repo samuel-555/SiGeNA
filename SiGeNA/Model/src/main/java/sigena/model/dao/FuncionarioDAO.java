@@ -29,8 +29,7 @@ public class FuncionarioDAO {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         """;
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, f.getNome());
             ps.setString(2, f.getCpf());
@@ -43,7 +42,9 @@ public class FuncionarioDAO {
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) f.setId(rs.getInt(1));
+                if (rs.next()) {
+                    f.setId(rs.getInt(1));
+                }
             }
 
         } catch (SQLException e) {
@@ -58,8 +59,7 @@ public class FuncionarioDAO {
             WHERE id=?;
         """;
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, f.getNome());
             ps.setString(2, f.getCpf());
@@ -77,21 +77,25 @@ public class FuncionarioDAO {
         }
     }
 
-    public void deletar(int id) throws DatabaseException {
-        String sql = "DELETE FROM funcionarios WHERE id=?;";
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+    public void cancelar(int id) throws DatabaseException {
+        String sql = "UPDATE funcionarios SET estado=? WHERE id=?";
+
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, EstadoFuncionario.CANCELADO.name());
+            ps.setInt(2, id);
             ps.executeUpdate();
+
         } catch (SQLException e) {
-            throw new DatabaseException("Erro ao deletar funcionário: " + e.getMessage());
+            throw new DatabaseException("Erro ao cancelar funcionário: " + e.getMessage());
         }
     }
 
     public Funcionario buscarPorId(int id) throws DatabaseException {
-        String sql = "SELECT * FROM funcionarios WHERE id=?;";
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        String sql = """
+                     SELECT * FROM funcionarios 
+                     WHERE id=? AND estado <> 'CANCELADO';""";
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -106,11 +110,11 @@ public class FuncionarioDAO {
 
     public List<Funcionario> listar() throws DatabaseException {
         List<Funcionario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM funcionarios ORDER BY nome;";
+        String sql = """
+        SELECT * FROM funcionarios  WHERE estado <> 'CANCELADO' ORDER BY nome; 
+        """;
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 lista.add(mapFuncionario(rs));
@@ -123,27 +127,104 @@ public class FuncionarioDAO {
         return lista;
     }
 
-    public int contarPorSetorETurnoExceto(String setor, String turno, int idExcluir) throws DatabaseException {
-        String sql = """
-            SELECT COUNT(*) FROM funcionarios 
-            WHERE area_atuacao=? AND turno=? AND id<>?;
-        """;
+    public int contarAtivosPorAreaTurnoExcetoId(
+            int idFuncionario,
+            String areaAtuacao,
+            Turno turno
+    ) throws DatabaseException {
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, setor);
-            ps.setString(2, turno);
-            ps.setInt(3, idExcluir);
+        String sql = """
+        SELECT COUNT(*)
+        FROM funcionarios
+        WHERE area_atuacao = ?
+          AND turno = ?
+          AND estado = 'ATIVO'
+          AND id <> ?
+    """;
+
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, areaAtuacao);
+            ps.setString(2, turno.name());
+            ps.setInt(3, idFuncionario);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
+
         } catch (SQLException e) {
-            throw new DatabaseException("Erro ao contar funcionários: " + e.getMessage());
+            throw new DatabaseException("Erro ao contar funcionários ativos: " + e.getMessage());
         }
+
         return 0;
+    }
+
+    public List<Funcionario> pesquisar(
+            String nome,
+            String cpf,
+            Cargo cargo,
+            Turno turno,
+            EstadoFuncionario estado
+    ) throws DatabaseException {
+
+        List<Funcionario> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT * FROM funcionarios
+        WHERE estado <> 'CANCELADO'
+    """);
+
+        if (nome != null && !nome.isEmpty()) {
+            sql.append(" AND nome LIKE ?");
+        }
+        if (cpf != null && !cpf.isEmpty()) {
+            sql.append(" AND cpf = ?");
+        }
+        if (cargo != null) {
+            sql.append(" AND cargo = ?");
+        }
+        if (turno != null) {
+            sql.append(" AND turno = ?");
+        }
+        if (estado != null) {
+            sql.append(" AND estado = ?");
+        }
+
+        sql.append(" ORDER BY nome");
+
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int i = 1;
+
+            if (nome != null && !nome.isEmpty()) {
+                ps.setString(i++, "%" + nome + "%");
+            }
+            if (cpf != null && !cpf.isEmpty()) {
+                ps.setString(i++, cpf);
+            }
+            if (cargo != null) {
+                ps.setString(i++, cargo.name());
+            }
+            if (turno != null) {
+                ps.setString(i++, turno.name());
+            }
+            if (estado != null) {
+                ps.setString(i++, estado.name());
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapFuncionario(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao pesquisar funcionários: " + e.getMessage());
+        }
+
+        return lista;
     }
 
     private Funcionario mapFuncionario(ResultSet rs) throws SQLException {

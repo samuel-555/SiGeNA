@@ -24,11 +24,41 @@
     </head>
     <body>
         <header>
-            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a></div>
         </header>
 
         <div class="container">
             <h1>Gestão de Funcionários</h1>
+            <form method="get" action="FuncionarioServlet" class="filtro">
+                <input type="text" name="nome" placeholder="Buscar pelo nome">
+
+                <select name="cargo">
+                    <option value="">Todos os cargos</option>
+                    <option value="GERENTE">Gerente</option>
+                    <option value="ZOOTECNISTA">Zootecnista</option>
+                    <option value="TRATADOR">Tratador</option>
+                    <option value="VETERINARIO">Veterinário</option>
+                </select>
+
+                <select name="turno">
+                    <option value="">Todos os turnos</option>
+                    <option value="MANHA">Manhã</option>
+                    <option value="TARDE">Tarde</option>
+                    <option value="NOITE">Noite</option>
+                </select>
+
+                <select name="estado">
+                    <option value="">Todos os estados</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="FERIAS">Férias</option>
+                    <option value="LICENCA_MATERNIDADE">Licença maternidade</option>
+                    <option value="LICENCA_PATERNIDADE">Licença paternidade</option>
+                    <option value="AFASTADO">Afastado</option>
+                    <option value="CANCELADO">Cancelado</option>
+                </select>
+
+                <button type="submit" class="btn">Pesquisar</button>
+            </form>
 
             <div class="botoes-acoes">
                 <a href="cadastrar-funcionario.jsp" class="btn">Cadastrar Novo Funcionário</a>
@@ -67,7 +97,7 @@
                             <td>
                                 <a class="btn-pequeno editar" href="FuncionarioServlet?acao=editar&id=<%= f.getId()%>">Editar</a>
                                 <form action="FuncionarioServlet" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclusão?');">
-                                    <input type="hidden" name="acao" value="deletar"/>
+                                    <input type="hidden" name="acao" value="cancelar"/>
                                     <input type="hidden" name="id" value="<%= f.getId()%>"/>
                                     <input type="hidden" name="setor" value="<%= f.getAreaAtuacao()%>"/>
                                     <input type="hidden" name="turno" value="<%= f.getTurno().name()%>"/>

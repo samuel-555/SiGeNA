@@ -38,9 +38,8 @@ public class DoacoesController extends HttpServlet {
                 return;
             }
 
-            // Ação padrão: listar todas as doações
             List<Doacao> lista = service.listarDoacoes();
-            req.setAttribute("doacoes", lista);  // manter padrão com "doacoes"
+            req.setAttribute("doacoes", lista);
             req.getRequestDispatcher("doacoes.jsp")
                     .forward(req, resp);
 
@@ -61,7 +60,6 @@ public class DoacoesController extends HttpServlet {
                 Doacao d = construirDoacao(req, false);
                 service.registrarDoacao(d);
 
-                // Redireciona para o GET que lista todas
                 resp.sendRedirect("doacoes?acao=listar");
                 return;
             }
@@ -72,21 +70,24 @@ public class DoacoesController extends HttpServlet {
 
                 Doacao d = construirDoacao(req, true);
 
-                // Atualização depende do tipo real da doação no banco
                 if (doacaoExistente.getTipo() == DoacaoTipo.MONETARIA) {
-                    // Atualiza valor apenas se for monetária
                     service.atualizarValor(d.getId(), d.getValorMonetario());
                 } else if (doacaoExistente.getTipo() == DoacaoTipo.OUTRO) {
-                    // Atualiza descrição apenas se for tipo OUTRO
                     String descricao = (d.getDescricaoOutro() == null || d.getDescricaoOutro().isBlank())
                             ? doacaoExistente.getDescricaoOutro()
                             : d.getDescricaoOutro();
 
                     service.atualizarDescricao(d.getId(), descricao);
                 }
-                // Outros tipos não têm atualização específica
 
-                // Redireciona para a listagem após atualização
+                resp.sendRedirect("doacoes?acao=listar");
+                return;
+            }
+
+            if ("cancelar".equals(acao)) {
+                Long id = Long.parseLong(req.getParameter("id"));
+                service.cancelarDoacao(id);
+
                 resp.sendRedirect("doacoes?acao=listar");
                 return;
             }
@@ -107,12 +108,10 @@ public class DoacoesController extends HttpServlet {
         d.setNomeDoador(req.getParameter("doador"));
         d.setObservacoes(req.getParameter("observacoes"));
 
-        // Tipo
         String tipoStr = req.getParameter("tipoDoacao");
         DoacaoTipo tipo = DoacaoTipo.fromString(tipoStr);
         d.setTipo(tipo);
 
-        // Tipo monetário
         if (tipo == DoacaoTipo.MONETARIA) {
             String v = req.getParameter("valor");
             if (v != null && !v.isBlank()) {

@@ -351,7 +351,7 @@ public void initDoacoes() throws SQLException {
     public void initHistorico() throws SQLException {
         String sql = """
         CREATE TABLE IF NOT EXISTS historico (
-            funcionario_id INT NOT NULL,
+            funcionarioCpf VARCHAR(255) NOT NULL,
             tipo VARCHAR(255) NOT NULL,
             descricao VARCHAR(255) NOT NULL,
             data DATETIME NOT NULL,

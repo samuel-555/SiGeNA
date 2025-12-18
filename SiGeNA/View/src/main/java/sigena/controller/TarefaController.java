@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +26,7 @@ import sigena.model.domain.Tarefa;
 import sigena.model.service.FuncionarioService;
 
 @WebServlet(name = "TarefaController", urlPatterns = {"/TarefaController"})
-public class TarefaController extends HttpServlet {
+public class TarefaController extends Controller {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -162,6 +161,8 @@ public class TarefaController extends HttpServlet {
    
    public void editar(HttpServletRequest request, HttpServletResponse response) throws IOException, DataInvalidaException, ServletException, SQLException, DatabaseException{
 
+        String funcionarioCpf = getCpfUsuarioLogado(request);
+       
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
         int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));

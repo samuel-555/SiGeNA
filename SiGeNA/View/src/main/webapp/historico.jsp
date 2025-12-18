@@ -32,7 +32,7 @@
 
 <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(sessao.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
@@ -58,28 +58,40 @@
         }
     </script>
 
-    <c:if test="${not empty historico}">
-  <table>
-    <thead>
-      <tr>
-        <th>Tipo</th>
-        <th>Descrição</th>
-        <th>Data</th>
-      </tr>
-    </thead>
-    
-    <tbody>
-        <c:forEach var="hist" items="${historico}"> <!-- separar na coisa coisa coisa coisa coisa funcionarios somehow -->
-     
-          <tr>
-            <td>${hist.tipo}</td>
-            <td>${hist.descricao}</td>
-            <fmt:formatDate value="${hist.data}" pattern="dd/MM/yyyy HH:mm"/>
-          </tr>
-        
+    <c:if test="${not empty historicoMap}">
+        <c:forEach var="entry" items="${historicoMap}">
+
+            <c:set var="lista" value="${entry.value}" />
+            <c:set var="primeiro" value="${lista[0]}" />
+
+        <h3>
+            ${primeiro.nomeFuncionario} - ${primeiro.cargoFuncionario}
+        </h3>
+
+        <table>
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <c:forEach var="hist" items="${lista}">
+                <tr>
+                    <td>${hist.tipo}</td>
+                    <td>${hist.descricao}</td>
+                    <td>
+                        <fmt:formatDate value="${hist.data}" pattern="dd/MM/yyyy HH:mm"/>
+                    </td>
+                    </tr>
+            </c:forEach>
+        </tbody>
+        </table>
+
         </c:forEach>
-    </tbody>
-    </table>
+
     </c:if>
 
     </div>

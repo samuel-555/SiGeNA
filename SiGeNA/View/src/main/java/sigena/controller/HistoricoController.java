@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 import sigena.model.domain.Historico;
-import sigena.model.domain.TipoHistorico;
 import sigena.model.service.GestaoHistoricoService;
 
 
@@ -41,26 +41,24 @@ public class HistoricoController extends HttpServlet {
 
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         GestaoHistoricoService service = new GestaoHistoricoService();
 
         String acao = request.getParameter("acao");
-        if (acao == null) {
-            response.sendRedirect("historico.jsp");
+
+        if (acao == null || "listar".equals(acao)) {
+
+            Map<String, List<Historico>> historicoPorFuncionario =
+                service.listarAgrupadoPorFuncionario();
+
+            request.setAttribute("historicoMap", historicoPorFuncionario);
+            request.getRequestDispatcher("historico.jsp").forward(request, response);
             return;
         }
 
-        switch(acao){
-            case "listar":
-                listar(request, response);
-                break;
-            case "buscar":
-                buscar(request, response);
-                break;
-            default:
-                response.sendRedirect("historico.jsp");
+        if ("buscar".equals(acao)) {
+            buscar(request, response);
         }
     }
 
@@ -83,10 +81,10 @@ public class HistoricoController extends HttpServlet {
    
    public void listar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
        
-        int idFuncionario = Integer.parseInt(request.getParameter("funcionario"));
+        String cpfFuncionario = request.getParameter("funcionario");
         GestaoHistoricoService service = new GestaoHistoricoService();
 
-        List<Historico> historico = service.listarPorFuncionario(idFuncionario);
+        List<Historico> historico = service.listarPorFuncionario(cpfFuncionario);
         request.setAttribute("historico", historico);
 
         request.getRequestDispatcher("historico.jsp").forward(request, response);
@@ -98,15 +96,16 @@ public class HistoricoController extends HttpServlet {
         String termo = request.getParameter("q");
 
         GestaoHistoricoService service = new GestaoHistoricoService();
-        List<Historico> historico;
-      
-        TipoHistorico tipo = TipoHistorico.from(termo);
-        if(tipo != null)
-            historico = service.buscarPorTipo(tipo);
-        else
-            historico = service.buscarPorFuncionario(termo);
         
-        request.setAttribute("historico", historico);
+        Map<String, List<Historico>> historicoMap;
+
+        if (termo == null || termo.isBlank()) 
+            historicoMap = service.listarAgrupadoPorFuncionario();
+        else
+            historicoMap = service.buscarAgrupado(termo);
+        
+ 
+        request.setAttribute("historicoMap", historicoMap);
         request.getRequestDispatcher("historico.jsp").forward(request, response);
 }
             

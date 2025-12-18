@@ -7,15 +7,18 @@ import sigena.model.domain.Animal;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.HabitatVazioException;
+import sigena.model.domain.TipoHistorico;
 
 public class GestaoHabitatService {
    
     private final HabitatDAO dao;
     private final AnimalDAO animalDao;
+    private final GestaoHistoricoService historicoService;
     
     public GestaoHabitatService(){
         dao = new HabitatDAO();
         animalDao = new AnimalDAO();
+        historicoService = new GestaoHistoricoService();
     }
 
     public void cadastrarHabitat(String tipo,String nome, int tamanho, boolean manutencao){
@@ -55,8 +58,19 @@ public class GestaoHabitatService {
     }
 
     
-    public void editarManutencao(String nomeHabitat, boolean manutencao){
+    public void editarManutencao(String nomeHabitat, boolean manutencao, String cpfLogado) {
+
+        Habitat habitatAtual = dao.buscar(nomeHabitat);
+
+        if (habitatAtual.getManutencao() == manutencao) {
+            return; 
+        }
+
         dao.editarManutencao(nomeHabitat, manutencao);
+
+        if (manutencao) {
+            historicoService.registrar(TipoHistorico.MANUTENCAO,TipoHistorico.MANUTENCAO.getDescricao(nomeHabitat),cpfLogado);
+        }
     }
 
     public void editarDisponivel(String nomeHabitat, boolean disponivel){

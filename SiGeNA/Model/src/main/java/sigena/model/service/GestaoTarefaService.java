@@ -10,13 +10,17 @@ import sigena.model.common.exception.DataInvalidaException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.TarefaDAO;
 import sigena.model.domain.Tarefa;
+import sigena.model.domain.TipoHistorico;
+
 
 public class GestaoTarefaService {
     
     private final TarefaDAO dao;
-    
+    private final GestaoHistoricoService historicoService;
+            
     public GestaoTarefaService(){
         dao = new TarefaDAO();
+        historicoService = new GestaoHistoricoService();
     }
     
     public void cadastrarTarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao) throws DataInvalidaException{
@@ -51,8 +55,9 @@ public class GestaoTarefaService {
         dao.editar(id,tarefa);
     }
 
-    public void editarConcluida(long id, boolean concluida){
+    public void editarConcluida(long id, boolean concluida, String cpf){
         dao.editarConcluida(id, concluida);
+        historicoService.registrar(TipoHistorico.TAREFA,TipoHistorico.TAREFA.getDescricao(dao.buscar(id)),cpf);
     }
     
     public Tarefa buscar(long id){

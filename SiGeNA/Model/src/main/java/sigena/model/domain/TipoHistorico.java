@@ -18,8 +18,8 @@ public enum TipoHistorico {
     },
     MANUTENCAO {
         @Override
-        public String getDescricao(Habitat habitat) {
-            return "Manutenção em "+ habitat.getNome() +" concluída";
+        public String getDescricao(String nome) {
+            return "Manutenção em "+ nome +" concluída";
         }
     },
 
@@ -38,8 +38,8 @@ public enum TipoHistorico {
     },
     TAREFA {
         @Override
-        public String getDescricao(Tarefa tarefa) {
-            return "Tarefa \"" + tarefa.getNome() + "\" concluída";
+        public String getDescricao(String tarefa) {
+            return "Tarefa \"" + tarefa + "\" concluída";
         }
     },
     TRATAMENTO{

@@ -34,7 +34,7 @@
             <h1>Editar Habitat</h1>
         <div class="formulario">
             <form action="${pageContext.request.contextPath}/HabitatController" method="post">
-                <input type="hidden" name="acao" value="editar">
+                <input type="hidden" name="acao" value="editar-manutencao">
                 <input type="hidden" name="nomeAntigo" value="${habitat.nome}"/>                
 
                 <label for="nome">Nome do Habitat:</label>

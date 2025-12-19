@@ -43,7 +43,7 @@ public class RelatorioSaudeController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         if (!isGerente(request)) {
-            redirecionarComMensagem(request, response, "Usuário sem permissão para alterar relatórios.", true);
+            redirecionarComMensagem(request, response, "Usuario sem permissão para alterar relatórios.", true);
             return;
         }
 
@@ -82,28 +82,22 @@ public class RelatorioSaudeController extends HttpServlet {
         request.setAttribute("animais", animais);
 
         String acao = request.getParameter("acao");
-        List<RelatorioSaude> relatorios;
+        Long animalId = parseLong(request.getParameter("animalId"));
+        String statusFiltro = normalizarStatus(request.getParameter("statusFiltro"));
 
-        if ("historico".equals(acao)) {
-            Long animalId = parseLong(request.getParameter("animalId"));
-            if (animalId != null) {
-                relatorios = relatorioService.consultarHistorico(animalId);
-                request.setAttribute("animalSelecionado", animalId);
-            } else {
-                relatorios = relatorioService.listarTodos();
-            }
-        } else if ("editar".equals(acao) && usuarioGerente) {
+        if ("editar".equals(acao) && usuarioGerente) {
             Long relatorioId = parseLong(request.getParameter("id"));
             if (relatorioId != null) {
                 RelatorioSaude relatorio = relatorioService.buscarPorId(relatorioId);
                 request.setAttribute("relatorioEdicao", relatorio);
                 request.setAttribute("animalSelecionado", relatorio.getAnimal().getId());
             }
-            relatorios = relatorioService.listarTodos();
-        } else {
-            relatorios = relatorioService.listarTodos();
+        } else if ("historico".equals(acao)) {
+            request.setAttribute("animalSelecionado", animalId);
         }
 
+        List<RelatorioSaude> relatorios = relatorioService.listarFiltrado(animalId, statusFiltro);
+        request.setAttribute("statusSelecionado", statusFiltro);
         request.setAttribute("relatorios", relatorios);
     }
 
@@ -111,9 +105,9 @@ public class RelatorioSaudeController extends HttpServlet {
         Long animalId = parseRequiredLong(request.getParameter("animalId"), "Animal obrigatório.");
         LocalDate data = parseData(request.getParameter("dataRelatorio"));
         Double peso = parsePeso(request.getParameter("peso"));
-        String status = request.getParameter("status");
+        boolean apto = isAptoMarcado(request.getParameter("apto"));
         String observacoes = request.getParameter("observacoes");
-        relatorioService.registrarCheckup(animalId, data, peso, status, observacoes);
+        relatorioService.registrarCheckup(animalId, data, peso, apto, observacoes);
     }
 
     private void atualizarRelatorio(HttpServletRequest request) throws PersistenciaException {
@@ -121,9 +115,9 @@ public class RelatorioSaudeController extends HttpServlet {
         Long animalId = parseRequiredLong(request.getParameter("animalId"), "Animal obrigatório.");
         LocalDate data = parseData(request.getParameter("dataRelatorio"));
         Double peso = parsePeso(request.getParameter("peso"));
-        String status = request.getParameter("status");
+        boolean apto = isAptoMarcado(request.getParameter("apto"));
         String observacoes = request.getParameter("observacoes");
-        relatorioService.atualizarRelatorio(relatorioId, animalId, data, peso, status, observacoes);
+        relatorioService.atualizarRelatorio(relatorioId, animalId, data, peso, apto, observacoes);
     }
 
     private void adicionarObservacao(HttpServletRequest request) throws PersistenciaException {
@@ -209,5 +203,24 @@ public class RelatorioSaudeController extends HttpServlet {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Peso informado inválido.");
         }
+    }
+
+    private boolean isAptoMarcado(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return false;
+        }
+        String normalizado = valor.trim().toUpperCase();
+        return "APTO".equals(normalizado) || "TRUE".equals(normalizado) || "ON".equals(normalizado);
+    }
+
+    private String normalizarStatus(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
+        String normalizado = valor.trim().toUpperCase();
+        if (!"APTO".equals(normalizado) && !"INAPTO".equals(normalizado)) {
+            return null;
+        }
+        return normalizado;
     }
 }

@@ -75,10 +75,15 @@
                                        value="${not empty relatorioEdicao ? relatorioEdicao.peso : ''}"
                                        placeholder="Ex: 12.5">
 
-                                <label>Condição Geral:</label>
-                                <input type="text" name="status" maxlength="255"
-                                       value="${not empty relatorioEdicao ? relatorioEdicao.status : ''}"
-                                       placeholder="Ex: Saudável, sem anormalidades" required>
+                                <label>Status do animal:</label>
+                                <div class="status-checkbox">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="apto" value="APTO"
+                                               <c:if test="${empty relatorioEdicao || relatorioEdicao.status == 'APTO'}">checked</c:if>>
+                                        Apto para atividades
+                                    </label>
+                                    <span class="status-toggle-hint">Desmarque para registrar como inapto.</span>
+                                </div>
 
                                 <label>Observações:</label>
                                 <textarea name="observacoes" rows="4" placeholder="Detalhes adicionais sobre o exame."><c:out value='${not empty relatorioEdicao ? relatorioEdicao.observacoes : ""}'/></textarea>
@@ -117,6 +122,12 @@
                                     </option>
                                 </c:forEach>
                             </select>
+                            <label for="statusFiltro">Status:</label>
+                            <select id="statusFiltro" name="statusFiltro">
+                                <option value="">Todos</option>
+                                <option value="APTO" <c:if test="${statusSelecionado == 'APTO'}">selected</c:if>>Aptos</option>
+                                <option value="INAPTO" <c:if test="${statusSelecionado == 'INAPTO'}">selected</c:if>>Inaptos</option>
+                            </select>
                             <button type="submit" class="btn filtro-btn">Consultar Histórico</button>
                         </form>
                     </div>
@@ -128,7 +139,7 @@
                                     <th>Animal</th>
                                     <th>Data</th>
                                     <th>Peso</th>
-                                    <th>Condição</th>
+                                    <th>Status</th>
                                     <th>Observações</th>
                                     <th class="acoes-header">Ações</th>
                                 </tr>
@@ -146,7 +157,7 @@
                                                 <td>${relatorio.animal.nome}</td>
                                                 <td>${relatorio.dataRelatorioFormatado}</td>
                                                 <td>
-                                                    <c:choose>
+                                                <c:choose>
                                                         <c:when test="${not empty relatorio.peso}">
                                                             ${relatorio.peso} kg
                                                         </c:when>
@@ -155,7 +166,19 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </td>
-                                                <td>${relatorio.status}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${relatorio.status == 'APTO'}">
+                                                            <span class="status-badge apto">Apto</span>
+                                                        </c:when>
+                                                        <c:when test="${relatorio.status == 'INAPTO'}">
+                                                            <span class="status-badge inapto">Inapto</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="status-badge">-</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td class="col-observacoes">
                                                     <c:out value='${relatorio.observacoes}'/>
                                                 </td>

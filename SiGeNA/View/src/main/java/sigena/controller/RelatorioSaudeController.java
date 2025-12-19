@@ -67,7 +67,7 @@ public class RelatorioSaudeController extends HttpServlet {
             }
             if ("excluir".equals(acao)) {
                 excluirRelatorio(request);
-                redirecionarComMensagem(request, response, "Relatório excluído.", false);
+                redirecionarComMensagem(request, response, "Relatório cancelado.", false);
                 return;
             }
 

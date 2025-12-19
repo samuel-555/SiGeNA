@@ -70,6 +70,7 @@ public class RelatorioSaudeDAO {
             """);
         List<Object> parametros = new ArrayList<>();
 
+        sql.append(" AND UPPER(status) <> 'CANCELADO'");
         if (animalId != null) {
             sql.append(" AND animal_id = ?");
             parametros.add(animalId);
@@ -127,7 +128,7 @@ public class RelatorioSaudeDAO {
     }
 
     public void excluir(Long id) throws PersistenciaException {
-        String sql = "DELETE FROM relatorios_saude WHERE id = ?";
+        String sql = "UPDATE relatorios_saude SET status = 'CANCELADO' WHERE id = ?";
 
         try (Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql)) {

@@ -10,6 +10,8 @@ import sigena.model.domain.RelatorioSaude;
 
 public class RelatorioSaudeService {
 
+    private static final String STATUS_CANCELADO = "CANCELADO";
+
     private final RelatorioSaudeDAO relatorioDAO = new RelatorioSaudeDAO();
     private final AnimalDAO animalDAO = new AnimalDAO();
 
@@ -31,6 +33,9 @@ public class RelatorioSaudeService {
         validarDadosBasicos(animalId, data);
 
         RelatorioSaude existente = relatorioDAO.buscarPorId(relatorioId);
+        if (existente != null && STATUS_CANCELADO.equalsIgnoreCase(existente.getStatus())) {
+            throw new PersistenciaException("RelatÇürio cancelado nÇœo pode ser editado.");
+        }
         if (existente == null) {
             throw new PersistenciaException("Relatório não encontrado para edição.");
         }
@@ -66,6 +71,9 @@ public class RelatorioSaudeService {
         }
 
         RelatorioSaude relatorio = relatorioDAO.buscarPorId(id);
+        if (relatorio != null && STATUS_CANCELADO.equalsIgnoreCase(relatorio.getStatus())) {
+            throw new PersistenciaException("RelatÇürio cancelado.");
+        }
         if (relatorio == null) {
             throw new PersistenciaException("Relatório não encontrado.");
         }
@@ -79,12 +87,26 @@ public class RelatorioSaudeService {
         if (novaObservacao == null || novaObservacao.isBlank()) {
             throw new PersistenciaException("Observação não pode ser vazia.");
         }
+        RelatorioSaude relatorio = relatorioDAO.buscarPorId(relatorioId);
+        if (relatorio == null) {
+            throw new PersistenciaException("RelatÇürio nÇœo encontrado.");
+        }
+        if (STATUS_CANCELADO.equalsIgnoreCase(relatorio.getStatus())) {
+            throw new PersistenciaException("RelatÇürio cancelado nÇœo pode receber observaÇõÇœes.");
+        }
         relatorioDAO.acrescentarObservacao(relatorioId, novaObservacao.trim());
     }
 
     public void excluirRelatorio(Long relatorioId) throws PersistenciaException {
         if (relatorioId == null || relatorioId <= 0) {
             throw new PersistenciaException("Relatório inválido para exclusão.");
+        }
+        RelatorioSaude relatorio = relatorioDAO.buscarPorId(relatorioId);
+        if (relatorio == null) {
+            throw new PersistenciaException("RelatÇürio nÇœo encontrado.");
+        }
+        if (STATUS_CANCELADO.equalsIgnoreCase(relatorio.getStatus())) {
+            throw new PersistenciaException("RelatÇürio jÇ­ cancelado.");
         }
         relatorioDAO.excluir(relatorioId);
     }

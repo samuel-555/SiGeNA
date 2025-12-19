@@ -187,10 +187,10 @@
                                                         <c:choose>
                                                             <c:when test="${podeEditarRelatorio}">
                                                                 <a class="btn editar" href="RelatorioSaudeController?acao=editar&id=${relatorio.id}">Editar</a>
-                                                                <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente excluir este relatório?');">
+                                                                <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente cancelar este relatório?');">
                                                                     <input type="hidden" name="acao" value="excluir">
                                                                     <input type="hidden" name="relatorioId" value="${relatorio.id}">
-                                                                    <button type="submit" class="btn excluir">Excluir</button>
+                                                                    <button type="submit" class="btn excluir">Cancelar</button>
                                                                 </form>
                                                             </c:when>
                                                             <c:otherwise>

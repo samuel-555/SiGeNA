@@ -172,10 +172,10 @@
                     <c:choose>
                         <c:when test="${podeGerenciarVisitantes}">
                             <a class="btn-pequeno editar" href="visitantes?acao=editar&id=<%= v.getId() %>">Editar</a>
-                            <form action="visitantes" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclus�o?');">
+                            <form action="visitantes" method="post" style="display:inline" onsubmit="return confirm('Confirmar cancelamento?');">
                                 <input type="hidden" name="acao" value="excluir">
                                 <input type="hidden" name="id" value="<%= v.getId() %>">
-                                <button type="submit" class="btn-pequeno excluir">Excluir</button>
+                                <button type="submit" class="btn-pequeno excluir">Cancelar</button>
                             </form>
                         </c:when>
                         <c:otherwise>

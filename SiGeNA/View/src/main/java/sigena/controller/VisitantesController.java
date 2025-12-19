@@ -28,7 +28,7 @@ public class VisitantesController extends HttpServlet {
             if ("excluir".equalsIgnoreCase(acao)) {
                 Long id = Long.valueOf(req.getParameter("id"));
                 service.excluir(id);
-                sessao.setAttribute("mensagemSucesso", "Visita removida com sucesso.");
+                sessao.setAttribute("mensagemSucesso", "Visita cancelada com sucesso.");
                 resp.sendRedirect("visitantes");
                 return;
             }
@@ -72,7 +72,7 @@ public class VisitantesController extends HttpServlet {
             if ("excluir".equalsIgnoreCase(acao)) {
                 Long id = Long.valueOf(req.getParameter("id"));
                 service.excluir(id);
-                sessao.setAttribute("mensagemSucesso", "Visita removida com sucesso.");
+                sessao.setAttribute("mensagemSucesso", "Visita cancelada com sucesso.");
                 resp.sendRedirect("visitantes");
                 return;
             }

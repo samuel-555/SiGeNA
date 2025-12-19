@@ -18,8 +18,8 @@ public class VisitaDAO {
 
     public void salvar(Visita visita) throws DatabaseException {
         String sql = """
-            INSERT INTO visitas (nome_visitante, documento, motivo, data_visita, observacoes, vip, necessidade_especial, descricao_necessidade, turno)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO visitas (nome_visitante, documento, motivo, data_visita, observacoes, vip, necessidade_especial, descricao_necessidade, turno, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
         try (Connection con = ConexaoDB.getConnection();
@@ -46,6 +46,7 @@ public class VisitaDAO {
             } else {
                 ps.setNull(9, Types.VARCHAR);
             }
+            ps.setString(10, "ATIVA");
 
             ps.executeUpdate();
 
@@ -98,7 +99,7 @@ public class VisitaDAO {
     }
 
     public void excluir(Long id) throws DatabaseException {
-        String sql = "DELETE FROM visitas WHERE id=?";
+        String sql = "UPDATE visitas SET status='CANCELADA' WHERE id=?";
         try (Connection con = ConexaoDB.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -127,7 +128,7 @@ public class VisitaDAO {
 
     public List<Visita> listar(String ordenacao, LocalDate inicio, LocalDate fim, String buscaTexto) throws DatabaseException {
         List<Visita> visitas = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM visitas WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT * FROM visitas WHERE 1=1 AND (status IS NULL OR UPPER(status) <> 'CANCELADA')");
 
         if (inicio != null) {
             sql.append(" AND data_visita >= ?");
@@ -173,7 +174,7 @@ public class VisitaDAO {
     }
 
     public long contarTodas() throws DatabaseException {
-        String sql = "SELECT COUNT(*) FROM visitas";
+        String sql = "SELECT COUNT(*) FROM visitas WHERE status IS NULL OR UPPER(status) <> 'CANCELADA'";
         try (Connection con = ConexaoDB.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -187,7 +188,7 @@ public class VisitaDAO {
     }
 
     public long contarHoje() throws DatabaseException {
-        String sql = "SELECT COUNT(*) FROM visitas WHERE data_visita = CURRENT_DATE";
+        String sql = "SELECT COUNT(*) FROM visitas WHERE data_visita = CURRENT_DATE AND (status IS NULL OR UPPER(status) <> 'CANCELADA')";
         try (Connection con = ConexaoDB.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -213,6 +214,7 @@ public class VisitaDAO {
         v.setVip(rs.getBoolean("vip"));
         v.setNecessidadeEspecial(rs.getBoolean("necessidade_especial"));
         v.setDescricaoNecessidade(rs.getString("descricao_necessidade"));
+        v.setStatus(rs.getString("status"));
         String turnoStr = rs.getString("turno");
         if (turnoStr != null && !turnoStr.isBlank()) {
             try {

@@ -365,12 +365,21 @@ public void initDoacoes() throws SQLException {
                 necessidade_especial BOOLEAN NOT NULL DEFAULT FALSE,
                 descricao_necessidade TEXT,
                 turno VARCHAR(15),
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
                 data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """;
-        
+
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE visitas ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException ignored) {
+            }
+            try {
+                st.executeUpdate("UPDATE visitas SET status='ATIVA' WHERE status IS NULL");
+            } catch (SQLException ignored) {
+            }
         }
     }
     

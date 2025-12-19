@@ -51,5 +51,14 @@
             </form>
         </div>
         </div>
+        
+        <script>
+            const input = document.getElementById("data-programada");
+
+            const agora = new Date();
+            agora.setSeconds(0, 0);
+
+            input.min = agora.toISOString().slice(0, 16);
+        </script>
     </body>
 </html>

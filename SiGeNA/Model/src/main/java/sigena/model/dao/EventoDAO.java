@@ -14,7 +14,7 @@ import sigena.model.util.ConexaoDB;
 
 public class EventoDAO {
     public void cadastrar(Evento evento) throws PersistenciaException {
-        String sql = "INSERT INTO eventos (titulo, descricao, data_programada, ocorrido, data_de_insercao, arquivado) VALUES (?, ?, ?, 0, NOW(), 0)";
+        String sql = "INSERT INTO eventos (titulo, descricao, data_programada, ocorrido, cancelado, data_de_insercao, arquivado) VALUES (?, ?, ?, 0,0, NOW(), 0)";
         
         try(Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -34,7 +34,9 @@ public class EventoDAO {
     }
     
     public List<Evento> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM eventos ORDER BY data_programada ASC;";
+        String sql = "SELECT * FROM eventos "
+                + "WHERE arquivado = false "
+                + "ORDER BY data_programada ASC;";
         
         List<Evento> eventos = new ArrayList<>();
         
@@ -50,6 +52,79 @@ public class EventoDAO {
         }
         
         return eventos;
+    }
+    
+    public void excluir(Long id) throws PersistenciaException {
+        String sql = "UPDATE eventos "
+                + "SET arquivado = true "
+                + "WHERE id = ?;";
+        
+        try(Connection con = ConexaoDB.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenciaException("Não foi possível excluir evento: " + e.getMessage());
+        }
+    }
+    
+    public void atualizarOcorridos() throws PersistenciaException {
+        String sql = "UPDATE eventos "
+                + "SET ocorrido = true "
+                + "WHERE data_programada < CURRENT_TIMESTAMP "
+                + "AND ocorrido = false "
+                + "AND cancelado = false "
+                + "AND arquivado = false;";
+        
+        try (Connection con = ConexaoDB.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql);){
+            
+            ResultSet rs = stmt.executeQuery();
+            
+        } catch (SQLException e) {
+            throw new PersistenciaException("Não foi possível atualizar eventos: " + e.getMessage());
+        }
+    }
+    
+    public Evento buscarPorId(Long id) throws PersistenciaException {
+        String sql = "SELECT eventos * "
+                + "WHERE id = ? "
+                + "AND arquivado = false;";
+        
+        Evento evento = null;
+        
+        try (Connection con = ConexaoDB.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                evento = consultaToEvento(rs);
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Não foi possível exibir evento: " + e.getMessage());
+        }
+        
+        return evento;
+    }
+    
+    public void editar(Evento evento) throws PersistenciaException {
+        String sqlEvento = "UPDATE eventos "
+                + "SET titulo = ?, "
+                + "descricao = ?, "
+                + "data_programada = ? "
+                + "WHERE id = ? "
+                + "AND ocorrido = false "
+                + "AND arquivado = false;";
+
+        try(Connection con = ConexaoDB.getConnection();) {
+            try (PreparedStatement stmt = con.prepareStatement(sqlEvento, Statement.RETURN_GENERATED_KEYS)){
+                setPreparedStatementUpdate(stmt, evento);
+                stmt.executeUpdate();
+            }
+            
+        } catch (SQLException e) {
+            throw new PersistenciaException("Não foi possível editar evento: " + e.getMessage());
+        }
     }
     
     private Evento consultaToEvento(ResultSet rs) throws SQLException, PersistenciaException {

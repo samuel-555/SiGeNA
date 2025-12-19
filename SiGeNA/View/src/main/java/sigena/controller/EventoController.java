@@ -51,10 +51,33 @@ public class EventoController extends HttpServlet {
                     request.setAttribute("eventos", eventos);
                     request.getRequestDispatcher("eventos.jsp").forward(request, response);
                 }    
-                    
+                
+                if("exibir".equals(acao)) {
+                    Long id = Long.valueOf(request.getParameter("id"));
+                    Evento evento = service.buscarEvento(id);
+                    request.setAttribute("evento", evento);
+                    request.getRequestDispatcher("exibir-evento.jsp").forward(request, response);
+                }
+                
+                if("editar".equals(acao)) {
+                    Long id = Long.valueOf(request.getParameter("id"));
+                    Evento evento = service.buscarEvento(id);
+                    request.setAttribute("evento", evento);
+                    request.getRequestDispatcher("editar-evento.jsp").forward(request, response);
+                }
+                
+                if("salvar_alteracoes".equals(acao)) {
+                    Long id = Long.valueOf(request.getParameter("id"));
+                    Evento evento = service.buscarEvento(id);
+                    request.setAttribute("evento", evento);
+                    request.getRequestDispatcher("exibir-evento.jsp").forward(request, response);
+                }
+                
                 if("cadastrar".equals(acao)) {
                     request.getRequestDispatcher("cadastrar-evento.jsp").forward(request, response);
                 }
+                
+                
             } catch(PersistenciaException e) {
                 System.out.println(e.getMessage());
             }
@@ -82,6 +105,24 @@ public class EventoController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
                 return;
             }
+            
+            if("excluir".equals(acao)) {
+                excluir(request, response);
+                response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
+            }
+            
+            if("editar".equals(acao)) {
+                boolean success = editar(request, response);
+                String id = request.getParameter("id");
+                HttpSession sessao = request.getSession(false);
+                if(!success) {
+                    sessao.setAttribute("campoInvalidoErro", "Campo(s) inválido(s) preenchido(s)!");
+                    response.sendRedirect(request.getContextPath() + "/EventoController?acao=editar&id=" + id);
+                    return;
+                }
+                sessao.setAttribute("acaoBemSucedida", "Evento editado com sucesso!");
+                response.sendRedirect(request.getContextPath() + "/EventoController?acao=exibir&id=" + id);
+            }
         } catch(PersistenciaException e) {
             System.out.println(e.getMessage());
         }
@@ -95,5 +136,22 @@ public class EventoController extends HttpServlet {
         Evento evento = new Evento(titulo, descricao, dataPrevista);
         
         return service.cadastrarEvento(evento);
+    }
+    
+    private void excluir(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
+        Long id = Long.valueOf(request.getParameter("id"));
+        service.excluirEvento(id);
+    }
+    
+    private boolean editar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException {
+        Long id = Long.valueOf(request.getParameter("id"));
+        String titulo = request.getParameter("titulo");
+        String descricao = request.getParameter("descricao");
+        String dataProgramada = request.getParameter("dataProgramada");
+
+        Evento eventoEditado = new Evento(id, titulo, descricao, dataProgramada);
+
+        
+        return service.editarEvento(eventoEditado);
     }
 }

@@ -22,8 +22,15 @@ public class Evento {
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataProgramada = DataConverter.toLocalDateTime(dataProgramada);
-        this.ocorrido = ocorrido;
+        this.ocorrido = true;
         this.dataInsercao = DataConverter.toLocalDateTime(dataInsercao);
+    }
+    
+    public Evento(Long id, String titulo, String descricao, String dataProgramada) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.dataProgramada = DataConverter.toLocalDateTime(dataProgramada);
     }
 
     public Long getId() {

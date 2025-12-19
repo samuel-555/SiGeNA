@@ -1,5 +1,6 @@
 package sigena.model.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Animal;
@@ -50,7 +51,7 @@ public class GestaoAnimalService {
     }
     
     private boolean conferirCampos(Animal animal) {
-        if(animal.getNome().replaceAll("\\s", "").equals(""))
+        if(animal.getNome() == null || animal.getNome().replaceAll("\\s", "").equals(""))
             return false;
         
         try {
@@ -73,6 +74,9 @@ public class GestaoAnimalService {
             return false;
         
         if(animal.getHabitatNome() == null || habitatDAO.buscar(animal.getHabitatNome()) == null)
+            return false;
+        
+        if(!animal.getDataDeNascimentoOb().isAfter(LocalDate.now()))
             return false;
         
         return true;

@@ -340,6 +340,7 @@ public void initDoacoes() throws SQLException {
               descricao TEXT,
               data_programada DATETIME NOT NULL,
               ocorrido BOOLEAN NOT NULL,
+              cancelado BOOLEAN NOT NULL,
               data_de_insercao DATETIME NOT NULL,
               arquivado BOOLEAN NOT NULL
         );

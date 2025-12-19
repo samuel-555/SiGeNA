@@ -75,4 +75,11 @@ public class GestaoTarefaService {
         return false;
     }
     
+    public List<Tarefa> listarTarefasDoDia(){
+        return dao.listarDoDia();
+    }
+    
+    public List<Tarefa> listarTarefasDoDiaPorUsuario(int id){
+        return dao. listarDoDiaPorUsuario(id);
+    }
 }

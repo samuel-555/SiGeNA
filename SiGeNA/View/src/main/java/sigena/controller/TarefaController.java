@@ -46,15 +46,26 @@ public class TarefaController extends Controller {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         GestaoTarefaService service = new GestaoTarefaService();
         HttpSession sessao = request.getSession(false);
-        
+
+        if (sessao == null || sessao.getAttribute("UsuarioLogado") == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+
         String acao = request.getParameter("acao");
-       
+        Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+        int idUsuario = (int) sessao.getAttribute("idUsuario");
+
+   
         if ("cadastrar".equals(acao)) {
+            if (cargo != Cargo.GERENTE) {
+                response.sendRedirect("home.jsp");
+                return;
+            }
             try {
                 abrirFormulario(request, response);
             } catch (SQLException ex) {
@@ -64,27 +75,16 @@ public class TarefaController extends Controller {
             }
             return;
         }
-        if ("listar".equals(acao)) {
-            listar(request, response);
-        return;
-        }
-        Integer idUsuario = (Integer) sessao.getAttribute("idUsuario");
-        Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
-        
-        try {
-            List<Tarefa> tarefas;
 
-            if (cargo != null && cargo.getDescricao().equalsIgnoreCase("GERENTE"))
-                tarefas = service.listarTarefas();
-            else 
-                tarefas = service.listarPorUsuario(idUsuario);
+        List<Tarefa> tarefas;
+
+        if (cargo == Cargo.GERENTE) 
+            tarefas = service.listarTarefasDoDia();
+        else 
+        tarefas = service.listarTarefasDoDiaPorUsuario(idUsuario);
+      
         request.setAttribute("tarefas", tarefas);
         request.getRequestDispatcher("home.jsp").forward(request, response);
-
-        } 
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

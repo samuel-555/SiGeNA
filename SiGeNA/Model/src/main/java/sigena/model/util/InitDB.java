@@ -368,6 +368,10 @@ public void initDoacoes() throws SQLException {
                 data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
     
     public void initHistorico() throws SQLException {
         String sql = """

@@ -2,6 +2,8 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="sigena.model.domain.Cargo" %>
 <%@ page import="java.util.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
@@ -152,6 +154,59 @@
                         </div>
                         <% } %>
                         <h2 class="tarefas-title">TAREFAS</h2>
+                        
+                        <% if (cargo == Cargo.GERENTE) { %>
+                            <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
+                        <% } %>
+    
+
+                        <div class="tarefas">
+                      <c:choose>
+                        <c:when test="${empty tarefas}">
+                            <p>Nenhuma tarefa para hoje.</p>
+                        </c:when>
+
+                     <c:otherwise>
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Data</th>
+                            <th>Concluída</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="tarefa" items="${tarefas}">
+                        <tr>
+                            <td>${tarefa.nome}</td>
+                            <td>${tarefa.texto}</td>
+                            <td>${tarefa.dataPConclusao}</td>
+                            
+                            <td>
+                                <form method="post" action="TarefaController">
+                                    <input type="hidden" name="acao" value="concluir">
+                                    <input type="hidden" name="id" value="${tarefa.id}">
+                                    <input type="checkbox"
+                                       onclick="this.form.submit()"
+                                       <c:if test="${tarefa.concluida}">checked</c:if>>
+                                </form>
+                            </td>
+                        <td>
+                            <form method="post" action="TarefaController" style="display:inline">
+                                <input type="hidden" name="acao" value="excluir">
+                                <input type="hidden" name="id" value="${tarefa.id}">
+                                <button class="btn-pequeno excluir">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </c:forEach>
+                </tbody>
+                </table>
+            </div>
+            <% } %>
+
                     <% } %>
                 </section>
             </main>

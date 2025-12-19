@@ -197,17 +197,17 @@
                             <form method="post" action="TarefaController" style="display:inline">
                                 <input type="hidden" name="acao" value="excluir">
                                 <input type="hidden" name="id" value="${tarefa.id}">
-                                <button class="btn-pequeno excluir">Excluir</button>
+                                <button class="btn-pequeno excluir" onclick="return confirm('Deseja realmente excluir esta tarefa?')">
                             </form>
                         </td>
                     </tr>
                     </c:forEach>
                 </tbody>
                 </table>
+                    </c:otherwise>
+                            </c:choose>
             </div>
-            <% } %>
-
-                    <% } %>
+                   <% } %>
                 </section>
             </main>
         </div>

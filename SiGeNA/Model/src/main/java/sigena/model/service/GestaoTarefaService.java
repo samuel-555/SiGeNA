@@ -82,4 +82,9 @@ public class GestaoTarefaService {
     public List<Tarefa> listarTarefasDoDiaPorUsuario(int id){
         return dao. listarDoDiaPorUsuario(id);
     }
+    
+    public List<Tarefa> listarTarefasDoDiaPorCpf(String cpf) {
+        return dao.listarDoDiaPorCpf(cpf);
+    }
+
 }

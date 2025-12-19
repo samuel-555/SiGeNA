@@ -259,6 +259,47 @@ public class TarefaDAO {
 
         return lista;
         }
+    
+    public List<Tarefa> listarDoDiaPorCpf(String cpf) {
+
+    List<Tarefa> lista = new ArrayList<>();
+
+    String sql = """
+        SELECT t.id, t.nome, t.texto, t.concluida,
+               t.funcionario_id, t.dataCadastro, t.dataPConclusao
+        FROM tarefas t
+        JOIN funcionarios f ON f.id = t.funcionario_id
+        WHERE f.cpf = ?
+          AND DATE(t.dataPConclusao) = CURRENT_DATE
+        ORDER BY t.dataPConclusao
+    """;
+
+    try (Connection con = ConexaoDB.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, cpf);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Tarefa tarefa = new Tarefa(
+                        rs.getString("nome"),
+                        rs.getString("texto"),
+                        rs.getBoolean("concluida"),
+                        rs.getInt("funcionario_id"),
+                        rs.getObject("dataCadastro", LocalDateTime.class),
+                        rs.getObject("dataPConclusao", LocalDateTime.class)
+                    );
+                    tarefa.setId(rs.getLong("id"));
+                    lista.add(tarefa);
+                }
+            }
+        } 
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return lista;
+    }
 
 }
 

@@ -23,6 +23,7 @@ import sigena.model.domain.Cargo;
 import sigena.model.domain.Funcionario;
 import sigena.model.service.GestaoTarefaService;
 import sigena.model.domain.Tarefa;
+import sigena.model.domain.Usuario;
 import sigena.model.service.FuncionarioService;
 
 @WebServlet(name = "TarefaController", urlPatterns = {"/TarefaController"})
@@ -58,7 +59,9 @@ public class TarefaController extends Controller {
 
         String acao = request.getParameter("acao");
         Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
-        int idUsuario = (int) sessao.getAttribute("idUsuario");
+        
+        Usuario usuario = (Usuario) sessao.getAttribute("UsuarioLogado");
+        String cpfUsuario = usuario.getCpf();
 
    
         if ("cadastrar".equals(acao)) {
@@ -81,7 +84,7 @@ public class TarefaController extends Controller {
         if (cargo == Cargo.GERENTE) 
             tarefas = service.listarTarefasDoDia();
         else 
-        tarefas = service.listarTarefasDoDiaPorUsuario(idUsuario);
+        tarefas = service.listarTarefasDoDiaPorCpf(cpfUsuario);
       
         request.setAttribute("tarefas", tarefas);
         request.getRequestDispatcher("home.jsp").forward(request, response);

@@ -31,28 +31,24 @@
         </header>
         
         <div class="botoes-acoes">
-            <a href="EventoController?acao=listar" class="btn">Voltar</a>
+            <a href="EventoController?acao=exibir&id=${evento.id}" class="btn">Voltar</a>
         </div>
         
         <div class="container">
-            <h1>Cadastrar Novo Evento</h1>
+            <h1>Editar Evento</h1>
         <div class="formulario">
             <form action="EventoController" method="post">
                 <label for="nome">Título do evento:*</label>
-                <input type="text" id="titulo" name="titulo" required>
+                <input type="text" id="titulo" name="titulo" value="<c:out value="${evento.titulo}"/>" required>
                 
                 <label for="descricao">Descrição:</label>
-                <textarea name="descricao"></textarea>
+                <textarea name="descricao"><c:out value="${evento.descricao}"/></textarea>
 
-                <label>Data e horário previstos:*<input type="datetime-local" name="data-programada" id="data-programada" required></label>
+                <label>Data e horário previstos:*<input type="datetime-local" name="data-programada" id="data-programada" value="<c:out value="${evento.dataProgramada}"/>" required></label>
                 
-                <c:if test="${not empty sessionScope.campoInvalidoErro}">
-                    <div class="mensagem"><c:out value="${sessionScope.campoInvalidoErro}"/></div>
-                    <c:remove var="campoInvalidoErro" scope="session"/>
-                </c:if>
-                
-                <input type="hidden" name="acao" value="salvar">
-                <button type="submit" class="btn-enviar">Salvar Evento</button>
+                <input type="hidden" name="acao" value="editar">
+                <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
+                <button type="submit" class="btn-enviar">Salvar Alterações</button>
             </form>
         </div>
         </div>
@@ -66,6 +62,5 @@
 
             input.min = agora.toISOString().slice(0, 16);
         </script>
-
     </body>
 </html>

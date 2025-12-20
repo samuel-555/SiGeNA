@@ -9,21 +9,24 @@ public class Evento {
     private LocalDateTime dataProgramada;
     private boolean ocorrido;
     private LocalDateTime dataInsercao;
-
+    private boolean cancelado;
+    
     public Evento(String titulo, String descricao, String dataProgramada) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataProgramada = DataConverter.toLocalDateTime(dataProgramada);
         this.ocorrido = false;
+        this.cancelado = false;
     }
 
-    public Evento(Long id, String titulo, String descricao, String dataProgramada, boolean ocorrido, String dataInsercao) {
+    public Evento(Long id, String titulo, String descricao, String dataProgramada, boolean ocorrido, String dataInsercao, boolean cancelado) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataProgramada = DataConverter.toLocalDateTime(dataProgramada);
-        this.ocorrido = true;
+        this.ocorrido = ocorrido;
         this.dataInsercao = DataConverter.toLocalDateTime(dataInsercao);
+        this.cancelado = cancelado;
     }
     
     public Evento(Long id, String titulo, String descricao, String dataProgramada) {
@@ -65,6 +68,10 @@ public class Evento {
         return dataInsercao;
     }
 
+    public boolean isCancelado() {
+        return cancelado;
+    }
+    
     public void setId(Long id) {
         this.id = id;
     }
@@ -87,5 +94,9 @@ public class Evento {
 
     public void setDataInsercao(LocalDateTime dataInsercao) {
         this.dataInsercao = dataInsercao;
+    }
+
+    public void setCancelado(boolean cancelado) {
+        this.cancelado = cancelado;
     }
 }

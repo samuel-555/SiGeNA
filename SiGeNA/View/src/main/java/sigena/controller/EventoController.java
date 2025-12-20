@@ -38,6 +38,7 @@ public class EventoController extends HttpServlet {
                     LocalDateTime fim = dataFim.plusDays(1).atStartOfDay();*/
                     List<Evento> eventos = null;
                     
+                    String tipo = StringUtils.conferNull(request.getParameter("tipo"));
                     /*if (di != null && !di.isBlank()) {
                         dataInicio = LocalDate.parse(di);
                     }
@@ -46,7 +47,7 @@ public class EventoController extends HttpServlet {
                         dataFim = LocalDate.parse(df);
                     }*/
                     
-                    eventos = service.listarEventos();
+                    eventos = service.listarEventos(tipo);
                     
                     request.setAttribute("eventos", eventos);
                     request.getRequestDispatcher("eventos.jsp").forward(request, response);
@@ -97,7 +98,7 @@ public class EventoController extends HttpServlet {
                 HttpSession sessao = request.getSession(false);
                 if(!success) {
                     sessao.setAttribute("campoInvalidoErro", "Campo(s) inválido(s) preenchido(s)!");
-                    response.sendRedirect(request.getContextPath() + "/AnimalController?acao=cadastrar");
+                    response.sendRedirect(request.getContextPath() + "/EventoController?acao=cadastrar");
                     return;
                 }
                 
@@ -109,6 +110,16 @@ public class EventoController extends HttpServlet {
             if("excluir".equals(acao)) {
                 excluir(request, response);
                 response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
+            }
+            
+            if("cancelar".equals(acao)) {
+                cancelar(request, response);
+                response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
+            }
+            
+            if("ativar".equals(acao)) {
+                ativar(request, response);
+                response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar&tipo=cancelados");
             }
             
             if("editar".equals(acao)) {
@@ -143,15 +154,24 @@ public class EventoController extends HttpServlet {
         service.excluirEvento(id);
     }
     
+    private void cancelar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
+        Long id = Long.valueOf(request.getParameter("id"));
+        service.cancelarEvento(id);
+    }
+    
+    private void ativar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{
+        Long id = Long.valueOf(request.getParameter("id"));
+        service.ativarEvento(id);
+    }
+    
     private boolean editar(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException {
         Long id = Long.valueOf(request.getParameter("id"));
         String titulo = request.getParameter("titulo");
         String descricao = request.getParameter("descricao");
-        String dataProgramada = request.getParameter("dataProgramada");
+        String dataProgramada = request.getParameter("data-programada");
 
         Evento eventoEditado = new Evento(id, titulo, descricao, dataProgramada);
-
-        
+ 
         return service.editarEvento(eventoEditado);
     }
 }

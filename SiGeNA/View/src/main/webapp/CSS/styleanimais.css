@@ -139,3 +139,10 @@ th {
   color: #333;
   cursor: pointer;
 }
+
+.evento {
+  margin: 8px;
+  background-color: #ccc;
+  border-radius: 0.5em;
+  padding: 8px;
+}

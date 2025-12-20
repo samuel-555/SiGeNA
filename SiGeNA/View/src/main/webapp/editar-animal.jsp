@@ -31,7 +31,7 @@
         </header>
         
         <div class="botoes-acoes">
-            <a href="AnimalController?acao=listar" class="btn">Voltar</a>
+            <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn">Voltar</a>
         </div>
         
         <div class="container">

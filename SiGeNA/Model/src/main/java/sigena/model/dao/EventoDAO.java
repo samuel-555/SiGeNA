@@ -33,15 +33,23 @@ public class EventoDAO {
         }
     }
     
-    public List<Evento> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM eventos "
-                + "WHERE arquivado = false "
-                + "ORDER BY data_programada ASC;";
+    public List<Evento> listar(String tipo) throws PersistenciaException {
+        StringBuilder sql = new StringBuilder("SELECT * FROM eventos WHERE arquivado = false ");
+
+        if ("ocorridos".equals(tipo)) {
+            sql.append("AND ocorrido = true ");
+        } else if ("cancelados".equals(tipo)) {
+            sql.append("AND cancelado = true ");
+        } else {
+            sql.append("AND cancelado = false AND ocorrido = false ");
+        }
+
+        sql.append("ORDER BY data_programada ASC");
         
         List<Evento> eventos = new ArrayList<>();
         
         try (Connection con = ConexaoDB.getConnection();
-                PreparedStatement stmt = con.prepareStatement(sql);){
+                PreparedStatement stmt = con.prepareStatement(sql.toString());){
             
             ResultSet rs = stmt.executeQuery();
             while(rs.next())
@@ -68,6 +76,34 @@ public class EventoDAO {
         }
     }
     
+    public void cancelar(Long id) throws PersistenciaException {
+        String sql = "UPDATE eventos "
+                + "SET cancelado = true "
+                + "WHERE id = ?;";
+        
+        try(Connection con = ConexaoDB.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenciaException("Não foi possível cancelar evento: " + e.getMessage());
+        }
+    }
+    
+    public void ativar(Long id) throws PersistenciaException {
+        String sql = "UPDATE eventos "
+                + "SET cancelado = false "
+                + "WHERE id = ?;";
+        
+        try(Connection con = ConexaoDB.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenciaException("Não foi possível excluir evento: " + e.getMessage());
+        }
+    }
+    
     public void atualizarOcorridos() throws PersistenciaException {
         String sql = "UPDATE eventos "
                 + "SET ocorrido = true "
@@ -79,7 +115,7 @@ public class EventoDAO {
         try (Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql);){
             
-            ResultSet rs = stmt.executeQuery();
+            stmt.executeUpdate();
             
         } catch (SQLException e) {
             throw new PersistenciaException("Não foi possível atualizar eventos: " + e.getMessage());
@@ -87,9 +123,9 @@ public class EventoDAO {
     }
     
     public Evento buscarPorId(Long id) throws PersistenciaException {
-        String sql = "SELECT eventos * "
-                + "WHERE id = ? "
-                + "AND arquivado = false;";
+        String sql = "SELECT * FROM eventos "
+           + "WHERE id = ? "
+           + "AND arquivado = false;";
         
         Evento evento = null;
         
@@ -134,8 +170,9 @@ public class EventoDAO {
         String dataProgramada = rs.getTimestamp("data_programada").toLocalDateTime().toString();
         boolean ocorrido = rs.getBoolean("ocorrido");
         String dataInsercao = rs.getTimestamp("data_de_insercao").toLocalDateTime().toString();
+        boolean cancelado = rs.getBoolean("cancelado");
         
-        return new Evento(id, titulo, descricao, dataProgramada, ocorrido, dataInsercao);
+        return new Evento(id, titulo, descricao, dataProgramada, ocorrido, dataInsercao, cancelado);
     }
     
     private void setPreparedStatementInsert(PreparedStatement stmt, Evento evento) throws SQLException{

@@ -9,10 +9,10 @@ import sigena.model.dao.EventoDAO;
 public class GestaoEventoService {
     private final EventoDAO eventoDAO = new EventoDAO();
     
-    public List<Evento> listarEventos() throws PersistenciaException{
+    public List<Evento> listarEventos(String tipo) throws PersistenciaException{
         eventoDAO.atualizarOcorridos();
         
-        return eventoDAO.listar();
+        return eventoDAO.listar(tipo);
     }
     
     public boolean cadastrarEvento(Evento evento) throws PersistenciaException {
@@ -37,8 +37,16 @@ public class GestaoEventoService {
     }
     
     public Evento buscarEvento(Long id) throws PersistenciaException {
-    return eventoDAO.buscarPorId(id);
-}
+        return eventoDAO.buscarPorId(id);
+    }
+    
+    public void cancelarEvento(Long id) throws PersistenciaException {
+        eventoDAO.cancelar(id);
+    }
+    
+    public void ativarEvento(Long id) throws PersistenciaException {
+        eventoDAO.ativar(id);
+    }
     
     private boolean conferirCampos(Evento evento) {
         if(evento.getTitulo() == null || evento.getTitulo().replaceAll("\\s", "").equals(""))

@@ -7,6 +7,10 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    if (!"GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")))) {
+        response.sendRedirect("home.jsp");
+        return;
+    }
     boolean edicao = request.getAttribute("agendamento") != null;
 %>
 <!DOCTYPE html>
@@ -21,7 +25,7 @@
     <body>
         <header>
             <div class="titulo">
-                <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a>
+                <a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a>
             </div>
         </header>
 

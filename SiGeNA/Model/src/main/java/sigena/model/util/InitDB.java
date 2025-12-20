@@ -262,11 +262,29 @@ public class InitDB {
                 justificativa_cancelamento TEXT
             );
             """;
-
         try (Statement st = con.createStatement()) {
-            st.executeUpdate(insertExemplo);
+            st.executeUpdate(tabelaSql);
+            try {
+                st.executeUpdate("ALTER TABLE agendamentos ADD COLUMN justificativa_cancelamento TEXT");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        // coluna ja existe
+                    } else {
+                        throw e;
+                    }
+                } else {
+                    throw e;
+                }
+            }
         }
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_data_hora ON agendamentos(data_agendamento, hora_agendamento)");
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_responsavel ON agendamentos(responsavel)");
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_local ON agendamentos(local)");
     }
+          
   
     public void initTratamento() throws SQLException {
         String sql = """

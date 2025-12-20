@@ -7,6 +7,7 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    boolean gerente = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")));
     Agendamento agendamento = (Agendamento) request.getAttribute("agendamento");
 %>
 <!DOCTYPE html>
@@ -20,7 +21,7 @@
     <body>
         <header>
             <div class="titulo">
-                <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">
+                <a href="<%= request.getContextPath() + "/home.jsp" %>">
                     SiGeNA
                 </a>
             </div>
@@ -47,7 +48,7 @@
             </div>
 
             <div class="botoes-acoes">
-                <% if (agendamento.getStatus() == null || !"CANCELADO".equals(agendamento.getStatus().name())) { %>
+                <% if (gerente && (agendamento.getStatus() == null || !"CANCELADO".equals(agendamento.getStatus().name()))) { %>
                     <a class="btn" href="AgendamentoController?acao=editar&id=<%= agendamento.getId() %>">Editar</a>
                 <% } %>
                 <a class="btn" href="AgendamentoController?acao=listar">Voltar</a>

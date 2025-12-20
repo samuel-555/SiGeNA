@@ -49,6 +49,7 @@
     features.add(new Feature("doacoes", "Gest\u00e3o de Doa\u00e7\u00f5es", "doacoes"));
     features.add(new Feature("fornecedores", "Gest\u00e3o de Fornecedores", "FornecedorController?acao=listar"));
     features.add(new Feature("funcionarios", "Gerenciamento de Funcion\u00e1rios", "FuncionarioServlet"));
+    features.add(new Feature("agendamentos", "Gestao de Agendamentos", "AgendamentoController?acao=listar"));
 
     Set<String> permitido = new LinkedHashSet<>();
     if (cargo == Cargo.GERENTE) {
@@ -58,7 +59,7 @@
     } else if (cargo == Cargo.VETERINARIO) {
         permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento"));
     } else if (cargo == Cargo.TRATADOR) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos"));
     } else {
         for (Feature f : features) permitido.add(f.id); // fallback: mostra tudo
     }

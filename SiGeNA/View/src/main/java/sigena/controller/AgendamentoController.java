@@ -16,6 +16,7 @@ import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.ValidationException;
 import sigena.model.domain.Agendamento;
+import sigena.model.domain.Cargo;
 import sigena.model.service.GestaoAgendamentoService;
 
 @WebServlet(name = "AgendamentoController", urlPatterns = {"/AgendamentoController"})
@@ -26,14 +27,23 @@ public class AgendamentoController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Cargo cargo = obterCargo(request);
         String acao = request.getParameter("acao");
 
         if (acao == null || "listar".equals(acao)) {
+            if (!podeVisualizar(cargo)) {
+                negarAcesso(request, response);
+                return;
+            }
             listar(request, response);
             return;
         }
 
         if ("ver".equals(acao)) {
+            if (!podeVisualizar(cargo)) {
+                negarAcesso(request, response);
+                return;
+            }
             try {
                 Long id = Long.valueOf(request.getParameter("id"));
                 Agendamento agendamento = service.buscarPorId(id);
@@ -52,11 +62,19 @@ public class AgendamentoController extends HttpServlet {
         }
 
         if ("cadastrar".equals(acao)) {
+            if (!podeGerenciar(cargo)) {
+                negarAcesso(request, response);
+                return;
+            }
             request.getRequestDispatcher("cadastrar-agendamento.jsp").forward(request, response);
             return;
         }
 
         if ("editar".equals(acao)) {
+            if (!podeGerenciar(cargo)) {
+                negarAcesso(request, response);
+                return;
+            }
             try {
                 Long id = Long.valueOf(request.getParameter("id"));
                 Agendamento agendamento = service.buscarPorId(id);
@@ -88,9 +106,14 @@ public class AgendamentoController extends HttpServlet {
             throws ServletException, IOException {
         String acao = request.getParameter("acao");
         HttpSession sessao = request.getSession();
+        Cargo cargo = obterCargo(request);
 
         try {
             if ("salvar".equals(acao)) {
+                if (!podeGerenciar(cargo)) {
+                    negarAcesso(request, response);
+                    return;
+                }
                 Agendamento agendamento = montarAgendamento(request, false);
                 service.criarAgendamento(agendamento);
                 sessao.setAttribute("acaoBemSucedida", "Agendamento cadastrado com sucesso!");
@@ -99,6 +122,10 @@ public class AgendamentoController extends HttpServlet {
             }
 
             if ("atualizar".equals(acao)) {
+                if (!podeGerenciar(cargo)) {
+                    negarAcesso(request, response);
+                    return;
+                }
                 Agendamento agendamento = montarAgendamento(request, true);
                 service.atualizarAgendamento(agendamento);
                 sessao.setAttribute("acaoBemSucedida", "Agendamento atualizado com sucesso!");
@@ -107,6 +134,10 @@ public class AgendamentoController extends HttpServlet {
             }
 
             if ("cancelar".equals(acao)) {
+                if (!podeGerenciar(cargo)) {
+                    negarAcesso(request, response);
+                    return;
+                }
                 Long id = Long.valueOf(request.getParameter("id"));
                 String justificativa = request.getParameter("justificativa");
                 service.cancelarAgendamento(id, justificativa);
@@ -214,5 +245,40 @@ public class AgendamentoController extends HttpServlet {
 
     private String parametroOuVazio(String valor) {
         return valor == null ? "" : valor;
+    }
+
+    private Cargo obterCargo(HttpServletRequest request) {
+        HttpSession sessao = request.getSession(false);
+        if (sessao == null) {
+            return null;
+        }
+        Object cargoObj = sessao.getAttribute("cargoUsuario");
+        if (cargoObj instanceof Cargo) {
+            return (Cargo) cargoObj;
+        }
+        if (cargoObj instanceof String) {
+            try {
+                return Cargo.valueOf((String) cargoObj);
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private boolean podeVisualizar(Cargo cargo) {
+        return Cargo.GERENTE == cargo || Cargo.TRATADOR == cargo;
+    }
+
+    private boolean podeGerenciar(Cargo cargo) {
+        return Cargo.GERENTE == cargo;
+    }
+
+    private void negarAcesso(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession sessao = request.getSession(false);
+        if (sessao != null) {
+            sessao.setAttribute("campoInvalidoErro", "Acesso nao autorizado.");
+        }
+        response.sendRedirect(request.getContextPath() + "/home.jsp");
     }
 }

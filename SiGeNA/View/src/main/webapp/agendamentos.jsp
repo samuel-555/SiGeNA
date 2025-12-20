@@ -7,6 +7,7 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    boolean gerente = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")));
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -20,7 +21,7 @@
     <body>
         <header>
             <div class="titulo">
-                <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a>
+                <a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a>
             </div>
         </header>
 
@@ -28,7 +29,9 @@
             <h1>Gestao de Agendamentos</h1>
 
             <div class="botoes-acoes">
-                <a href="AgendamentoController?acao=cadastrar" class="btn">Cadastrar Agendamento</a>
+                <% if (gerente) { %>
+                    <a href="AgendamentoController?acao=cadastrar" class="btn">Cadastrar Agendamento</a>
+                <% } %>
             </div>
 
             <div class="historico">
@@ -93,14 +96,16 @@
                                         <td>
                                             <div class="acoes-agendamento">
                                                 <a href="AgendamentoController?acao=ver&id=${agendamento.id}" class="btn-pequeno">Ver</a>
-                                                <c:if test="${agendamento.status == 'ATIVO'}">
-                                                    <form action="AgendamentoController" method="post" class="botao-acao" onsubmit="return solicitarJustificativa(this);">
-                                                        <input type="hidden" name="acao" value="cancelar">
-                                                        <input type="hidden" name="id" value="${agendamento.id}">
-                                                        <input type="hidden" name="justificativa" value="">
-                                                        <button type="submit" class="btn-pequeno excluir">Cancelar</button>
-                                                    </form>
-                                                </c:if>
+                                                <% if (gerente) { %>
+                                                    <c:if test="${agendamento.status == 'ATIVO'}">
+                                                        <form action="AgendamentoController" method="post" class="botao-acao" onsubmit="return solicitarJustificativa(this);">
+                                                            <input type="hidden" name="acao" value="cancelar">
+                                                            <input type="hidden" name="id" value="${agendamento.id}">
+                                                            <input type="hidden" name="justificativa" value="">
+                                                            <button type="submit" class="btn-pequeno excluir">Cancelar</button>
+                                                        </form>
+                                                    </c:if>
+                                                <% } %>
                                             </div>
                                         </td>
                                     </tr>

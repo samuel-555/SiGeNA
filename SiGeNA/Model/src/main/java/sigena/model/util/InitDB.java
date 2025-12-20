@@ -215,6 +215,59 @@ public class InitDB {
         }
     }
 
+    public void initEnriquecimentos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS enriquecimento (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            especie_destinada VARCHAR(255),
+            frequencia VARCHAR(100),
+            observacoes TEXT,
+            status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
+            data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE enriquecimento ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
+        }
+    }
+
+
+    public void initAgendamentos() throws SQLException {
+        String tabelaSql = """
+            CREATE TABLE IF NOT EXISTS agendamentos (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                tipo VARCHAR(100) NOT NULL,
+                data_agendamento DATE NOT NULL,
+                hora_agendamento TIME NOT NULL,
+                responsavel VARCHAR(120) NOT NULL,
+                local VARCHAR(120) NOT NULL,
+                observacoes TEXT,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
+                criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                cancelado_em DATETIME,
+                justificativa_cancelamento TEXT
+            );
+            """;
+
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(insertExemplo);
+        }
+    }
+  
     public void initTratamento() throws SQLException {
         String sql = """
                      
@@ -235,6 +288,23 @@ public class InitDB {
                     
                 );
                 """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+    
+    public void initTarefas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS tarefas (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL,
+                texto VARCHAR(255),
+                concluida BOOLEAN NOT NULL,
+                funcionario_id INT NOT NULL,
+                dataCadastro DATETIME NOT NULL,
+                dataPConclusao DATETIME NOT NULL
+            );
+            """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
@@ -314,36 +384,7 @@ public void initDoacoes() throws SQLException {
         }
     }
 
-    public void initEnriquecimentos() throws SQLException {
-        String sql = """
-        CREATE TABLE IF NOT EXISTS enriquecimento (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            nome VARCHAR(255) NOT NULL,
-            tipo VARCHAR(255) NOT NULL,
-            especie_destinada VARCHAR(255),
-            frequencia VARCHAR(100),
-            observacoes TEXT,
-            status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
-            data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        """;
-        try (Statement st = con.createStatement()) {
-            st.executeUpdate(sql);
-            try {
-                st.executeUpdate("ALTER TABLE enriquecimento ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
-            } catch (SQLException e) {
-                String msg = e.getMessage();
-                if (msg != null) {
-                    msg = msg.toLowerCase();
-                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
-                        return;
-                    }
-                }
-                throw e;
-            }
-        }
-    }
-
+    
     public void initEnriquecimento_habitat() throws SQLException {
         String sql = """
         CREATE TABLE IF NOT EXISTS enriquecimento_habitat (
@@ -361,45 +402,50 @@ public void initDoacoes() throws SQLException {
         }
     }
 
-    public void initAgendamentos() throws SQLException {
-        String tabelaSql = """
-            CREATE TABLE IF NOT EXISTS agendamentos (
+    public void initVisitas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS visitas (
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                tipo VARCHAR(100) NOT NULL,
-                data_agendamento DATE NOT NULL,
-                hora_agendamento TIME NOT NULL,
-                responsavel VARCHAR(120) NOT NULL,
-                local VARCHAR(120) NOT NULL,
+                nome_visitante VARCHAR(150) NOT NULL,
+                documento VARCHAR(50),
+                motivo VARCHAR(255) NOT NULL,
+                data_visita DATE NOT NULL,
                 observacoes TEXT,
-                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
-                criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                cancelado_em DATETIME,
-                justificativa_cancelamento TEXT
+                vip BOOLEAN NOT NULL DEFAULT FALSE,
+                necessidade_especial BOOLEAN NOT NULL DEFAULT FALSE,
+                descricao_necessidade TEXT,
+                turno VARCHAR(15),
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
+                data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """;
 
         try (Statement st = con.createStatement()) {
-            st.executeUpdate(tabelaSql);
+            st.executeUpdate(sql);
             try {
-                st.executeUpdate("ALTER TABLE agendamentos ADD COLUMN justificativa_cancelamento TEXT");
-            } catch (SQLException e) {
-                String msg = e.getMessage();
-                if (msg != null) {
-                    msg = msg.toLowerCase();
-                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
-                        // coluna ja existe
-                    } else {
-                        throw e;
-                    }
-                } else {
-                    throw e;
-                }
+                st.executeUpdate("ALTER TABLE visitas ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException ignored) {
+            }
+            try {
+                st.executeUpdate("UPDATE visitas SET status='ATIVA' WHERE status IS NULL");
+            } catch (SQLException ignored) {
             }
         }
-
-        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_data_hora ON agendamentos(data_agendamento, hora_agendamento)");
-        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_responsavel ON agendamentos(responsavel)");
-        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_local ON agendamentos(local)");
+    }
+    
+    public void initHistorico() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS historico (
+            funcionarioCpf VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            descricao VARCHAR(255) NOT NULL,
+            data DATETIME NOT NULL,
+            id BIGINT AUTO_INCREMENT PRIMARY KEY
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
     }
 
     public void initTodos() throws PersistenciaException {
@@ -417,7 +463,9 @@ public void initDoacoes() throws SQLException {
             initRelatoriosSaude();
             initDoacoes();
             initRecibosDoacao();
-
+            initVisitas();
+            initTarefas();
+            initHistorico();
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
 
             initFornecedores();

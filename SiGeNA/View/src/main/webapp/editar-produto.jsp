@@ -26,7 +26,7 @@
     <body>
         <header>
             <div class="titulo">
-                <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a>
+                <a href="<%= request.getContextPath() + "/home.jsp"%>">SiGeNA</a>
             </div>
         </header>
 

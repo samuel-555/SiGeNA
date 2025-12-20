@@ -10,6 +10,7 @@ public class PlanoAlimentar {
     private Long id;
     private Animal animal;
     private LocalDateTime dataCriacao;
+    private String status;
     private final List<ItemPlanoAlimentar> itens = new ArrayList<>();
 
     public PlanoAlimentar() {
@@ -51,6 +52,14 @@ public class PlanoAlimentar {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public List<ItemPlanoAlimentar> getItens() {

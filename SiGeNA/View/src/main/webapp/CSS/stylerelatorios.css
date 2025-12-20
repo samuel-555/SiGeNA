@@ -146,9 +146,9 @@ header {
 }
 
 .btn.editar {
-    background-color: #1d4ed8;
+    background-color: #149b5a;
     color: #fff;
-    padding: 6px 12px;
+    padding: 3px 6px;
     border-radius: 6px;
     text-decoration: none;
     display: inline-block;
@@ -157,7 +157,7 @@ header {
 .btn.excluir {
     background-color: #dc2626;
     color: #fff;
-    padding: 6px 12px;
+    padding: 3px 6px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -268,6 +268,35 @@ th, td {
     text-align: center;
     font-style: italic;
     color: #6b7280;
+}
+
+.status-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-toggle-hint {
+    font-size: 12px;
+    color: #4b5563;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.status-badge.apto {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.inapto {
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
 @media (max-width: 768px) {

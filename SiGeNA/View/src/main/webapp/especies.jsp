@@ -35,6 +35,29 @@
         <div class="historico">
             <h2>Catá­logo de Espécies</h2>
 
+            <%
+                String busca = request.getParameter("busca") != null ? request.getParameter("busca") : "";
+                String predadorFiltro = request.getParameter("predador") != null ? request.getParameter("predador") : "";
+                String ordem = request.getParameter("ordem") != null ? request.getParameter("ordem") : "";
+            %>
+            <form action="EspeciesController" method="get" class="filtro-especies">
+                <input type="text" name="busca" placeholder="Buscar por nome" value="<%= busca %>">
+                <select name="predador">
+                    <option value="" <%= predadorFiltro.isBlank() ? "selected" : "" %>>Todas</option>
+                    <option value="sim" <%= "sim".equalsIgnoreCase(predadorFiltro) ? "selected" : "" %>>Predadora</option>
+                    <option value="nao" <%= "nao".equalsIgnoreCase(predadorFiltro) ? "selected" : "" %>>Nao predadora</option>
+                </select>
+                <select name="ordem">
+                    <option value="" <%= ordem.isBlank() ? "selected" : "" %>>Ordem padrao</option>
+                    <option value="nome_az" <%= "nome_az".equalsIgnoreCase(ordem) ? "selected" : "" %>>Nome A-Z</option>
+                    <option value="nome_za" <%= "nome_za".equalsIgnoreCase(ordem) ? "selected" : "" %>>Nome Z-A</option>
+                    <option value="mais_recente" <%= "mais_recente".equalsIgnoreCase(ordem) ? "selected" : "" %>>Mais recente</option>
+                    <option value="mais_antigo" <%= "mais_antigo".equalsIgnoreCase(ordem) ? "selected" : "" %>>Mais antigo</option>
+                </select>
+                <button type="submit" class="btn-pequeno">Filtrar</button>
+                <a href="EspeciesController" class="btn-pequeno">Limpar</a>
+            </form>
+
             <% String erro = (String) request.getAttribute("erro");
                if (erro != null) { %>
                 <p style="color:red;"><%= erro %></p>
@@ -81,3 +104,4 @@
     </div>
 </body>
 </html>
+

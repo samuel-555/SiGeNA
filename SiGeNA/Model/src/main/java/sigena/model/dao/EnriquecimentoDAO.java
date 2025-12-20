@@ -56,7 +56,7 @@ public class EnriquecimentoDAO {
 
     public List<Enriquecimento> findAll() throws SQLException {
         List<Enriquecimento> lista = new ArrayList<>();
-        String q = "SELECT id, nome, tipo, especie_destinada, frequencia, observacoes, data_criacao FROM enriquecimento ORDER BY data_criacao DESC";
+        String q = "SELECT id, nome, tipo, especie_destinada, frequencia, observacoes, data_criacao FROM enriquecimento WHERE status IS NULL OR status <> 'EXCLUIDA' ORDER BY data_criacao DESC";
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(q); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Enriquecimento e = new Enriquecimento();
@@ -130,7 +130,7 @@ public class EnriquecimentoDAO {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM enriquecimento WHERE id = ?";
+        String sql = "UPDATE enriquecimento SET status = 'EXCLUIDA' WHERE id = ?";
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();

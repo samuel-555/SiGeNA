@@ -104,10 +104,10 @@ public class AgendamentoDAO {
         }
     }
 
-    public void cancelar(Long id) throws PersistenciaException {
+    public void cancelar(Long id, String justificativa) throws PersistenciaException {
         String sql = """
             UPDATE agendamentos
-            SET status = ?, cancelado_em = NOW()
+            SET status = ?, cancelado_em = NOW(), justificativa_cancelamento = ?
             WHERE id = ?
             """;
 
@@ -115,7 +115,12 @@ public class AgendamentoDAO {
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setString(1, AgendamentoStatus.CANCELADO.name());
-            stmt.setLong(2, id);
+            if (justificativa == null || justificativa.isBlank()) {
+                stmt.setNull(2, Types.LONGVARCHAR);
+            } else {
+                stmt.setString(2, justificativa);
+            }
+            stmt.setLong(3, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenciaException("Nao foi possivel cancelar o agendamento: " + e.getMessage());
@@ -182,6 +187,7 @@ public class AgendamentoDAO {
         agendamento.setLocal(rs.getString("local"));
         agendamento.setObservacoes(rs.getString("observacoes"));
         agendamento.setStatus(AgendamentoStatus.valueOf(rs.getString("status")));
+        agendamento.setJustificativaCancelamento(rs.getString("justificativa_cancelamento"));
 
         Timestamp criadoEm = rs.getTimestamp("criado_em");
         if (criadoEm != null) {

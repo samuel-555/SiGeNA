@@ -28,11 +28,18 @@ public class GestaoAgendamentoService {
         if (agendamento.getId() == null) {
             throw new ValidationException("Agendamento invalido.");
         }
+        Agendamento existente = dao.buscarPorId(agendamento.getId());
+        if (existente == null) {
+            throw new ValidationException("Agendamento nao encontrado.");
+        }
+        if (AgendamentoStatus.CANCELADO.equals(existente.getStatus())) {
+            throw new ValidationException("Agendamento cancelado nao pode ser editado.");
+        }
         validarAgendamento(agendamento, agendamento.getId());
         dao.atualizar(agendamento);
     }
 
-    public void cancelarAgendamento(Long id) throws PersistenciaException, ValidationException {
+    public void cancelarAgendamento(Long id, String justificativa) throws PersistenciaException, ValidationException {
         Agendamento agendamento = dao.buscarPorId(id);
         if (agendamento == null) {
             throw new ValidationException("Agendamento nao encontrado.");
@@ -52,7 +59,11 @@ public class GestaoAgendamentoService {
             throw new ValidationException("Cancelamentos precisam ser feitos com no minimo 24h de antecedencia.");
         }
 
-        dao.cancelar(id);
+        if (justificativa == null || justificativa.isBlank()) {
+            throw new ValidationException("Informe a justificativa do cancelamento.");
+        }
+
+        dao.cancelar(id, justificativa.trim());
     }
 
     public List<Agendamento> listarAgendamentos() throws PersistenciaException {

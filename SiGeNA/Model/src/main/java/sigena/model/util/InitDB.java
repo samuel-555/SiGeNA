@@ -194,11 +194,24 @@ public class InitDB {
                 habitat VARCHAR(255) NOT NULL,
                 alimentacao VARCHAR(255) NOT NULL,
                 predador BOOLEAN NOT NULL,
-                observacoes TEXT
+                observacoes TEXT,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'
             );
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE especie ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
         }
     }
 
@@ -310,11 +323,24 @@ public void initDoacoes() throws SQLException {
             especie_destinada VARCHAR(255),
             frequencia VARCHAR(100),
             observacoes TEXT,
+            status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
             data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
         """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE enriquecimento ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
         }
     }
 
@@ -347,12 +373,28 @@ public void initDoacoes() throws SQLException {
                 observacoes TEXT,
                 status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
                 criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                cancelado_em DATETIME
+                cancelado_em DATETIME,
+                justificativa_cancelamento TEXT
             );
             """;
 
         try (Statement st = con.createStatement()) {
             st.executeUpdate(tabelaSql);
+            try {
+                st.executeUpdate("ALTER TABLE agendamentos ADD COLUMN justificativa_cancelamento TEXT");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        // coluna ja existe
+                    } else {
+                        throw e;
+                    }
+                } else {
+                    throw e;
+                }
+            }
         }
 
         criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_data_hora ON agendamentos(data_agendamento, hora_agendamento)");

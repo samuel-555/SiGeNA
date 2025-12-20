@@ -37,6 +37,9 @@
                 <p><strong>Responsavel:</strong> <%= agendamento.getResponsavel() %></p>
                 <p><strong>Local:</strong> <%= agendamento.getLocal() %></p>
                 <p><strong>Status:</strong> <%= agendamento.getStatus() %></p>
+                <% if (agendamento.getStatus() != null && "CANCELADO".equals(agendamento.getStatus().name())) { %>
+                    <p><strong>Justificativa do cancelamento:</strong> <%= agendamento.getJustificativaCancelamento() != null && !agendamento.getJustificativaCancelamento().isBlank() ? agendamento.getJustificativaCancelamento() : "Sem justificativa." %></p>
+                <% } %>
                 <p><strong>Observacoes:</strong></p>
                 <div class="observacoes">
                     <%= agendamento.getObservacoes() != null && !agendamento.getObservacoes().isBlank() ? agendamento.getObservacoes() : "Sem observacoes." %>
@@ -44,7 +47,9 @@
             </div>
 
             <div class="botoes-acoes">
-                <a class="btn" href="AgendamentoController?acao=editar&id=<%= agendamento.getId() %>">Editar</a>
+                <% if (agendamento.getStatus() == null || !"CANCELADO".equals(agendamento.getStatus().name())) { %>
+                    <a class="btn" href="AgendamentoController?acao=editar&id=<%= agendamento.getId() %>">Editar</a>
+                <% } %>
                 <a class="btn" href="AgendamentoController?acao=listar">Voltar</a>
             </div>
             <% } else { %>

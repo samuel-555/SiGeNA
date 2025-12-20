@@ -16,6 +16,7 @@ public class Agendamento {
     private AgendamentoStatus status;
     private LocalDateTime criadoEm;
     private LocalDateTime canceladoEm;
+    private String justificativaCancelamento;
 
     public Long getId() {
         return id;
@@ -95,6 +96,14 @@ public class Agendamento {
 
     public void setCanceladoEm(LocalDateTime canceladoEm) {
         this.canceladoEm = canceladoEm;
+    }
+
+    public String getJustificativaCancelamento() {
+        return justificativaCancelamento;
+    }
+
+    public void setJustificativaCancelamento(String justificativaCancelamento) {
+        this.justificativaCancelamento = justificativaCancelamento;
     }
 
     public LocalDateTime getDataHora() {

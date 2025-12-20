@@ -66,6 +66,12 @@ public class AgendamentoController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/AgendamentoController?acao=listar");
                     return;
                 }
+                if (agendamento.getStatus() != null && "CANCELADO".equals(agendamento.getStatus().name())) {
+                    HttpSession sessao = request.getSession();
+                    sessao.setAttribute("campoInvalidoErro", "Agendamento cancelado nao pode ser editado.");
+                    response.sendRedirect(request.getContextPath() + "/AgendamentoController?acao=listar");
+                    return;
+                }
                 request.setAttribute("agendamento", agendamento);
                 request.getRequestDispatcher("cadastrar-agendamento.jsp").forward(request, response);
                 return;
@@ -102,7 +108,8 @@ public class AgendamentoController extends HttpServlet {
 
             if ("cancelar".equals(acao)) {
                 Long id = Long.valueOf(request.getParameter("id"));
-                service.cancelarAgendamento(id);
+                String justificativa = request.getParameter("justificativa");
+                service.cancelarAgendamento(id, justificativa);
                 sessao.setAttribute("acaoBemSucedida", "Agendamento cancelado com sucesso!");
                 response.sendRedirect(request.getContextPath() + "/AgendamentoController?acao=listar");
                 return;

@@ -94,9 +94,10 @@
                                             <div class="acoes-agendamento">
                                                 <a href="AgendamentoController?acao=ver&id=${agendamento.id}" class="btn-pequeno">Ver</a>
                                                 <c:if test="${agendamento.status == 'ATIVO'}">
-                                                    <form action="AgendamentoController" method="post" class="botao-acao">
+                                                    <form action="AgendamentoController" method="post" class="botao-acao" onsubmit="return solicitarJustificativa(this);">
                                                         <input type="hidden" name="acao" value="cancelar">
                                                         <input type="hidden" name="id" value="${agendamento.id}">
+                                                        <input type="hidden" name="justificativa" value="">
                                                         <button type="submit" class="btn-pequeno excluir">Cancelar</button>
                                                     </form>
                                                 </c:if>
@@ -111,4 +112,22 @@
             </div>
         </div>
     </body>
+    <script>
+        function solicitarJustificativa(form) {
+            var justificativa = prompt("Informe a justificativa do cancelamento:");
+            if (justificativa === null) {
+                return false;
+            }
+            justificativa = justificativa.trim();
+            if (!justificativa) {
+                alert("A justificativa e obrigatoria.");
+                return false;
+            }
+            var campo = form.querySelector("input[name='justificativa']");
+            if (campo) {
+                campo.value = justificativa;
+            }
+            return true;
+        }
+    </script>
 </html>

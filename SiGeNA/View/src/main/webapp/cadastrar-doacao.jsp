@@ -68,6 +68,49 @@
                 <button type="submit" class="btn">Salvar</button>
                 <a href="doacoes" class="btn cancelar">Cancelar</a>
             </form>
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Doação</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/stylefuncionario.css">
+</head>
+<body>
+
+<header>
+    <div class="titulo">
+        <a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a>
+    </div>
+</header>
+
+<div class="container">
+    <h1><%= doacao != null ? "Editar Doação" : "Cadastrar Doação" %></h1>
+
+    <form action="doacoes" method="post">
+
+        <c:choose>
+            <c:when test="${doacao != null}">
+                <input type="hidden" name="acao" value="atualizar" />
+                <input type="hidden" name="id" value="${doacao.id}" />
+            </c:when>
+
+            <c:otherwise>
+                <input type="hidden" name="acao" value="cadastrar" />
+            </c:otherwise>
+        </c:choose>
+
+        <label>Nome do Doador:</label>
+        <input type="text" name="doador" value="${doacao.nomeDoador}" required />
+
+        <label>Tipo da Doação:</label>
+        <select name="tipoDoacao" required>
+            <option value="">-- selecione --</option>
+            <option value="MONETARIA" ${doacao != null && doacao.tipo == 'MONETARIA' ? 'selected' : ''}>Monetária</option>
+            <option value="OUTRO" ${doacao != null && doacao.tipo == 'OUTRO' ? 'selected' : ''}>Outro</option>
+        </select>
+
+        <div id="bloco-monetaria" style="${doacao != null && doacao.tipo == 'MONETARIA' ? '' : 'display:none;'}">
+            <label>Valor (R$):</label>
+            <input type="number" name="valor" value="${doacao.valorMonetario}" min="0" step="0.01"  />
         </div>
 
         <script>

@@ -28,6 +28,14 @@ public class DoacoesController extends HttpServlet {
         String acao = req.getParameter("acao");
 
         try {
+
+            if ("excluir".equals(acao)) {
+                Long id = Long.parseLong(req.getParameter("id"));
+                service.cancelarDoacao(id);
+                resp.sendRedirect("doacoes?acao=listar");
+                return;
+            }
+
             if ("editar".equals(acao)) {
                 Long id = Long.parseLong(req.getParameter("id"));
                 Doacao d = service.buscarPorId(id);
@@ -93,6 +101,10 @@ public class DoacoesController extends HttpServlet {
 
             req.setAttribute("doacoes", lista);
             req.getRequestDispatcher("doacoes.jsp").forward(req, resp);
+            List<Doacao> lista = service.listarDoacoes();
+            req.setAttribute("doacoes", lista);
+            req.getRequestDispatcher("doacoes.jsp")
+                    .forward(req, resp);
 
         } catch (Exception e) {
             throw new ServletException("Erro no controller: " + e.getMessage(), e);
@@ -117,6 +129,7 @@ public class DoacoesController extends HttpServlet {
                     return;
                 }
                 service.registrarDoacao(d);
+
                 resp.sendRedirect("doacoes?acao=listar");
                 return;
             }
@@ -138,6 +151,23 @@ public class DoacoesController extends HttpServlet {
                 if (doacaoExistente.getTipo() == DoacaoTipo.MONETARIA) {
                     service.atualizarValor(d.getId(), d.getValorMonetario());
                 } else if (doacaoExistente.getTipo() == DoacaoTipo.OUTRO) {
+
+                    Double valorNovo = d.getValorMonetario();
+
+                    if (valorNovo == null) {
+                        valorNovo = doacaoExistente.getValorMonetario();
+                    }
+
+
+                    if (valorNovo != null && valorNovo <= 0) {
+                        throw new sigena.model.common.exception.ValidationException(
+                                "O valor da doação deve ser maior que zero."
+                        );
+                    }
+
+                    service.atualizarValor(id, valorNovo);
+                } else if (doacaoExistente.getTipo() == DoacaoTipo.OUTRO) {
+
                     String descricao = (d.getDescricaoOutro() == null || d.getDescricaoOutro().isBlank())
                             ? doacaoExistente.getDescricaoOutro()
                             : d.getDescricaoOutro();
@@ -179,6 +209,7 @@ public class DoacoesController extends HttpServlet {
 
         if (tipo == DoacaoTipo.MONETARIA) {
             String v = req.getParameter("valor");
+
             if (v != null && !v.isBlank()) {
                 v = v.replace(".", "").replace(",", ".");
 
@@ -193,6 +224,11 @@ public class DoacoesController extends HttpServlet {
                 }
 
                 d.setValorMonetario(valor);
+                try {
+                    d.setValorMonetario(Double.parseDouble(v));
+                } catch (NumberFormatException e) {
+                    d.setValorMonetario(null); 
+                }
             }
 
             d.setDescricaoOutro(null);

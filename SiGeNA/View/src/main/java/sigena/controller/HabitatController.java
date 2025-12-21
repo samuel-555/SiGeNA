@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -18,7 +17,7 @@ import sigena.model.service.GestaoHabitatService;
 
 
 @WebServlet(name = "HabitatController", urlPatterns = {"/HabitatController"})
-public class HabitatController extends HttpServlet {
+public class HabitatController extends Controller {
 
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -55,6 +54,11 @@ public class HabitatController extends HttpServlet {
             request.getRequestDispatcher("editar-habitat.jsp").forward(request, response);
             return;
         }
+        if ("buscar".equals(acao)) {
+            buscar(request, response);
+            return;
+        }   
+
         
         List<Habitat> habitats = service.listarHabitats();
         request.setAttribute("habitats", habitats);
@@ -73,6 +77,9 @@ public class HabitatController extends HttpServlet {
                 break;
             case "editar":
                 editar(request, response);
+                break;
+            case "editar-manutencao":
+                editarManutencao(request, response);
                 break;
             case "excluir":
             {
@@ -128,6 +135,18 @@ public class HabitatController extends HttpServlet {
         response.sendRedirect("HabitatController");
     }
 
+    public void editarManutencao(HttpServletRequest request,HttpServletResponse response)throws IOException {
+
+        String nomeHabitat = request.getParameter("nome");
+        boolean manutencao = request.getParameter("manutencao") != null;
+
+        String cpfLogado = getCpfUsuarioLogado(request);
+
+        GestaoHabitatService service = new GestaoHabitatService();
+        service.editarManutencao(nomeHabitat, manutencao, cpfLogado);
+
+        response.sendRedirect("HabitatController");
+    }
     
     public void excluir(HttpServletRequest request, HttpServletResponse response) throws IOException, HabitatVazioException, ServletException {
         String nome = request.getParameter("nome");
@@ -145,6 +164,17 @@ public class HabitatController extends HttpServlet {
         }
 
         request.getRequestDispatcher("habitats.jsp").forward(request, response);
-}
-            
+    }
+    
+    private void buscar(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        String termo = request.getParameter("q");
+
+        GestaoHabitatService service = new GestaoHabitatService();
+        List<Habitat> habitats = service.buscarPorNomeOuTipo(termo);
+
+        request.setAttribute("habitats", habitats);
+        request.getRequestDispatcher("habitats.jsp").forward(request, response);
+    }
 }

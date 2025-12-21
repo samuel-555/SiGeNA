@@ -7,15 +7,18 @@ import sigena.model.domain.Animal;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.HabitatVazioException;
+import sigena.model.domain.TipoHistorico;
 
 public class GestaoHabitatService {
    
     private final HabitatDAO dao;
     private final AnimalDAO animalDao;
+    private final GestaoHistoricoService historicoService;
     
     public GestaoHabitatService(){
         dao = new HabitatDAO();
         animalDao = new AnimalDAO();
+        historicoService = new GestaoHistoricoService();
     }
 
     public void cadastrarHabitat(String tipo,String nome, int tamanho, boolean manutencao){
@@ -35,14 +38,15 @@ public class GestaoHabitatService {
         Habitat habitatAntigo = dao.buscar(nomeAntigo);
         
         if(habitatAntigo.getTamanho() != tamanho){
-            if (tamanho > habitatAntigo.getTamanho())
-                habitat.setCapacidade(habitatAntigo.getCapacidade()+ tamanho);
-            else{
-                if((habitatAntigo.getCapacidade() - tamanho)< habitatAntigo.getCapacidade()){
+            int novaCapacidade = tamanho;
+            int ocupadoAntigo = (habitatAntigo.getTamanho() - habitatAntigo.getCapacidade());
+            
+            if(ocupadoAntigo > novaCapacidade){
                     habitat.setCapacidade(0);
                     habitat.setDisponivel(false);
                 }
-                habitat.setCapacidade(habitatAntigo.getCapacidade() - tamanho);
+            else{
+                habitat.setCapacidade(novaCapacidade - ocupadoAntigo);
             }
         }
         else
@@ -54,8 +58,19 @@ public class GestaoHabitatService {
     }
 
     
-    public void editarManutencao(String nomeHabitat, boolean manutencao){
+    public void editarManutencao(String nomeHabitat, boolean manutencao, String cpfLogado) {
+
+        Habitat habitatAtual = dao.buscar(nomeHabitat);
+
+        if (habitatAtual.getManutencao() == manutencao) {
+            return; 
+        }
+
         dao.editarManutencao(nomeHabitat, manutencao);
+
+        if (manutencao) {
+            historicoService.registrar(TipoHistorico.MANUTENCAO,TipoHistorico.MANUTENCAO.getDescricao(nomeHabitat),cpfLogado);
+        }
     }
 
     public void editarDisponivel(String nomeHabitat, boolean disponivel){
@@ -78,6 +93,14 @@ public class GestaoHabitatService {
     
     public Habitat buscar(String nome){
         return dao.buscar(nome);
+    }
+    
+    public List<Habitat> buscarPorNomeOuTipo(String termo) {
+
+        if (termo == null || termo.isBlank()) 
+            return dao.listar();
+    
+        return dao.buscarPorNomeOuTipo(termo);
     }
     
     public void excluir(Habitat habitat) throws HabitatVazioException {

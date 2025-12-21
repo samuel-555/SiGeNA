@@ -1,87 +1,201 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package sigena.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import sigena.model.common.exception.DataInvalidaException;
+import sigena.model.common.exception.DatabaseException;
+import sigena.model.domain.Cargo;
+import sigena.model.domain.Tarefa;
+import sigena.model.service.FuncionarioService;
+import sigena.model.service.GestaoTarefaService;
 
-/**
- *
- * @author USUARIO
- */
 @WebServlet(name = "TarefaController", urlPatterns = {"/TarefaController"})
-public class TarefaController extends HttpServlet {
+public class TarefaController extends Controller {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet TarefaController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet TarefaController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        HttpSession sessao = request.getSession(false);
+        if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+
+        String acao = request.getParameter("acao");
+        GestaoTarefaService service = new GestaoTarefaService();
+
+        try {
+            if ("cadastrar".equals(acao)) {
+                abrirFormularioCadastro(request, response);
+                return;
+            }
+
+            if ("editar".equals(acao)) {
+                long id = Long.parseLong(request.getParameter("id"));
+                Tarefa tarefa = service.buscar(id);
+
+                if (tarefa == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+
+                String cpfLogado = getCpfUsuarioLogado(request);
+                if (!tarefa.getCpfAutor().equals(cpfLogado)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
+
+                FuncionarioService funcionarioService = new FuncionarioService();
+                request.setAttribute("funcionarios", funcionarioService.listar());
+                request.setAttribute("tarefa", tarefa);
+
+                request.getRequestDispatcher("editar-tarefa.jsp").forward(request, response);
+                return;
+            }
+
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+
+        Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+        String cpf = (String) sessao.getAttribute("CpfLogado");
+
+        List<Tarefa> tarefas =
+                (cargo == Cargo.GERENTE)
+                        ? service.listarTarefasDoDia()
+                        : service.listarTarefasDoDiaPorCpf(cpf);
+
+        request.setAttribute("tarefas", tarefas);
+        request.setAttribute("isGerente", cargo == Cargo.GERENTE);
+
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String acao = request.getParameter("acao");
+
+        try {
+            switch (acao) {
+                case "inserir" -> cadastrar(request, response);
+                case "editar" -> editar(request, response);
+                case "excluir" -> excluir(request, response);
+                case "concluir" -> concluir(request, response);
+                default -> response.sendRedirect("TarefaController");
+            }
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    private void abrirFormularioCadastro(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException, DatabaseException {
 
+        FuncionarioService funcionarioService = new FuncionarioService();
+        request.setAttribute("funcionarios", funcionarioService.listar());
+        request.getRequestDispatcher("cadastrar-tarefa.jsp").forward(request, response);
+    }
+
+    private void cadastrar(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException, SQLException, DatabaseException {
+
+        String nome = request.getParameter("nome");
+        String texto = request.getParameter("texto");
+        int idDestinatario = Integer.parseInt(request.getParameter("destinatario"));
+
+        LocalDateTime dataPConclusao = LocalDateTime.parse(
+                request.getParameter("data-conclusao"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+        );
+
+        String cpfAutor = getCpfUsuarioLogado(request);
+
+        GestaoTarefaService service = new GestaoTarefaService();
+
+        try {
+            service.cadastrarTarefa(nome, texto, idDestinatario, dataPConclusao, cpfAutor);
+        } catch (DataInvalidaException e) {
+            request.setAttribute("msgErro", e.getMessage());
+            abrirFormularioCadastro(request, response);
+            return;
+        }
+
+        response.sendRedirect("TarefaController");
+    }
+
+    private void editar(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException, SQLException, DatabaseException {
+
+        long id = Long.parseLong(request.getParameter("id"));
+        String nome = request.getParameter("nome");
+        String texto = request.getParameter("texto");
+        int idDestinatario = Integer.parseInt(request.getParameter("destinatario"));
+
+        LocalDateTime dataPConclusao = LocalDateTime.parse(
+                request.getParameter("data-conclusao"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+        );
+
+        String cpfLogado = getCpfUsuarioLogado(request);
+        GestaoTarefaService service = new GestaoTarefaService();
+
+        try {
+            service.editar(id, nome, texto, idDestinatario, dataPConclusao, null, cpfLogado);
+        } catch (DataInvalidaException e) {
+            response.sendRedirect("TarefaController?acao=editar&id=" + id);
+            return;
+        } catch (SecurityException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        response.sendRedirect("TarefaController");
+    }
+
+    private void excluir(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        long id = Long.parseLong(request.getParameter("id"));
+        String cpf = getCpfUsuarioLogado(request);
+
+        GestaoTarefaService service = new GestaoTarefaService();
+        Tarefa tarefa = service.buscar(id);
+
+        if (tarefa == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        try {
+            service.excluir(tarefa, cpf);
+        } catch (SecurityException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        response.sendRedirect("TarefaController");
+    }
+
+    private void concluir(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        long id = Long.parseLong(request.getParameter("id"));
+        String cpf = getCpfUsuarioLogado(request);
+
+        GestaoTarefaService service = new GestaoTarefaService();
+        service.editarConcluida(id, true, cpf);
+
+        response.sendRedirect("TarefaController");
+    }
 }

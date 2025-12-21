@@ -182,6 +182,47 @@ public class HabitatDAO {
 
         return null;
     }
+    
+    public List<Habitat> buscarPorNomeOuTipo(String termo) {
+
+    List<Habitat> lista = new ArrayList<>();
+
+    String sql = """
+        SELECT h.tipo, h.nome, h.tamanho, h.manutencao,
+               h.capacidade, h.disponivel
+        FROM habitat h
+        WHERE LOWER(h.nome) LIKE ?
+           OR LOWER(h.tipo) LIKE ?
+    """;
+
+    try (Connection con = ConexaoDB.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        String filtro = "%" + termo.toLowerCase() + "%";
+
+        ps.setString(1, filtro);
+        ps.setString(2, filtro);
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Habitat habitat = new Habitat(
+                rs.getString("tipo"),
+                rs.getString("nome"),
+                rs.getInt("tamanho"),
+                rs.getBoolean("manutencao")
+            );
+            habitat.setCapacidade(rs.getInt("capacidade"));
+            habitat.setDisponivel(rs.getBoolean("disponivel"));
+            lista.add(habitat);
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+
+    return lista;   
+}
+
        
     public void inserirAnimalAlocado(String habitatNome, long animalId) {
         String sql = "INSERT INTO habitat_animal(habitat_nome, animal_id) VALUES(?,?)";

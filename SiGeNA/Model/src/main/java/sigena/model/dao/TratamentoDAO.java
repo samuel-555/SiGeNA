@@ -51,20 +51,20 @@ public class TratamentoDAO {
     }
 
     public List<Tratamento> listar() throws PersistenciaException, DatabaseException {
-        String sql = "SELECT * FROM tratamento WHERE";
+        String sql = "SELECT * FROM tratamento";
         List<Tratamento> tratamentos = new ArrayList<>();
 
-        try (
+        try {
             Connection con = ConexaoDB.getConnection(); 
             PreparedStatement ps = con.prepareStatement(sql); 
-            ResultSet rs = ps.executeQuery()) {
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 tratamentos.add(consultaToTratamento(rs));
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao exibir animais: " + e.getMessage());
+            System.out.println("Erro ao exibir tratamentos: " + e.getMessage());
         }
 
         return tratamentos;

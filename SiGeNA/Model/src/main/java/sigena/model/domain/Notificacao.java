@@ -5,13 +5,24 @@ import java.time.LocalDateTime;
 public class Notificacao {
     private Long id;
     private String titulo;
-    private String descricao;
     private boolean lida;
     private int idDestinatario;
     private LocalDateTime data;
     
     public Notificacao(){
         
+    }
+    
+    public Notificacao(int id, String titulo){
+        idDestinatario = id;
+        this.titulo = titulo;
+    }
+    
+    public Notificacao(Long id, String titulo, int idDestinatario, LocalDateTime data){
+        this.id = id;
+        this.titulo = titulo;
+        this.idDestinatario = idDestinatario;
+       this.data = data;
     }
     
     public void setId(Long id){
@@ -28,14 +39,6 @@ public class Notificacao {
     
     public String getTitulo(){
         return titulo;
-    }
-    
-    public void setDescricao(String descricao){
-        this.descricao = descricao;
-    }        
-    
-    public String getDescricao(){
-        return descricao;
     }
     
     public void setLida(boolean lida){

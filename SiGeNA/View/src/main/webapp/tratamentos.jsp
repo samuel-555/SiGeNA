@@ -68,7 +68,7 @@
 
                         if (lista != null && !lista.isEmpty()) {
                             for (Tratamento t : lista) {
-                            if(t.getStatusTratamento() != "Cancelado"){
+                            if(!"Cancelado".equalsIgnoreCase(t.getStatusTratamento())){
                     %>
 
                     <tr>

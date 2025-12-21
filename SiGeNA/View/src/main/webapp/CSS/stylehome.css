@@ -60,3 +60,19 @@ header {
 .btn:hover {
   background-color: #0e7142;
 }
+
+.notificacao {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+}
+
+.nao-lida {
+    background-color: #eef;
+    font-weight: bold;
+}
+
+.lida {
+    background-color: #f5f5f5;
+    color: #777;
+}

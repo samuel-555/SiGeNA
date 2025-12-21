@@ -5,7 +5,7 @@
 <%
     String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) 
         ? "home-gerente.jsp" 
-        : "home.jsp";
+        : "NotificacaoController";
 
     String paginaHomeComContexto = request.getContextPath() + "/" + paginaHome;
 %>

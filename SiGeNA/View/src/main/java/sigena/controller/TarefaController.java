@@ -69,8 +69,8 @@ public class TarefaController extends Controller {
         Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
         String cpf = (String) sessao.getAttribute("CpfLogado");
 
-        List<Tarefa> tarefas =
-                (cargo == Cargo.GERENTE)
+        List<Tarefa> tarefas
+                = (cargo == Cargo.GERENTE)
                         ? service.listarTarefasDoDia()
                         : service.listarTarefasDoDiaPorCpf(cpf);
 
@@ -88,11 +88,16 @@ public class TarefaController extends Controller {
 
         try {
             switch (acao) {
-                case "inserir" -> cadastrar(request, response);
-                case "editar" -> editar(request, response);
-                case "excluir" -> excluir(request, response);
-                case "concluir" -> concluir(request, response);
-                default -> response.sendRedirect("TarefaController");
+                case "inserir" ->
+                    cadastrar(request, response);
+                case "editar" ->
+                    editar(request, response);
+                case "excluir" ->
+                    excluir(request, response);
+                case "concluir" ->
+                    concluir(request, response);
+                default ->
+                    response.sendRedirect("TarefaController");
             }
         } catch (Exception e) {
             throw new ServletException(e);
@@ -193,8 +198,13 @@ public class TarefaController extends Controller {
         long id = Long.parseLong(request.getParameter("id"));
         String cpf = getCpfUsuarioLogado(request);
 
-        GestaoTarefaService service = new GestaoTarefaService();
-        service.editarConcluida(id, true, cpf);
+        String statusParam = request.getParameter("status");
+        boolean novoStatus = (statusParam != null) ? Boolean.parseBoolean(statusParam) : true;
+
+        if (novoStatus == true) {
+            GestaoTarefaService service = new GestaoTarefaService();
+            service.editarConcluida(id, true, cpf);
+        }
 
         response.sendRedirect("TarefaController");
     }

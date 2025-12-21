@@ -1,52 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+:root {
+    --zoo-dark-green: #00593f;
+    --zoo-orange: #e86526;
+    --zoo-orange-hover: #d1541b;
+    --white: #ffffff;
+    --shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #fcfcfc 0%, #e6f4eb 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
 .login-box {
-    background-color: #d9d9d9;
-    padding: 30px 40px;
-    border-radius: 15px;
+    background-color: var(--white);
+    padding: 50px;
+    border-radius: 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px;
 }
 
 .login-box form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 220px;
+    gap: 20px;
+    width: 100%;
 }
 
 label {
     font-size: 14px;
-    color: #222;
+    font-weight: 700;
+    color: var(--zoo-dark-green);
+    margin-bottom: -10px;
 }
 
 input {
-    padding: 8px;
-    border: none;
-    border-radius: 20px;
-    outline: none;
-    text-indent: 10px;
-}
-
-button {
-    background-color: #0e7142;
-    color: #fff;
-    font-weight: bold;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 0;
-    margin-top: 10px;
-    cursor: pointer;
+    padding: 15px 20px;
+    border: 1px solid #eee;
+    border-radius: 15px;
+    background: #f9f9f9;
+    font-family: 'Montserrat', sans-serif;
     transition: 0.3s;
 }
 
+input:focus {
+    outline: none;
+    border-color: var(--zoo-dark-green);
+    background: var(--white);
+}
+
+button {
+    background-color: var(--zoo-orange);
+    color: var(--white);
+    font-weight: 800;
+    border: none;
+    border-radius: 50px;
+    padding: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
 button:hover {
-    background-color: #149b5a;
+    background-color: var(--zoo-orange-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(232, 101, 38, 0.3);
 }
 
 .mensagem {
-    color: red;
-    margin-top: 10px;
+    color: #d93025;
     font-size: 13px;
     text-align: center;
+    margin-top: 15px;
+    font-weight: 600;
 }

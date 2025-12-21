@@ -23,39 +23,63 @@
             <div class="titulo">SiGeNA</div>
             <a href="index.jsp" class="btn-sair">Sair</a>
         </header>
-        <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado") %>!</h1>
+        <h1>Bem-vindo, <%= sessao.getAttribute("CpfLogado")%>!</h1>
         <div class="grid-botoes">
 
-            
+
             <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
             <a href="EspeciesController" class="btn">Gestão de Espécies</a>
             <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
             <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
-            <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+            <a href="TratamentosController?acao=listar" class="btn">Gestão de Tratamentos Medicos</a>
             <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
         </div>
         <div class="tarefas">
-            
+
             <!--  if user = gerente -> cadastrar tarefas -->
             <!-- set user.cpf == funcionario.cpf? -->
-            
+
             <c:forEach var= "funcionario" items="${funcionarios}">
                 <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario.cpf}"/>
                 <c:if test="${funcionario.estado == ATIVO}"> <!-- mudar isso aqui só pra cadastro -->
-                    
+
                     <c:if test="${empty tarefas}">
                         <p>Sem tarefas cadastradas para hoje></p>
                     </c:if>
-                        
+
                     <c:forEach var="tarefa" items="${tarefas}">
                         <c:out value="${tarefa}"/>
                     </c:forEach>
-                    
+
                 </c:if>
             </c:forEach>
-                    
+
         </div>
+        <div class = "notificacoes">
+            <h2>Notificações</h2>
+
+            <c:forEach var="n" items="${notificacoes}">
+                 <div class="notificacao ${n.lida ? 'lida' : 'nao-lida'}">
+                     
+                    <c:if test="${!n.lida}">
+                        <form id="form-${n.id}" action="NotificacaoController" method="post">
+                            <input type="hidden" name="id" value="${n.id}">
+                        </form>
+                        <a href="#" onclick="document.getElementById('form-${n.id}').submit(); return false;">
+                            ${n.titulo}
+                        </a>
+                    </c:if>
+                    
+                    <c:if test="${n.lida}">
+                        <p>${n.titulo}</p>
+                    </c:if>
+
+                </div>
+                </c:forEach>
+
+
+            </div>
     </body>
 </html>

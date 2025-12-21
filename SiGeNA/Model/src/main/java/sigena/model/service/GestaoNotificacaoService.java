@@ -9,12 +9,12 @@ public class GestaoNotificacaoService {
     
     NotificacaoDAO dao = new NotificacaoDAO();
     
-    public void salvar(Notificacao n){
+    public void salvar(Notificacao n) throws PersistenciaException{
         dao.salvar(n);
     }
     
-    public void criarParaTodos(Notificacao n) throws PersistenciaException {
-        dao.criarParaTodos(n);
+    public void criarParaTodos(String mensagem) throws PersistenciaException {
+        dao.criarParaTodos(mensagem);
     }
     
     public List<Notificacao> listarPorUsuario(int idDestinatario){

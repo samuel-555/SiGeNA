@@ -70,9 +70,7 @@ public class ProdutoController extends HttpServlet {
             if ("salvar".equals(acao)) {
                 cadastrar(request, response);
                 GestaoNotificacaoService not = new GestaoNotificacaoService();
-                Usuario u = (Usuario) request.getSession().getAttribute("UsuarioLogado");
-                Notificacao n = new Notificacao(u.getId(), "Novo produto cadastrado");
-                not.criarParaTodos(n);
+                not.criarParaTodos("Novo produto cadastrado");
             } else if ("salvarEdicao".equals(acao)) {
                 editar(request, response);
             }

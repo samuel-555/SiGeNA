@@ -11,7 +11,7 @@ import sigena.model.util.ConexaoDB;
 
 public class NotificacaoDAO {
 
-    public void salvar(Notificacao n) {
+    public void salvar(Notificacao n) throws PersistenciaException {
         String sql = "INSERT INTO notificacao(idDestinatario, titulo, lida, "
                 + "data_criacao) values (?, ?, ?, NOW())";
 
@@ -25,17 +25,20 @@ public class NotificacaoDAO {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenciaException("Erro ao salvar notificação" + e.getMessage());
         }
     }
 
-    public void criarParaTodos(Notificacao n) throws PersistenciaException {
+    public void criarParaTodos(String mensagem) throws PersistenciaException {
 
         UsuarioDAO usuarioDao = new UsuarioDAO();
         List<Usuario> usuarios = usuarioDao.listarUsuarios();
+        System.out.println("TOTAL DE USUÁRIOS: " + usuarios.size());
 
         for (Usuario u : usuarios) {
-            n.setIdDestinatario(u.getId());
+            System.out.println("Criando notificação para usuário ID: " + u.getId());
+            
+            Notificacao n = new Notificacao(u.getId(), mensagem);
             salvar(n);
         }
     }
@@ -67,7 +70,7 @@ public class NotificacaoDAO {
 
     public void marcarComoLida(Notificacao n) {
 
-        String sql = "UPDATE notificacao SET lida = true WHERE id = ? AND id_usuario = ?";
+        String sql = "UPDATE notificacao SET lida = true WHERE id = ? AND idDestinatario = ?";
 
         try {
             Connection con = ConexaoDB.getConnection();
@@ -86,19 +89,19 @@ public class NotificacaoDAO {
         try {
             Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            
             ps.setLong(1, id);
-            
-            if(rs.next()){
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
                 String titulo = rs.getString("titulo");
-                LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
+                LocalDateTime data = rs.getTimestamp("data_criacao").toLocalDateTime();
                 int idDestinatario = rs.getInt("idDestinatario");
                 Notificacao n = new Notificacao(id, titulo, idDestinatario, data);
                 return n;
             }
-            
-        }catch (SQLException e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

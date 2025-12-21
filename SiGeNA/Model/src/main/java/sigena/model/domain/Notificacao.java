@@ -24,7 +24,7 @@ public class Notificacao {
         this.idDestinatario = idDestinatario;
        this.data = data;
     }
-    
+        
     public void setId(Long id){
         this.id = id;
     }        

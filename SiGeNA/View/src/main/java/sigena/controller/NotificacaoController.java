@@ -48,7 +48,7 @@ public class NotificacaoController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Long id = Long.parseLong(request.getParameter("id"));
-        System.out.println(id);
+        System.out.println("ID da notificacao: " + id);
         Notificacao n = service.buscarPorId(id);
         service.marcarComoLida(n);
     }

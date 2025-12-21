@@ -1,5 +1,5 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%
     HttpSession sessao = request.getSession(false);
     if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
@@ -18,7 +18,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SiGeNA - Gest„o de Funcion·rios</title>
+        <title>SiGeNA - Gest√£o de Funcion√°rios</title>
         <link rel="stylesheet" href="CSS\\style.css">
         <link rel="stylesheet" href="CSS\\stylefuncionario.css">
     </head>
@@ -28,10 +28,39 @@
         </header>
 
         <div class="container">
-            <h1>Gest„o de Funcion·rios</h1>
+            <h1>Gest√£o de Funcion√°rios</h1>
+            <form method="get" action="FuncionarioServlet" class="filtro">
+                <input type="text" name="nome" placeholder="Buscar pelo nome">
+
+                <select name="cargo">
+                    <option value="">Todos os cargos</option>
+                    <option value="GERENTE">Gerente</option>
+                    <option value="ZOOTECNISTA">Zootecnista</option>
+                    <option value="TRATADOR">Tratador</option>
+                    <option value="VETERINARIO">Veterin√°rio</option>
+                </select>
+
+                <select name="turno">
+                    <option value="">Todos os turnos</option>
+                    <option value="MANHA">Manh√£</option>
+                    <option value="TARDE">Tarde</option>
+                    <option value="NOITE">Noite</option>
+                </select>
+
+                <select name="estado">
+                    <option value="">Todos os estados</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="FERIAS">F√©rias</option>
+                    <option value="LICENCA_MATERNIDADE">Licen√ßa maternidade</option>
+                    <option value="LICENCA_PATERNIDADE">Licen√ßa paternidade</option>
+                    <option value="AFASTADO">Afastado</option>
+                </select>
+
+                <button type="submit" class="btn">Pesquisar</button>
+            </form>
 
             <div class="botoes-acoes">
-                <a href="cadastrar-funcionario.jsp" class="btn">Cadastrar Novo Funcion·rio</a>
+                <a href="cadastrar-funcionario.jsp" class="btn">Cadastrar Novo Funcion√°rio</a>
             </div>
 
             <c:if test="${not empty erro}">
@@ -39,7 +68,7 @@
             </c:if>
 
             <div class="historico">
-                <h2>Lista de Funcion·rios</h2>
+                <h2>Lista de Funcion√°rios</h2>
                 <table>
                     <thead>
                         <tr>
@@ -48,7 +77,7 @@
                             <th>Setor</th>
                             <th>Turno</th>
                             <th>Estado</th>
-                            <th>AÁıes</th>
+                            <th>A√ß√µes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,8 +95,8 @@
                             <td><%= f.getEstado()%></td>
                             <td>
                                 <a class="btn-pequeno editar" href="FuncionarioServlet?acao=editar&id=<%= f.getId()%>">Editar</a>
-                                <form action="FuncionarioServlet" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclus„o?');">
-                                    <input type="hidden" name="acao" value="deletar"/>
+                                <form action="FuncionarioServlet" method="post" style="display:inline" onsubmit="return confirm('Confirmar exclus√£o?');">
+                                    <input type="hidden" name="acao" value="cancelar"/>
                                     <input type="hidden" name="id" value="<%= f.getId()%>"/>
                                     <input type="hidden" name="setor" value="<%= f.getAreaAtuacao()%>"/>
                                     <input type="hidden" name="turno" value="<%= f.getTurno().name()%>"/>

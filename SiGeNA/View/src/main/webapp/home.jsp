@@ -98,6 +98,27 @@
             <a href="LogoutServlet" class="btn-sair">Sair</a>
         </header>
 
+            
+            <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
+            <a href="EspeciesController" class="btn">Gestão de Espécies</a>
+            <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
+            <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
+            <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
+            <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
+            <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
+            <a href="ocorrencias" class="btn"> Fazer ocorrencia</a>
+        </div>
+        <div class="tarefas">
+            
+            
+            <c:forEach var= "funcionario" items="${funcionarios}">
+                <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario.cpf}"/>
+                <c:if test="${funcionario.estado == ATIVO}"> 
+                    
+                    <c:if test="${empty tarefas}">
+                        <p>Sem tarefas cadastradas para hoje></p>
+                    </c:if>
+                        
         <div class="welcome-banner">
             Bem-vindo, <%= nomeUsuario %>!
         </div>

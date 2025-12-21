@@ -57,7 +57,7 @@ public class Tarefa {
     public LocalDateTime getDataPConclusao(){
         return dataPConclusao;
     }
-    public String getAutor(){
+    public String getCpfAutor(){
         return cpfAutor;
     }
     

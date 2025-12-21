@@ -39,25 +39,30 @@ public class GestaoTarefaService {
         return dao.listarPorUsuario(id);
     }
     
-    public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao, String cpfAutor,String cpfLogado) throws DataInvalidaException {
-        if(!validarData(dataPConclusao))
-            throw new DataInvalidaException("Data inválida!");
+    public void editar(long id, String nome, String texto, int idDestinatario,LocalDateTime dataPConclusao, String cpfAutor, String cpfLogado)
+        throws DataInvalidaException {
 
-        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao,cpfAutor);
-        
-        if (!tarefa.getAutor().equals(cpfLogado))
+        if (!validarData(dataPConclusao))
+            throw new DataInvalidaException("Data inválida!");
+    
+        Tarefa tarefaBanco = dao.buscar(id);
+
+        if (tarefaBanco == null) 
+            throw new IllegalArgumentException("Tarefa não encontrada");
+    
+
+        if (!tarefaBanco.getCpfAutor().equals(cpfLogado)) 
             throw new SecurityException("Você não pode editar esta tarefa");
+    
         
-        tarefa.setId(id);
-        tarefa.setNome(nome);
-        tarefa.setTexto(texto);
-        tarefa.setIdDestinatario(id_destinatario);
-        tarefa.setDataPConclusao(dataPConclusao);
-        tarefa.setDataCadastro(LocalDateTime.now());
-        tarefa.setCpfAutor(cpfAutor);
-        
-        dao.editar(id,tarefa);
+        tarefaBanco.setNome(nome);
+        tarefaBanco.setTexto(texto);
+        tarefaBanco.setIdDestinatario(idDestinatario);
+        tarefaBanco.setDataPConclusao(dataPConclusao);
+
+        dao.editar(id, tarefaBanco);
     }
+
 
     public void editarConcluida(long id, boolean concluida, String cpf){
         dao.editarConcluida(id, concluida);
@@ -69,9 +74,9 @@ public class GestaoTarefaService {
     }
     
     public void excluir(Tarefa tarefa,String cpfLogado){
-        if (!tarefa.getAutor().equals(cpfLogado))
+        if (!tarefa.getCpfAutor().equals(cpfLogado)) 
             throw new SecurityException("Você não pode excluir esta tarefa");
-        
+    
         dao.excluir(tarefa);
     }
     

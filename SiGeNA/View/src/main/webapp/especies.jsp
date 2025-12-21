@@ -87,7 +87,7 @@
                     <td>
                         <a href="EspeciesController?acao=ver&id=<%= e.getId() %>" class="btn-pequeno ver">Ver</a>
                         <% if (podeGerenciar) { %>
-                        <a href="EspeciesController?acao=excluir&id=<%= e.getId() %>" class="btn-pequeno excluir">Excluir</a>
+                        <a href="EspeciesController?acao=excluir&id=<%= e.getId() %>" class="btn-pequeno excluir" onclick="return confirm('Confirmar exclusao?');">Excluir</a>
                         <% } %>
                     </td>
                 </tr>
@@ -104,4 +104,3 @@
     </div>
 </body>
 </html>
-

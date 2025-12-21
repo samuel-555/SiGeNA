@@ -58,6 +58,7 @@ public class NotificacaoDAO {
                 String titulo = rs.getString("titulo");
                 LocalDateTime data = rs.getTimestamp("data_criacao").toLocalDateTime();
                 Notificacao n = new Notificacao(id, titulo, idDestinatario, data);
+                n.setLida(rs.getBoolean("lida"));
                 lista.add(n);
             }
 

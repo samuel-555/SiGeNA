@@ -17,22 +17,6 @@ public class NotificacaoController extends HttpServlet {
     
     private GestaoNotificacaoService service = new GestaoNotificacaoService();
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet NotificacaoController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet NotificacaoController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -51,6 +35,7 @@ public class NotificacaoController extends HttpServlet {
         System.out.println("ID da notificacao: " + id);
         Notificacao n = service.buscarPorId(id);
         service.marcarComoLida(n);
+        response.sendRedirect("NotificacaoController");
     }
 
 }

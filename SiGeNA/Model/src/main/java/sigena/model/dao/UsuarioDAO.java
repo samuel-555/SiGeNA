@@ -149,7 +149,7 @@ public class UsuarioDAO {
     }
 
     public List<Usuario> listarUsuarios() throws PersistenciaException {
-        String sql = "SELECT * FROM tratamento";
+        String sql = "SELECT * FROM usuarios";
         List<Usuario> us = new ArrayList<>();
 
         try {

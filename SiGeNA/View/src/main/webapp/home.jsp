@@ -61,8 +61,8 @@
             <h2>Notificações</h2>
 
             <c:forEach var="n" items="${notificacoes}">
-                <div class="notificacao ${n.lida ? 'lida' : 'nao-lida'}">
-
+                 <div class="notificacao ${n.lida ? 'lida' : 'nao-lida'}">
+                     
                     <c:if test="${!n.lida}">
                         <form id="form-${n.id}" action="NotificacaoController" method="post">
                             <input type="hidden" name="id" value="${n.id}">
@@ -71,15 +71,15 @@
                             ${n.titulo}
                         </a>
                     </c:if>
-
+                    
                     <c:if test="${n.lida}">
                         <p>${n.titulo}</p>
                     </c:if>
 
                 </div>
-            </c:forEach>
+                </c:forEach>
 
 
-        </div>
+            </div>
     </body>
 </html>

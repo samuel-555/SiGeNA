@@ -88,6 +88,7 @@
 
                         if (lista != null && !lista.isEmpty()) {
                             for (Produto p : lista) {
+                                if(p.getDisponivel() == true){
                     %>
 
                     <tr>
@@ -109,6 +110,7 @@
 
                     <%
                         }
+                            }
                     } else {
                     %>
 

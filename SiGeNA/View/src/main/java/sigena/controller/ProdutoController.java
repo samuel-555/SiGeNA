@@ -125,7 +125,7 @@ public class ProdutoController extends HttpServlet {
                 }
             }
         }
-        
+
         String busca = request.getParameter("busca");
         String tipo = request.getParameter("tipo");
         if (busca == null) {
@@ -208,8 +208,6 @@ public class ProdutoController extends HttpServlet {
         produto.setDisponivel(disponivel);
 
         service.alterar(produto);
-
-        
     }
 
     @Override

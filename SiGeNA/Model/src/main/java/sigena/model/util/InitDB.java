@@ -288,7 +288,8 @@ public class InitDB {
                   email VARCHAR(50),
                   endereco VARCHAR(100),
                   tipo VARCHAR(50) NOT NULL,
-                  descricao TEXT
+                  descricao TEXT,
+                  data_de_insercao DATETIME NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {
@@ -323,6 +324,24 @@ public class InitDB {
                 REFERENCES enriquecimento(id) ON DELETE CASCADE,
             CONSTRAINT fk_hab FOREIGN KEY (habitat_nome)
                 REFERENCES habitat(nome) ON DELETE CASCADE
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+    
+    public void initEventos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS eventos (
+              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+              titulo VARCHAR(100) NOT NULL, 
+              descricao TEXT,
+              data_programada DATETIME NOT NULL,
+              ocorrido BOOLEAN NOT NULL,
+              cancelado BOOLEAN NOT NULL,
+              data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL
         );
         """;
         try (Statement st = con.createStatement()) {
@@ -364,6 +383,7 @@ public class InitDB {
             initRecibosDoacao();
             initFornecedores();
             initProdutos();
+            initEventos();
             initNotificacao();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());

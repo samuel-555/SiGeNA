@@ -32,7 +32,7 @@
 
 <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(sessao.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="TarefaController">SiGeNA</a></div>
   </header>
 
   <div class="container">

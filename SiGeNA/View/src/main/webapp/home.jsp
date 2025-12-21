@@ -153,60 +153,85 @@
                             <% } %>
                         </div>
                         <% } %>
-                        <h2 class="tarefas-title">TAREFAS</h2>
-                        
-                        <% if (cargo == Cargo.GERENTE) { %>
-                            <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
-                        <% } %>
-    
+<h2 class="tarefas-title">TAREFAS</h2>
 
-                        <div class="tarefas">
-                      <c:choose>
-                        <c:when test="${empty tarefas}">
-                            <p>Nenhuma tarefa para hoje.</p>
-                        </c:when>
+<c:if test="${sessionScope.cargoUsuario == 'GERENTE'}">
+    <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
+</c:if>
 
-                     <c:otherwise>
-                    <table>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Data</th>
-                            <th>Concluída</th>
+<div class="tarefas">
+
+    <c:choose>
+
+        <c:when test="${empty tarefas}">
+            <p>Nenhuma tarefa para hoje.</p>
+        </c:when>
+
+        <c:otherwise>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Prazo</th>
+                        <th>Concluir</th>
+                        <c:if test="${cargo == 'GERENTE'}">
                             <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                        </c:if>
+                    </tr>
+                </thead>
+
+                <tbody>
                     <c:forEach var="tarefa" items="${tarefas}">
                         <tr>
+
                             <td>${tarefa.nome}</td>
                             <td>${tarefa.texto}</td>
                             <td>${tarefa.dataPConclusao}</td>
-                            
+
                             <td>
                                 <form method="post" action="TarefaController">
                                     <input type="hidden" name="acao" value="concluir">
                                     <input type="hidden" name="id" value="${tarefa.id}">
                                     <input type="checkbox"
-                                       onclick="this.form.submit()"
-                                       <c:if test="${tarefa.concluida}">checked</c:if>>
+                                           onclick="this.form.submit()"
+                                           <c:if test="${tarefa.concluida}">checked</c:if>>
                                 </form>
                             </td>
-                        <td>
-                            <form method="post" action="TarefaController" style="display:inline">
-                                <input type="hidden" name="acao" value="excluir">
-                                <input type="hidden" name="id" value="${tarefa.id}">
-                                <button class="btn-pequeno excluir" onclick="return confirm('Deseja realmente excluir esta tarefa?')">
-                            </form>
-                        </td>
-                    </tr>
+
+                            <c:if test="${sessionScope.cargoUsuario == 'GERENTE' && tarefa.cpfCriador == sessionScope.CpfLogado}">
+                                <td>
+                                    <form method="post" action="TarefaController" style="display:inline">
+                                        <input type="hidden" name="acao" value="excluir">
+                                        <input type="hidden" name="id" value="${tarefa.id}">
+                                        <button type="submit"
+                                                class="btn-pequeno excluir"
+                                                onclick="return confirm('Deseja realmente excluir esta tarefa?')">
+                                            Excluir
+                                        </button>
+                                    </form>
+                                </td>
+                                
+                                <td>
+                                    <form method="post" action="TarefaController" style="display:inline">
+                                        <input type="hidden" name="acao" value="editar">
+                                        <input type="hidden" name="id" value="${tarefa.id}">
+                                        <button type="submit class="btn-pequeno editar" Excluir</button>
+                                    </form>
+                                </td>
+                            </c:if>
+                            
+
+                        </tr>
                     </c:forEach>
                 </tbody>
-                </table>
-                    </c:otherwise>
-                            </c:choose>
-            </div>
+            </table>
+        </c:otherwise>
+
+    </c:choose>
+
+</div>
+
                    <% } %>
                 </section>
             </main>

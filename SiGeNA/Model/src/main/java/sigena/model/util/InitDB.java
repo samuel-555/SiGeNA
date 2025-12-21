@@ -236,7 +236,8 @@ public class InitDB {
                 concluida BOOLEAN NOT NULL,
                 funcionario_id INT NOT NULL,
                 dataCadastro DATETIME NOT NULL,
-                dataPConclusao DATETIME NOT NULL
+                dataPConclusao DATETIME NOT NULL,
+                cpfAutor VARCHAR(255) NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {

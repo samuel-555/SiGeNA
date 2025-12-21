@@ -23,11 +23,11 @@ public class GestaoTarefaService {
         historicoService = new GestaoHistoricoService();
     }
     
-    public void cadastrarTarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao) throws DataInvalidaException{
+    public void cadastrarTarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao, String cpfAutor) throws DataInvalidaException{
         if(!validarData(dataPConclusao))
             throw new DataInvalidaException("Data inválida!");
         
-        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao); 
+        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao, cpfAutor); 
         dao.inserir(tarefa);
     }
     
@@ -39,11 +39,14 @@ public class GestaoTarefaService {
         return dao.listarPorUsuario(id);
     }
     
-    public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao) throws DataInvalidaException {
+    public void editar(long id, String nome, String texto,int id_destinatario,LocalDateTime dataPConclusao, String cpfAutor,String cpfLogado) throws DataInvalidaException {
         if(!validarData(dataPConclusao))
             throw new DataInvalidaException("Data inválida!");
+
+        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao,cpfAutor);
         
-        Tarefa tarefa = new Tarefa(nome,texto,id_destinatario,dataPConclusao);
+        if (!tarefa.getAutor().equals(cpfLogado))
+            throw new SecurityException("Você não pode editar esta tarefa");
         
         tarefa.setId(id);
         tarefa.setNome(nome);
@@ -51,6 +54,7 @@ public class GestaoTarefaService {
         tarefa.setIdDestinatario(id_destinatario);
         tarefa.setDataPConclusao(dataPConclusao);
         tarefa.setDataCadastro(LocalDateTime.now());
+        tarefa.setCpfAutor(cpfAutor);
         
         dao.editar(id,tarefa);
     }
@@ -64,7 +68,10 @@ public class GestaoTarefaService {
         return dao.buscar(id);
     }
     
-    public void excluir(Tarefa tarefa){
+    public void excluir(Tarefa tarefa,String cpfLogado){
+        if (!tarefa.getAutor().equals(cpfLogado))
+            throw new SecurityException("Você não pode excluir esta tarefa");
+        
         dao.excluir(tarefa);
     }
     

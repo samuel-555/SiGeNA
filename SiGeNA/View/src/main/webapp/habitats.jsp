@@ -92,7 +92,7 @@
                         
                       <input type="hidden" name="acao" value="excluir">
                       <input type="hidden" name="nome" value="${habitat.nome}">
-                      <button class="btn-pequeno excluir">Excluir</button>
+                      <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Deseja realmente excluir este habitat?')">Excluir</button>
                  </form>
               </c:if>
             </td>

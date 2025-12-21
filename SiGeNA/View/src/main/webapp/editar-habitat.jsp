@@ -38,7 +38,8 @@
                 <input type="hidden" name="nomeAntigo" value="${habitat.nome}"/>                
 
                 <label for="nome">Nome do Habitat:</label>
-                <input type="text" id="nome" name="nome" placeholder="Savana doida" value="${habitat.nome}" required>
+                <input type="text" id="nome" value="${habitat.nome}" disabled>
+                <input type="hidden" name="nome" value="${habitat.nome}">
 
                 <label for="tipo">Tipo de Habitat:</label>
                 <input type="text" id="tipo" name="tipo" placeholder="Terra" value="${habitat.tipo}" required>

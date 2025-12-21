@@ -154,7 +154,7 @@ public class TarefaDAO {
     }
     
     public Tarefa buscar(Long id) { 
-        String sql = "SELECT nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao FROM tarefas";
+        String sql = "SELECT nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao FROM tarefas where id = ?";
 
 
 

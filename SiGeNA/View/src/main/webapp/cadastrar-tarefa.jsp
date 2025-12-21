@@ -32,7 +32,7 @@
     <h1>Cadastrar Tarefa</h1>
 
     <div class="botoes-acoes">
-      <a href="home-gerente.jsp" class="btn">Voltar</a>
+      <a href="TarefaController" class="btn">Voltar</a>
     </div>
     
     <div class="formulario">

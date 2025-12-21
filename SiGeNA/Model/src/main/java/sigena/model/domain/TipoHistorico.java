@@ -38,8 +38,8 @@ public enum TipoHistorico {
     },
     TAREFA {
         @Override
-        public String getDescricao(String tarefa) {
-            return "Tarefa \"" + tarefa + "\" concluída";
+        public String getDescricao(Tarefa tarefa) {
+            return "Tarefa \"" + tarefa.getNome() + "\" concluída";
         }
     },
     TRATAMENTO{

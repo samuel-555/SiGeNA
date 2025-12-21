@@ -114,7 +114,7 @@
                         <li><span>Nome:</span> <%= nomeUsuario %></li>
                         <li><span>Cargo:</span> <%= cargoDescricao %></li>
                         <li><span>Documento:</span> <%= sessao.getAttribute("CpfLogado") %></li>
-                        <li><span>Turno:</span> Integral</li>
+                        <li><span>Turno:</span> <%= sessao.getAttribute("TurnoLogado") != null ? sessao.getAttribute("TurnoLogado") : "Nao informado" %></li>
                     </ul>
                 </div>
             </aside>

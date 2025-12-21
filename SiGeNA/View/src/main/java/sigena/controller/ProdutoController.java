@@ -23,22 +23,6 @@ import sigena.model.service.GestaoProdutoService;
 @WebServlet(name = "ProdutoController", urlPatterns = {"/ProdutoController"})
 public class ProdutoController extends HttpServlet {
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProdutoController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProdutoController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -129,7 +113,7 @@ public class ProdutoController extends HttpServlet {
 
         GestaoProdutoService service = new GestaoProdutoService();
 
-        List<Produto> lista = service.listar();
+        List<Produto> lista = service.listar("", "");
         LocalDate hoje = LocalDate.now();
 
         for (Produto p : lista) {
@@ -141,8 +125,16 @@ public class ProdutoController extends HttpServlet {
                 }
             }
         }
-
-        lista = service.listar();
+        
+        String busca = request.getParameter("busca");
+        String tipo = request.getParameter("tipo");
+        if (busca == null) {
+            busca = "";
+        }
+        if (tipo == null) {
+            tipo = "";
+        }
+        lista = service.listar(busca, tipo);
 
         request.setAttribute("lista", lista);
         request.getRequestDispatcher("produtos.jsp").forward(request, response);

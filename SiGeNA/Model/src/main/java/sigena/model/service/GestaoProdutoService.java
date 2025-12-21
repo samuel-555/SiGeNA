@@ -13,8 +13,8 @@ public class GestaoProdutoService {
         dao.cadastrar(p, f);
     }
     
-     public List<Produto> listar() throws PersistenciaException {
-        return dao.listar();
+     public List<Produto> listar(String busca, String tipo) throws PersistenciaException {
+        return dao.listar(busca, tipo);
     }
 
     public Produto buscar(Long id) throws PersistenciaException {

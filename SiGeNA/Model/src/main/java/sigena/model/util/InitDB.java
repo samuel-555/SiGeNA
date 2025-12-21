@@ -80,6 +80,7 @@ public class InitDB {
             st.executeUpdate(itensSql);
         }
     }
+
     public void initRelatoriosSaude() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS relatorios_saude (
@@ -226,27 +227,42 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
-    
+
     public void initTarefas() throws SQLException {
         String sql = """
+
             CREATE TABLE IF NOT EXISTS tarefas (
+
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
                 nome VARCHAR(255) NOT NULL,
-                texto VARCHAR(255),
-                concluida BOOLEAN NOT NULL,
+
+                texto TEXT,
+
+                concluida BOOLEAN DEFAULT FALSE,
+
                 funcionario_id INT NOT NULL,
-                dataCadastro DATETIME NOT NULL,
-                dataPConclusao DATETIME NOT NULL,
-                cpfAutor VARCHAR(255) NOT NULL
+
+                dataCadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                dataPConclusao TIMESTAMP,
+
+                cpfAutor VARCHAR(14),
+
+                prioridade VARCHAR(50),
+
+                FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id)
+
             );
+
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
     }
 
-public void initDoacoes() throws SQLException {
-    String sql = """
+    public void initDoacoes() throws SQLException {
+        String sql = """
         CREATE TABLE IF NOT EXISTS doacoes (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             nome_doador VARCHAR(150) NOT NULL,
@@ -261,14 +277,13 @@ public void initDoacoes() throws SQLException {
         );
     """;
 
-    try (Statement stmt = con.createStatement()) {
-        stmt.execute(sql);
+        try (Statement stmt = con.createStatement()) {
+            stmt.execute(sql);
+        }
     }
-}
-
 
     public void initRecibosDoacao() throws SQLException {
-    String sql = """
+        String sql = """
         CREATE TABLE IF NOT EXISTS recibo_doacao (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             doacao_id BIGINT NOT NULL,
@@ -278,11 +293,10 @@ public void initDoacoes() throws SQLException {
         );
         """;
 
-    try (Statement st = con.createStatement()) {
-        st.executeUpdate(sql);
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
     }
-}
-
 
     public void initProdutos() throws SQLException {
         String sql = """ 
@@ -373,7 +387,7 @@ public void initDoacoes() throws SQLException {
             st.executeUpdate(sql);
         }
     }
-    
+
     public void initHistorico() throws SQLException {
         String sql = """
         CREATE TABLE IF NOT EXISTS historico (

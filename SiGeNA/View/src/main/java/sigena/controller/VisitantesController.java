@@ -2,7 +2,6 @@ package sigena.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,7 +14,7 @@ import sigena.model.domain.Visita;
 import sigena.model.service.GestaoVisitaService;
 
 @WebServlet("/visitantes")
-public class VisitantesController extends HttpServlet {
+public class VisitantesController extends Controller {
 
     private final GestaoVisitaService service = new GestaoVisitaService();
 
@@ -55,7 +54,8 @@ public class VisitantesController extends HttpServlet {
         try {
             if ("cadastrar".equalsIgnoreCase(acao)) {
                 Visita visita = construirVisita(req, false);
-                service.registrarVisita(visita);
+                String cpfLogado = getCpfUsuarioLogado(req);
+                service.registrarVisita(visita, cpfLogado);
                 sessao.setAttribute("mensagemSucesso", "Visita registrada com sucesso.");
                 resp.sendRedirect("visitantes");
                 return;

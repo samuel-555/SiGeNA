@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,7 +16,7 @@ import sigena.model.service.GestaoAnimalService;
 import sigena.model.service.RelatorioSaudeService;
 
 @WebServlet(name = "RelatorioSaudeController", urlPatterns = {"/RelatorioSaudeController"})
-public class RelatorioSaudeController extends HttpServlet {
+public class RelatorioSaudeController extends Controller {
 
     private final RelatorioSaudeService relatorioService = new RelatorioSaudeService();
     private final GestaoAnimalService animalService = new GestaoAnimalService();
@@ -107,7 +106,8 @@ public class RelatorioSaudeController extends HttpServlet {
         Double peso = parsePeso(request.getParameter("peso"));
         boolean apto = isAptoMarcado(request.getParameter("apto"));
         String observacoes = request.getParameter("observacoes");
-        relatorioService.registrarCheckup(animalId, data, peso, apto, observacoes);
+        String cpfLogado = getCpfUsuarioLogado(request);
+        relatorioService.registrarCheckup(animalId, data, peso, apto, observacoes, cpfLogado);
     }
 
     private void atualizarRelatorio(HttpServletRequest request) throws PersistenciaException {

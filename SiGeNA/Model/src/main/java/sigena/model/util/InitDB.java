@@ -56,6 +56,7 @@ public class InitDB {
             CREATE TABLE IF NOT EXISTS planos_alimentares (
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
                 animal_id BIGINT NOT NULL,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
                 data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (animal_id) REFERENCES animais(id)
                     ON DELETE CASCADE
@@ -78,6 +79,18 @@ public class InitDB {
         try (Statement st = con.createStatement()) {
             st.executeUpdate(planosSql);
             st.executeUpdate(itensSql);
+            try {
+                st.executeUpdate("ALTER TABLE planos_alimentares ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVO'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
         }
     }
     public void initRelatoriosSaude() throws SQLException {
@@ -245,29 +258,6 @@ public class InitDB {
         }
     }
 
-
-    public void initAgendamentos() throws SQLException {
-        String tabelaSql = """
-            CREATE TABLE IF NOT EXISTS agendamentos (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                tipo VARCHAR(100) NOT NULL,
-                data_agendamento DATE NOT NULL,
-                hora_agendamento TIME NOT NULL,
-                responsavel VARCHAR(120) NOT NULL,
-                local VARCHAR(120) NOT NULL,
-                observacoes TEXT,
-                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
-                criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                cancelado_em DATETIME,
-                justificativa_cancelamento TEXT
-            );
-            """;
-
-        try (Statement st = con.createStatement()) {
-            st.executeUpdate(insertExemplo);
-        }
-    }
-  
     public void initTratamento() throws SQLException {
         String sql = """
                      
@@ -470,7 +460,6 @@ public void initDoacoes() throws SQLException {
 
             initFornecedores();
             initProdutos();
-            initAgendamentos();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

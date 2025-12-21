@@ -7,6 +7,7 @@ import sigena.model.dao.AnimalDAO;
 import sigena.model.dao.RelatorioSaudeDAO;
 import sigena.model.domain.Animal;
 import sigena.model.domain.RelatorioSaude;
+import sigena.model.domain.TipoHistorico;
 
 public class RelatorioSaudeService {
 
@@ -14,15 +15,27 @@ public class RelatorioSaudeService {
 
     private final RelatorioSaudeDAO relatorioDAO = new RelatorioSaudeDAO();
     private final AnimalDAO animalDAO = new AnimalDAO();
+    private final GestaoHistoricoService historicoService = new GestaoHistoricoService();
 
-    public RelatorioSaude registrarCheckup(Long animalId, LocalDate data, Double peso, boolean apto, String observacoes)
-            throws PersistenciaException {
+    public RelatorioSaude registrarCheckup(Long animalId, LocalDate data, Double peso, boolean apto, String observacoes,
+            String cpfLogado) throws PersistenciaException {
         validarDadosBasicos(animalId, data);
         Animal animal = buscarAnimalValido(animalId);
 
         String statusNormalizado = apto ? "APTO" : "INAPTO";
         RelatorioSaude relatorio = new RelatorioSaude(animal, data, validarPeso(peso), statusNormalizado, observacoes);
-        return relatorioDAO.cadastrar(relatorio);
+        RelatorioSaude salvo = relatorioDAO.cadastrar(relatorio);
+        historicoService.registrar(
+                TipoHistorico.RELATORIO,
+                TipoHistorico.RELATORIO.getDescricao(
+                        animal,
+                        relatorio.getPeso() != null ? relatorio.getPeso() : 0.0,
+                        statusNormalizado,
+                        relatorio.getObservacoes()
+                ),
+                cpfLogado
+        );
+        return salvo;
     }
 
     public void atualizarRelatorio(Long relatorioId, Long animalId, LocalDate data, Double peso, boolean apto, String observacoes)

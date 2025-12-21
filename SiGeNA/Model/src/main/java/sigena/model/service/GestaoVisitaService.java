@@ -1,5 +1,6 @@
 package sigena.model.service;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.ValidationException;
 import sigena.model.dao.VisitaDAO;
+import sigena.model.domain.TipoHistorico;
 import sigena.model.domain.Visita;
 import sigena.model.util.ConexaoDB;
 import sigena.model.util.InitDB;
@@ -17,6 +19,7 @@ public class GestaoVisitaService {
     private static final String STATUS_CANCELADA = "CANCELADA";
 
     private final VisitaDAO dao = new VisitaDAO();
+    private final GestaoHistoricoService historicoService = new GestaoHistoricoService();
 
     public GestaoVisitaService() {
         inicializarTabela();
@@ -29,6 +32,11 @@ public class GestaoVisitaService {
         } catch (DatabaseException e) {
             throw new PersistenciaException(e.getMessage());
         }
+    }
+
+    public void registrarVisita(Visita visita, String cpfLogado) throws PersistenciaException, ValidationException {
+        registrarVisita(visita);
+        registrarHistorico(visita, cpfLogado);
     }
 
     public List<Visita> listar(String ordenacao, LocalDate inicio, LocalDate fim, String busca) throws PersistenciaException {
@@ -117,5 +125,20 @@ public class GestaoVisitaService {
         if (visita.getTurno() == null) {
             throw new ValidationException("Selecione o turno da visita.");
         }
+    }
+
+    private void registrarHistorico(Visita visita, String cpfLogado) {
+        Date dataVisita = visita.getDataVisita() != null ? Date.valueOf(visita.getDataVisita()) : null;
+        historicoService.registrar(
+                TipoHistorico.VISITA,
+                TipoHistorico.VISITA.getDescricao(
+                        visita.getNomeVisitante(),
+                        visita.getMotivo(),
+                        dataVisita,
+                        visita.getObservacoes(),
+                        visita.isVip()
+                ),
+                cpfLogado
+        );
     }
 }

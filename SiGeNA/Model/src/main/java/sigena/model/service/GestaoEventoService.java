@@ -5,14 +5,22 @@ import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Evento;
 import sigena.model.dao.EventoDAO;
+import java.time.LocalDateTime;
 
 public class GestaoEventoService {
     private final EventoDAO eventoDAO = new EventoDAO();
     
-    public List<Evento> listarEventos(String tipo) throws PersistenciaException{
+    public List<Evento> listarEventos(String busca, String filtro, String tipo, LocalDateTime inicio, LocalDateTime fim) throws PersistenciaException{
+        if(inicio != null && fim != null && fim.isBefore(inicio))
+            throw new IllegalArgumentException("A data de início deve ser anterior ao fim");
+        
         eventoDAO.atualizarOcorridos();
         
-        return eventoDAO.listar(tipo);
+        return eventoDAO.listar(busca, filtro, tipo, inicio, fim);
+    }
+    
+    public List<Evento> listarEventos(LocalDateTime inicio, LocalDateTime fim) throws PersistenciaException{
+        return listarEventos("", "", "", inicio, fim);
     }
     
     public boolean cadastrarEvento(Evento evento) throws PersistenciaException {

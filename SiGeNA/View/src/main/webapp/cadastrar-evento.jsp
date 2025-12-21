@@ -52,7 +52,7 @@
                 </c:if>
                 
                 <input type="hidden" name="acao" value="salvar">
-                <button type="submit" class="btn-enviar">Salvar Evento</button>
+                <button type="submit" class="btn-enviar" onclick="return confirm('Salvar evento?')">Salvar Evento</button>
             </form>
         </div>
         </div>

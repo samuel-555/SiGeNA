@@ -33,10 +33,10 @@
     
     <div class="botoes-acoes">
         <c:choose>
-            <c:when test="${evento.cancelado}">
+            <c:when test="${evento.cancelado and not expirado}">
                 <a href="EventoController?acao=listar&tipo=cancelados" class="btn">Voltar</a>
             </c:when>
-            <c:when test="${evento.ocorrido}">
+            <c:when test="${expirado}">
                 <a href="EventoController?acao=listar&tipo=ocorridos" class="btn">Voltar</a>
             </c:when>
             <c:otherwise>
@@ -75,13 +75,13 @@
                 <strong>Status:</strong>
                 <c:choose>
                     <c:when test="${evento.cancelado}">
-                        <span class="status cancelado">Cancelado</span>
+                        <span>Cancelado<c:if test="${expirado}"> e expirado</c:if></span>
                     </c:when>
                     <c:when test="${evento.ocorrido}">
-                        <span class="status ocorrido">Ocorrido</span>
+                        <span>Ocorrido</span>
                     </c:when>
                     <c:otherwise>
-                        <span class="status ativo">Ativo</span>
+                        <span>Ativo</span>
                     </c:otherwise>
                 </c:choose>
             </p>
@@ -95,15 +95,15 @@
                 <form action="EventoController" method="post" style="display:inline">
                     <input type="hidden" name="acao" value="cancelar">
                     <input type="hidden" name="id" value="${evento.id}">
-                    <button type="submit" class="btn cancelar">Cancelar</button>
+                    <button type="submit" class="btn cancelar" onclick="return confirm('Tem certeza que deseja cancelar o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat}? Você poderá reativá-lo antes de seu prazo terminar.')">Cancelar</button>
                 </form>
             </c:if>
 
-            <c:if test="${evento.cancelado}">
+            <c:if test="${evento.cancelado and not expirado}">
                 <form action="EventoController" method="post" style="display:inline">
                     <input type="hidden" name="acao" value="ativar">
                     <input type="hidden" name="id" value="${evento.id}">
-                    <button type="submit" class="btn">Reativar</button>
+                    <button type="submit" class="btn" onclick="return confirm('Tem certeza que deseja reativar o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat}?')">Reativar</button>
                 </form>
             </c:if>
 

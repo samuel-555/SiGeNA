@@ -76,7 +76,7 @@ public class GestaoAnimalService {
         if(animal.getHabitatNome() == null || habitatDAO.buscar(animal.getHabitatNome()) == null)
             return false;
         
-        if(!animal.getDataDeNascimentoOb().isAfter(LocalDate.now()))
+        if(animal.getDataDeNascimentoOb().isAfter(LocalDate.now()))
             return false;
         
         return true;

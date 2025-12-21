@@ -32,11 +32,50 @@
     <div class="botoes-acoes">
         <a href="EventoController?acao=cadastrar" class="btn">Cadastrar Novo Evento</a>
     </div>
+    <form method="get" action="EventoController">
+      <input type="hidden" name="acao" value="listar">
+      <input type="hidden" name="tipo" value="${param.tipo}">
 
+      Período:<br>
+      <label>Data inicial:</label>
+      <input type="datetime-local" name="dataInicio" value="${dataInicio}">
+
+      <label>Data final:</label>
+      <input type="datetime-local" name="dataFim" value="${dataFim}">
+
+      <button type="submit" class="btn">Filtrar</button>
+    </form>
     <c:if test="${not empty sessionScope.acaoBemSucedida}">
         <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
         <c:remove var="acaoBemSucedida" scope="session"/>
     </c:if>
+    <c:if test="${not empty sessionScope.erro}">
+        <div class="mensagem"><c:out value="${sessionScope.erro}"/></div>
+        <c:remove var="erro" scope="session"/>
+    </c:if>
+    <div class="pesquisa">
+          Pesquaisar: <input type="text" placeholder="Digite o título do evento"><br>
+          
+          <c:if test="${param.tipo != 'ocorridos'}">
+            Ordenar por: <select class="sequencia">
+              <option value="adicionado" data-ordem="crescente">Data mais próxima</option>
+              <option value="adicionado" data-ordem="decrescente">Data mais distante</option>
+            </select>
+          </c:if>
+
+          <c:if test="${param.tipo == 'ocorridos'}">
+            <select class="sequencia">
+            <option value="adicionado" data-ordem="decrescente">Data mais recente</option>
+            <option value="adicionado" data-ordem="crescente">Data mais antiga</option>
+          </select>
+            Status: <select class="filtro">
+              <option value="">Todos</option>
+              <option value="ocorridos">Ocorrido</option>
+              <option value="cancelados">Cancelado</option>
+            </select>
+          </c:if>
+
+    </div>
     
         <div class="historico">
         <h2>Lista de 
@@ -52,7 +91,7 @@
         </c:if>
 
         <c:if test="${param.tipo != 'ocorridos'}">
-          <a href="EventoController?acao=listar&tipo=ocorridos" class="btn">Ocorridos</a>
+          <a href="EventoController?acao=listar&tipo=ocorridos" class="btn">Histórico</a>
         </c:if>
 
         <c:if test="${param.tipo != 'cancelados'}">
@@ -64,27 +103,36 @@
             <c:forEach var="evento" items="${eventos}">
                 <div class="evento">
                   <h2><c:out value="${evento.dataProgramadaFormat}"/> - <c:out value="${evento.horaProgramadaFormat}"/></h2>
-                  <h3><c:out value="${evento.titulo}"/></h3>
-                  <p><c:out value="${evento.descricao}"/></p>
+                  <h3><c:out value="${evento.titulo}"/>
+                  <c:choose>
+                    <c:when test="${evento.ocorrido}">
+                      - Ocorrido
+                    </c:when>
+
+                    <c:when test="${evento.cancelado}">
+                      - Cancelado
+                    </c:when>
+                  </c:choose>
+                  </h3>
 
                   <c:if test="${empty param.tipo}">
                   <form action="EventoController" method="post">
                   <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir">Remover</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat} permanentemente?')">Remover</button>
                   </form>
                   <form action="EventoController" method="post">
                         <input type="hidden" name="acao" value="cancelar">
                         <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir">Cancelar</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja cancelar o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat}? Você poderá reativá-lo antes de seu prazo terminar.')">Cancelar</button>
                   </form>
                   </c:if>
                   
-                  <c:if test="${param.tipo == 'cancelados'}">
+                  <c:if test="${param.tipo == 'cancelados' and not expirado}">
                   <form action="EventoController" method="post">
                         <input type="hidden" name="acao" value="ativar">
                         <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir">Ativar</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja reativar o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat}?')">Ativar</button>
                   </form>
                   </c:if>
                   <a href="EventoController?acao=exibir&id=<c:out value="${evento.id}"/>" class="btn-pequeno">Exibir</a>
@@ -96,6 +144,10 @@
     </c:if>
     
   </div>
+  <c:choose>
+        <c:when test="${param.tipo == 'ocorridos'}"><script src="JS/pesquisa-evento.js"></script></c:when>
+        <c:otherwise><script src="JS/pesquisa-por-nome-sequencia.js"></script></c:otherwise>
+        </c:choose>
 </body>
 </html>
 

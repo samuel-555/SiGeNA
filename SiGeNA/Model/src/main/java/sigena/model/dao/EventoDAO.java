@@ -33,23 +33,51 @@ public class EventoDAO {
         }
     }
     
-    public List<Evento> listar(String tipo) throws PersistenciaException {
+    public List<Evento> listar(String busca, String filtro, String tipo, LocalDateTime inicio, LocalDateTime fim) throws PersistenciaException {
         StringBuilder sql = new StringBuilder("SELECT * FROM eventos WHERE arquivado = false ");
 
-        if ("ocorridos".equals(tipo)) {
-            sql.append("AND ocorrido = true ");
-        } else if ("cancelados".equals(tipo)) {
-            sql.append("AND cancelado = true ");
+        if("ocorridos".equals(tipo)) {
+
+            if("ocorridos".equals(filtro)) {
+                sql.append("AND ocorrido = true ");
+            } 
+            else if("cancelados".equals(filtro)) {
+                sql.append("AND cancelado = true AND data_programada < CURRENT_TIMESTAMP ");
+            } 
+            else {
+                sql.append("AND (ocorrido = true OR (cancelado = true AND data_programada < CURRENT_TIMESTAMP)) ");
+            }
+        }
+        else if ("cancelados".equals(tipo)) {
+            sql.append("AND cancelado = true AND data_programada > CURRENT_TIMESTAMP ");
         } else {
             sql.append("AND cancelado = false AND ocorrido = false ");
         }
-
+        
+        if(inicio != null)
+            sql.append("AND data_programada >= ? ");
+        
+        if(fim != null)
+            sql.append("AND data_programada <= ? ");
+        
+        sql.append("AND titulo like ? ");
+        
         sql.append("ORDER BY data_programada ASC");
         
         List<Evento> eventos = new ArrayList<>();
         
         try (Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql.toString());){
+            
+            int index = 1;
+            
+            if(inicio != null)
+                stmt.setObject(index++, inicio);
+            
+            if(fim != null)
+                stmt.setObject(index++, fim);
+            
+            stmt.setString(index, "%" + busca + "%");
             
             ResultSet rs = stmt.executeQuery();
             while(rs.next())

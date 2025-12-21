@@ -39,7 +39,7 @@
     <div class="pesquisa">
           Pesquaisar: <input type="text" placeholder="Digite o ID ou o nome"><br>
           Filtrar espécie: <select class="filtro">
-                    <option value="">Selecione uma espécie</option>
+                    <option value="">Todas</option>
                     <c:forEach items="${especies}" var="especie">
                         <option value="${especie.id}">${especie.nome}</option>
                     </c:forEach>

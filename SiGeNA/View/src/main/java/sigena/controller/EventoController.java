@@ -13,9 +13,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
+import sigena.model.common.util.DataConverter;
 import sigena.model.common.util.StringUtils;
 import sigena.model.domain.Evento;
 import sigena.model.service.GestaoEventoService;
+import sigena.controller.util.ListOrdener;
 
 @WebServlet(name = "EventoController", urlPatterns = {"/EventoController"})
 public class EventoController extends HttpServlet {
@@ -28,28 +30,54 @@ public class EventoController extends HttpServlet {
                 String acao = request.getParameter("acao");
                 
                 if("listar".equals(acao)) {
-                    /*String di = StringUtils.conferNull(request.getParameter("dataInicio"));
+                    String di = StringUtils.conferNull(request.getParameter("dataInicio"));
                     String df = StringUtils.conferNull(request.getParameter("dataFim"));
 
-                    LocalDate dataInicio = null;
-                    LocalDate dataFim = null;
+                    LocalDateTime dataInicio = null;
+                    LocalDateTime dataFim = null;
 
-                    LocalDateTime inicio = dataInicio.atStartOfDay();
-                    LocalDateTime fim = dataFim.plusDays(1).atStartOfDay();*/
+                    if(di != null && !di.isBlank())
+                        dataInicio = LocalDateTime.parse(di);
+                    
+                    if(df != null && !df.isBlank())
+                        dataFim = LocalDateTime.parse(df);
+                        
                     List<Evento> eventos = null;
                     
                     String tipo = StringUtils.conferNull(request.getParameter("tipo"));
-                    /*if (di != null && !di.isBlank()) {
-                        dataInicio = LocalDate.parse(di);
-                    }
+                    String busca = StringUtils.conferNull(request.getParameter("busca"));
+                    String ordem = StringUtils.conferNull(request.getParameter("ordem"));
+                    String filtro = StringUtils.conferNull(request.getParameter("filtro"));
+                    
+                    if ("ocorridos".equals(tipo) && (ordem == null || ordem.isBlank()))
+                        ordem = "decrescente";
+    
+                    try {
+                        eventos = service.listarEventos(busca, filtro, tipo, dataInicio, dataFim);
+                    
+                        ListOrdener.ordenarBusca(eventos, ordem);
+                        request.setAttribute("eventos", eventos);
+                    
+                        if (dataInicio != null) {
+                            request.setAttribute("dataInicio", DataConverter.toHTMLFormat(dataInicio));
+                        }
 
-                    if (df != null && !df.isBlank()) {
-                        dataFim = LocalDate.parse(df);
-                    }*/
+                        if (dataFim != null) {
+                            request.setAttribute("dataFim", DataConverter.toHTMLFormat(dataFim));
+                        }
+                    } catch (IllegalArgumentException e) {
+                        eventos = service.listarEventos(busca, filtro, tipo, null, null);
                     
-                    eventos = service.listarEventos(tipo);
+                        ListOrdener.ordenarBusca(eventos, ordem);
+                        request.setAttribute("eventos", eventos);
+                        
+                        HttpSession sessao = request.getSession(false);
+                        sessao.setAttribute("erro", e.getMessage());
+                        response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
+                        return;
+                    }
                     
-                    request.setAttribute("eventos", eventos);
+                    
                     request.getRequestDispatcher("eventos.jsp").forward(request, response);
                 }    
                 
@@ -57,6 +85,8 @@ public class EventoController extends HttpServlet {
                     Long id = Long.valueOf(request.getParameter("id"));
                     Evento evento = service.buscarEvento(id);
                     request.setAttribute("evento", evento);
+                    boolean expirado = evento.getDataProgramada().isBefore(LocalDateTime.now());
+                    request.setAttribute("expirado", expirado);
                     request.getRequestDispatcher("exibir-evento.jsp").forward(request, response);
                 }
                 

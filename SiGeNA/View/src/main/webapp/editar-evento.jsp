@@ -48,7 +48,7 @@
                 
                 <input type="hidden" name="acao" value="editar">
                 <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
-                <button type="submit" class="btn-enviar">Salvar Alterações</button>
+                <button type="submit" class="btn-enviar" onclick="return confirm('Salvar alterações? Essas modificações não poderão ser desfeitas.')">Salvar Alterações</button>
             </form>
         </div>
         </div>

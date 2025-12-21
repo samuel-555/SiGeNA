@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class ListOrdener {
-        public static <T> void ordenarBusca(List<T> lista, String sequencia, String ordem, Function<T, String> getNome){
+    public static <T> void ordenarBusca(List<T> lista, String sequencia, String ordem, Function<T, String> getNome){
         if("adicionado".equals(sequencia) || "".equals(sequencia)) {
             if("crescente".equals(ordem) || "".equals(ordem))
                 Collections.reverse(lista);
@@ -14,6 +14,12 @@ public class ListOrdener {
             lista.sort(Comparator.comparing(getNome));
             if("decrescente".equals(ordem))
                 Collections.reverse(lista);
+        }
+    }
+    
+    public static <T> void ordenarBusca(List<T> lista, String ordem) {
+        if ("decrescente".equals(ordem)) {
+            Collections.reverse(lista);
         }
     }
 }

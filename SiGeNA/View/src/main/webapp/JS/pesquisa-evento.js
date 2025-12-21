@@ -90,8 +90,11 @@ window.addEventListener('load', function() {
   if(campoPesquisaValor !== null)
     campoPesquisa.value = campoPesquisaValor;
 
-  if(campoFiltroValor !== null)
-    campoFiltro.value = campoFiltroValor;
+  let url = new URL(window.location.href);
+
+if (campoFiltroValor !== null && url.searchParams.has("filtro")) {
+  campoFiltro.value = campoFiltroValor;
+}
 
   if (campoSequenciaValor !== null && campoOrdemValor !== null) {
     for (let opt of campoSequencia.options) {

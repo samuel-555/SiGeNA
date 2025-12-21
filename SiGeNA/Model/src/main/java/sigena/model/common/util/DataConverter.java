@@ -50,4 +50,13 @@ public class DataConverter {
         
         return String.format("%d ano(s) e %d mês(es)", periodo.getYears(), periodo.getMonths());
     }
+    
+    public static String toHTMLFormat(LocalDateTime data) {
+        if(data == null)
+            return "";
+        
+        DateTimeFormatter htmlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        
+        return data.format(htmlFormatter);
+    }
 }

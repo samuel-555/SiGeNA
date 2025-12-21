@@ -3,7 +3,7 @@ package sigena.model.dao;
 import java.sql.*;
 import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
-import sigena.model.domain.Cargo;
+import sigena.model.domain.util.Cargo;
 import sigena.model.domain.Funcionario;
 import sigena.model.domain.Usuario;
 import sigena.model.util.ConexaoDB;

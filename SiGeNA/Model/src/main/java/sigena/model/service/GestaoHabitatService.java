@@ -95,6 +95,14 @@ public class GestaoHabitatService {
         return dao.buscar(nome);
     }
     
+    public List<Habitat> buscarPorNomeOuTipo(String termo) {
+
+        if (termo == null || termo.isBlank()) 
+            return dao.listar();
+    
+        return dao.buscarPorNomeOuTipo(termo);
+    }
+    
     public void excluir(Habitat habitat) throws HabitatVazioException {
         if(!habitat.getVazio())
             throw new HabitatVazioException("Não é permitido deletar um habitat com animais alocados");

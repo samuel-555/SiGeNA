@@ -27,15 +27,25 @@ public class FuncionarioService {
     }
 
     public void deletar(int id, String setor, String turno) throws BusinessException, DatabaseException, SQLException {
-        int restantes = funcionarioDAO.contarPorSetorETurnoExceto(setor, turno, id);
+        Funcionario f = funcionarioDAO.buscarPorId(id);
+
+        int restantes = funcionarioDAO.contarAtivosPorAreaTurnoExcetoId(
+                f.getId(),
+                f.getAreaAtuacao(),
+                f.getTurno()
+        );
+
         if (restantes == 0) {
-            throw new ValidationException("deve haver pelo menos um funcionário por setor/turno.");
+            throw new ValidationException(
+                    "Deve haver pelo menos um funcionário ATIVO por setor e turno."
+            );
         }
-        funcionarioDAO.deletar(id);
+
+        funcionarioDAO.cancelar(id);
         usuarioDAO.deletarPorFuncionario(id);
     }
 
-    public Funcionario buscarPorId(int id) throws SQLException, DatabaseException {
+    public Funcionario buscarPorId(int id) throws DatabaseException {
         return funcionarioDAO.buscarPorId(id);
     }
 

@@ -128,7 +128,7 @@ public class InitDB {
                 cargo VARCHAR(30) NOT NULL,
                 area_atuacao VARCHAR(120) NOT NULL,
                 turno ENUM('MANHA','TARDE','NOITE') NOT NULL DEFAULT 'MANHA',
-                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO') 
+                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO','CANCELADO') 
                     NOT NULL DEFAULT 'ATIVO',
                 observacoes TEXT
             );
@@ -267,7 +267,7 @@ public class InitDB {
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             nome_doador VARCHAR(150) NOT NULL,
             tipo VARCHAR(50) NOT NULL,
-            valor_monetario DECIMAL(10,2),
+            valor_monetario DECIMAL(15,2),
             descricao_outro VARCHAR(255),
             observacoes TEXT,
             status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
@@ -367,6 +367,18 @@ public class InitDB {
         }
     }
 
+    public void initOcorrencias() throws SQLException {
+        String sql = """
+    CREATE TABLE IF NOT EXISTS ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        descricao TEXT,
+        tipo VARCHAR(30) NOT NULL,
+        status VARCHAR(30) NOT NULL,
+        cpf_cadastrador VARCHAR(14) NOT NULL,
+        data DATETIME NOT NULL
+    );
+    """;
+
     public void initVisitas() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS visitas (
@@ -387,6 +399,25 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
+    
+
+    public void initHistoricoStatusOcorrencia() throws SQLException {
+    String sql = """
+    CREATE TABLE IF NOT EXISTS historico_status_ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        ocorrencia_id BIGINT NOT NULL,
+        status_anterior VARCHAR(20) NULL,
+        status_novo VARCHAR(20) NOT NULL,
+        cpf_responsavel VARCHAR(14) NOT NULL,
+        data_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (ocorrencia_id) REFERENCES ocorrencia(id)
+    );
+    """;
+
+    try (Statement st = con.createStatement()) {
+        st.executeUpdate(sql);
+    }
+}
 
     public void initHistorico() throws SQLException {
         String sql = """
@@ -419,6 +450,8 @@ public class InitDB {
             initRelatoriosSaude();
             initDoacoes();
             initRecibosDoacao();
+            initOcorrencias();
+            initHistoricoStatusOcorrencia();
             initVisitas();
             initTarefas();
             initHistorico();

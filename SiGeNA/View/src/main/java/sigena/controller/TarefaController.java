@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +26,7 @@ import sigena.model.domain.Tarefa;
 import sigena.model.service.FuncionarioService;
 
 @WebServlet(name = "TarefaController", urlPatterns = {"/TarefaController"})
-public class TarefaController extends HttpServlet {
+public class TarefaController extends Controller {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -46,47 +45,45 @@ public class TarefaController extends HttpServlet {
         }
     }
 
-    @Override
+   @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        GestaoTarefaService service = new GestaoTarefaService();
+        throws ServletException, IOException {
+
         HttpSession sessao = request.getSession(false);
-        
-        String acao = request.getParameter("acao");
-       
-        if ("cadastrar".equals(acao)) {
-            try {
-                abrirFormulario(request, response);
-            } catch (SQLException ex) {
-                System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-            } catch (DatabaseException ex) {
-                System.getLogger(TarefaController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-            }
+
+        if (sessao == null || sessao.getAttribute("CpfLogado") == null) {
+            response.sendRedirect("index.jsp");
             return;
         }
-        if ("listar".equals(acao)) {
-            listar(request, response);
-        return;
-        }
-        Integer idUsuario = (Integer) sessao.getAttribute("idUsuario");
-        Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
-        
+
+        String acao = request.getParameter("acao");
+
         try {
-            List<Tarefa> tarefas;
-
-            if (cargo != null && cargo.getDescricao().equalsIgnoreCase("GERENTE"))
-                tarefas = service.listarTarefas();
-            else 
-                tarefas = service.listarPorUsuario(idUsuario);
-        request.setAttribute("tarefas", tarefas);
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-
+            if ("cadastrar".equals(acao)) {
+                abrirFormulario(request, response);
+                return;
+            }
         } 
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ServletException(e);
         }
+
+        Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+        String cpf = (String) sessao.getAttribute("CpfLogado");
+
+        GestaoTarefaService service = new GestaoTarefaService();
+        List<Tarefa> tarefas;
+
+        if (cargo == Cargo.GERENTE)
+            tarefas = service.listarTarefasDoDia();
+        else
+            tarefas = service.listarTarefasDoDiaPorCpf(cpf);
+
+        request.setAttribute("tarefas", tarefas);
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
+
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -122,7 +119,9 @@ public class TarefaController extends HttpServlet {
             case "excluir":
                 excluir(request, response);
                 break;
-
+            case "concluir":
+                concluir(request, response);
+                break;
         }
     }
     
@@ -144,12 +143,13 @@ public class TarefaController extends HttpServlet {
         String dataStr = request.getParameter("data-conclusao");
         DateTimeFormatter dataForm = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime dataPConclusao = LocalDateTime.parse(dataStr, dataForm);
+        String cpfAutor = getCpfUsuarioLogado(request);
 
         
         GestaoTarefaService service = new GestaoTarefaService();
       
         try {
-            service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao);
+            service.cadastrarTarefa(nome,texto,id_destinatario,dataPConclusao,cpfAutor);
         } 
         catch (DataInvalidaException ex) {    
             request.setAttribute("msgErro",ex.getMessage());
@@ -162,6 +162,8 @@ public class TarefaController extends HttpServlet {
    
    public void editar(HttpServletRequest request, HttpServletResponse response) throws IOException, DataInvalidaException, ServletException, SQLException, DatabaseException{
 
+        String cpfAutor = getCpfUsuarioLogado(request);
+       
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
         int id_destinatario = Integer.parseInt(request.getParameter("destinatario"));
@@ -175,46 +177,60 @@ public class TarefaController extends HttpServlet {
         
         long id = Integer.parseInt(request.getParameter("id"));
         request.setAttribute("destinatario",nomeFuncionario);
-
+        String cpfLogado = getCpfUsuarioLogado(request);
+        
         GestaoTarefaService service = new GestaoTarefaService();
         try{
-            service.editar(id, nome, texto, id_destinatario, dataPConclusao);
+            service.editar(id, nome, texto, id_destinatario, dataPConclusao, cpfAutor,cpfLogado);
         }
         catch (DataInvalidaException ex) {    
             request.setAttribute("msgErro",ex.getMessage());
             request.getRequestDispatcher("cadastrar-tarefa.jsp").forward(request, response);
             return;
         }
+        catch (SecurityException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
         
-
         response.sendRedirect("TarefaController");
     }
 
     
     public void excluir(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        long id = Integer.parseInt(request.getParameter("id"));
+        Cargo cargo = (Cargo) request.getSession().getAttribute("cargoUsuario");
 
-       
+        if (cargo != Cargo.GERENTE) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        
+        long id = Integer.parseInt(request.getParameter("id"));
+        String cpf = getCpfUsuarioLogado(request);
+        
         GestaoTarefaService service = new GestaoTarefaService();
-        Tarefa tarefa = new Tarefa("","",0,LocalDateTime.now());
+        Tarefa tarefa = new Tarefa("","",0,LocalDateTime.now(),"1000000");
         tarefa.setId(id);
         
-       
-        service.excluir(tarefa);
-      
-        request.getRequestDispatcher("home.jsp").forward(request, response);
+        try {
+            service.excluir(tarefa, cpf);
+            response.sendRedirect("TarefaController");
+        } 
+        catch (SecurityException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
+        response.sendRedirect("TarefaController");
     }
     
-    private void listar(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void concluir(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
+
+        long id = Long.parseLong(request.getParameter("id"));
+        String cpf = getCpfUsuarioLogado(request);
 
         GestaoTarefaService service = new GestaoTarefaService();
+        service.editarConcluida(id,true,cpf);
 
-        List<Tarefa> tarefas = service.listarTarefas();
-        request.setAttribute("tarefas", tarefas);
-
-        request.getRequestDispatcher("home.jsp").forward(request, response);
+        response.sendRedirect("TarefaController");
     }
-
 
 }

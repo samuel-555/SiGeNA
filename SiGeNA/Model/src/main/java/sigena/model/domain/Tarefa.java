@@ -14,6 +14,7 @@ public class Tarefa {
     private int id_destinatario;
     private LocalDateTime dataCadastro;
     private LocalDateTime dataPConclusao;
+    private String cpfAutor;
     
     public Tarefa(String nome, String texto, boolean concluida, int id_destinatario,LocalDateTime dataCadastro ,LocalDateTime dataPConclusao){
         this.nome = nome;
@@ -24,13 +25,14 @@ public class Tarefa {
         this.dataPConclusao = dataPConclusao;
     }
     
-    public Tarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao){
+    public Tarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao, String cpfAutor){
         this.nome = nome;
         this.texto = texto;
         this.id_destinatario = id_destinatario;
         concluida = false;
         dataCadastro = LocalDateTime.now();
         this.dataPConclusao = dataPConclusao;
+        this.cpfAutor = cpfAutor;
     }
     
     
@@ -55,6 +57,9 @@ public class Tarefa {
     public LocalDateTime getDataPConclusao(){
         return dataPConclusao;
     }
+    public String getAutor(){
+        return cpfAutor;
+    }
     
     
     public void setId(long id){
@@ -77,5 +82,9 @@ public class Tarefa {
     }
     public void setDataCadastro(LocalDateTime data){
         this.dataCadastro = data;
-    }//
+    }
+    public void setCpfAutor(String cpf){
+        this.cpfAutor= cpf;
+    }
 }
+                

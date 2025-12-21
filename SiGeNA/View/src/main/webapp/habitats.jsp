@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -19,6 +20,10 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "habitats");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "habitats");
+    request.setAttribute("podeGerenciarHabitats", podeGerenciar);
 %>
 
 
@@ -33,14 +38,16 @@
 </head>
 <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
     <h1>Gestão de Habitat</h1>
 
     <div class="botoes-acoes">
+      <% if (podeCadastrar) { %>
       <a href="cadastrar-habitat.jsp" class="btn">Cadastrar Novo Habitat</a>
+      <% } %>
     </div>
 
     
@@ -74,18 +81,20 @@
             <td>${habitat.disponivel ? "Disponível":"Indisponível"}</td>
             <td>
                 
-              <a href="HabitatController?acao=editar&nome=${habitat.nome}" class="btn-pequeno editar">Editar</a>
+              <c:if test="${podeGerenciarHabitats}">
+                  <a href="HabitatController?acao=editar&nome=${habitat.nome}" class="btn-pequeno editar">Editar</a>
 
 
-              <form action="${pageContext.request.contextPath}/HabitatController" method="POST" style="display:inline-block;">
-                <c:if test="${not empty msgErro}">
-                    <p style="color:red;font-weight:bold">${msgErro}</p>
-                </c:if>
-                    
-                  <input type="hidden" name="acao" value="excluir">
-                  <input type="hidden" name="nome" value="${habitat.nome}">
-                  <button class="btn-pequeno excluir">Excluir</button>
-             </form>
+                  <form action="${pageContext.request.contextPath}/HabitatController" method="POST" style="display:inline-block;">
+                    <c:if test="${not empty msgErro}">
+                        <p style="color:red;font-weight:bold">${msgErro}</p>
+                    </c:if>
+                        
+                      <input type="hidden" name="acao" value="excluir">
+                      <input type="hidden" name="nome" value="${habitat.nome}">
+                      <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Deseja realmente excluir este habitat?')">Excluir</button>
+                 </form>
+              </c:if>
             </td>
           </tr>
         </c:forEach>
@@ -97,4 +106,3 @@
   </div>
 </body>
 </html>
-

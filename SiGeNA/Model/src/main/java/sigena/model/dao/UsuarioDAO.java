@@ -45,6 +45,25 @@ public class UsuarioDAO {
         }
     }
 
+    public String buscarNomePorCpf(String cpf) throws PersistenciaException {
+        cpf = normalizarCPF(cpf);
+        String sql = "SELECT nome FROM funcionarios WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ? LIMIT 1";
+
+        try (Connection con = ConexaoDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cpf);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nome");
+                }
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao buscar nome do funcionÇ­rio: " + e.getMessage());
+        }
+    }
+
     public boolean existeCPF(String cpf) throws PersistenciaException {
         cpf = normalizarCPF(cpf);
         String sql = "SELECT 1 FROM usuarios WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ?";

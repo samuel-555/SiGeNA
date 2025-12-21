@@ -50,21 +50,49 @@ public class TratamentoDAO {
         }
     }
 
-    public List<Tratamento> listar() throws PersistenciaException, DatabaseException {
-        String sql = "SELECT * FROM tratamento";
+    public List<Tratamento> listar(String busca, String status, String tipo) throws PersistenciaException, DatabaseException {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT t.* FROM tratamento t ");
+        sql.append("INNER JOIN animais a ON t.animal_id = a.id ");
+        sql.append("WHERE 1=1 ");
+        boolean temBusca = busca != null && !busca.isEmpty();
+        if (temBusca) {
+            sql.append(" AND (a.nome LIKE ? OR t.animal_id LIKE ?)");
+        }
+        boolean temStatus = status != null && !status.isEmpty();
+        if (temStatus) {
+            sql.append(" AND status = ?");
+        }
+        boolean temTipo = tipo != null && !tipo.isEmpty();
+        if (temTipo) {
+            sql.append(" AND tipo = ?");
+        }
+        sql.append(" ORDER BY data_inicio DESC");
         List<Tratamento> tratamentos = new ArrayList<>();
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            int index = 1;
 
-        try {
-            Connection con = ConexaoDB.getConnection(); 
-            PreparedStatement ps = con.prepareStatement(sql); 
-            ResultSet rs = ps.executeQuery();
+            if (temBusca) {
+                ps.setString(index++, "%" + busca + "%");
+                ps.setString(index++, "%" + busca + "%");
+            }
 
-            while (rs.next()) {
-                tratamentos.add(consultaToTratamento(rs));
+            if (temStatus) {
+                ps.setString(index++, status);
+            }
+
+            if (temTipo) {
+                ps.setString(index++, tipo);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    tratamentos.add(consultaToTratamento(rs));
+                }
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao exibir tratamentos: " + e.getMessage());
+            throw new PersistenciaException("Erro ao listar tratamentos: " + e.getMessage());
         }
 
         return tratamentos;
@@ -81,9 +109,9 @@ public class TratamentoDAO {
         Usuario vet = null;
         if (funcionario != null) {
             vet = new Usuario();
-            vet.setId(funcionario.getId());     
-            vet.setCpf(funcionario.getCpf());    
-            vet.setCargo(funcionario.getCargo()); 
+            vet.setId(funcionario.getId());
+            vet.setCpf(funcionario.getCpf());
+            vet.setCargo(funcionario.getCargo());
         }
         String diagnostico = rs.getString("diagnostico");
         String medicacao = rs.getString("medicacao");
@@ -98,7 +126,7 @@ public class TratamentoDAO {
         int id = rs.getInt("id");
         TipoTratamento tipo = Enum.valueOf(TipoTratamento.class, tipoStr.toUpperCase());
         StatusTratamento status = Enum.valueOf(StatusTratamento.class, statusStr.toUpperCase());
-        
+
         Tratamento t = new Tratamento(animal, vet, diagnostico, medicacao, frequencia, observacao, tipo, status, dataFinal, horario);
         t.setId(id);
         return t;
@@ -135,28 +163,28 @@ public class TratamentoDAO {
             e.printStackTrace();
         }
     }
-    
-    public Tratamento buscarPorId(int id) throws PersistenciaException, DatabaseException{
+
+    public Tratamento buscarPorId(int id) throws PersistenciaException, DatabaseException {
         String sql = "SELECT * FROM tratamento WHERE id = ?";
-        try{
+        try {
             Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 Tratamento t = new Tratamento();
                 t = consultaToTratamento(rs);
-                
+
                 return t;
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-        
+
     }
-    
-    public void cancelar(int id) throws PersistenciaException, DatabaseException{
+
+    public void cancelar(int id) throws PersistenciaException, DatabaseException {
         String sql = "UPDATE tratamento SET status = ? WHERE id = ?";
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             Tratamento t = buscarPorId(id);
@@ -168,6 +196,6 @@ public class TratamentoDAO {
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao cancelar tratamento: " + e.getMessage());
         }
-        
+
     }
 }

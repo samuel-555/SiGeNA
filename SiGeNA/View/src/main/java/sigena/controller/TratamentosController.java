@@ -24,22 +24,6 @@ import sigena.model.service.GestaoTratamentosService;
 @WebServlet(name = "TratamentosController", urlPatterns = {"/TratamentosController"})
 public class TratamentosController extends HttpServlet {
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet TratamentosController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet TratamentosController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -127,8 +111,20 @@ public class TratamentosController extends HttpServlet {
 
     public void listar(HttpServletResponse response, HttpServletRequest request) throws PersistenciaException, ServletException, IOException, DatabaseException {
 
+        String busca = request.getParameter("busca");
+        String status = request.getParameter("status");
+        String tipo = request.getParameter("tipo");
+        if (busca == null) {
+            busca = "";
+        }
+        if (status == null) {
+            status = "";
+        }
+        if (tipo == null) {
+            tipo = "";
+        }
         GestaoTratamentosService service = new GestaoTratamentosService();
-        List<Tratamento> lista = service.listar();
+        List<Tratamento> lista = service.listar(busca, status, tipo);
         request.setAttribute("lista", lista);
         request.getRequestDispatcher("tratamentos.jsp").forward(request, response);
     }

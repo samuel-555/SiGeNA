@@ -36,9 +36,9 @@ public class GestaoTratamentosService {
         }
         dao.editar(tratamento);
     }
-    
-    public List<Tratamento> listar() throws PersistenciaException, DatabaseException{
-       return dao.listar();
+   
+    public List<Tratamento> listar(String busca, String status, String tipo) throws PersistenciaException, DatabaseException{
+       return dao.listar(busca, status, tipo);
     }
     
     public Tratamento buscarPorId(int id) throws PersistenciaException, DatabaseException{

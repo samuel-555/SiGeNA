@@ -1,3 +1,7 @@
+<%@page import="sigena.model.domain.util.StatusTratamento"%>
+<%@page import="sigena.model.service.GestaoAnimalService"%>
+<%@page import="sigena.model.domain.Animal"%>
+<%@page import="sigena.model.domain.util.TipoTratamento"%>
 <%@page import="sigena.model.domain.Tratamento"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.List"%>
@@ -10,6 +14,11 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    pageContext.setAttribute("tiposTratamento", TipoTratamento.values());
+    pageContext.setAttribute("tiposStatus", StatusTratamento.values());
+    GestaoAnimalService service = new GestaoAnimalService();
+    List<Animal> animais = service.listarAnimais();
+    pageContext.setAttribute("animais", animais);
 %>
 <!DOCTYPE html>
 <html>
@@ -29,7 +38,7 @@
 
             <div class="botoes-acoes">
                 <button class="btn"><a href="cadastrar-tratamentos.jsp">Registrar Novo Tratamento</a></button>
-                
+
             </div>
 
             <c:if test="${not empty mensagemSucesso}">
@@ -47,7 +56,45 @@
             </c:if>
 
             <div class="historico">
+
                 <h2>Lista de Tratamentos</h2>
+                <div class="barra-filtros">
+                    <form action="TratamentosController" method="GET" class="form-filtros">
+
+                        <input type="hidden" name="acao" value="listar">
+
+                        <div class="grupo-input">
+                            <label for="busca">Buscar:</label>
+                            <input type="text" name="busca" id="busca" class="form-control" placeholder="Nome do animal..." 
+                                   value="<%= request.getParameter("busca") != null ? request.getParameter("busca") : ""%>">
+                        </div>
+
+                        <div class="grupo-input">
+                            <label for="status">Status</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="">Todos</option>
+                                <c:forEach var="status" items="${tiposStatus}">
+                                    <option value="${status}">${status.status}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="grupo-input">
+                            <label for="tipo">Tipo:</label>
+                            <select name="tipo" id="tipo" class="form-control">
+                                <option value="">Todos</option>
+                                <c:forEach var="tipo" items="${tiposTratamento}">
+                                    <option value="${tipo}">${tipo.tipo}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="grupo-botoes">
+                            <button type="submit" class="btn-pequeno">Filtrar</button>
+                            <a href="TratamentosController?acao=listar" class="link-limpar">Limpar</a>
+                        </div>
+                    </form>
+                </div>
                 <%
                     String erro = (String) request.getAttribute("erro");
                     if (erro != null) {
@@ -68,7 +115,7 @@
 
                         if (lista != null && !lista.isEmpty()) {
                             for (Tratamento t : lista) {
-                            if(!"Cancelado".equalsIgnoreCase(t.getStatusTratamento())){
+                                if (lista.size() != 0) {
                     %>
 
                     <tr>
@@ -80,10 +127,10 @@
                         <td><%= t.getMedicacao()%></td>
                         <td><%= t.getStatusTratamento().replace("_", " ")%></td>
                         <td>
-                    <a href="TratamentosController?acao=ver&id=<%= t.getId()%>" class="btn-pequeno ver">Ver</a>
-                    <a href="TratamentosController?acao=cancelar&id=<%= t.getId()%>" onclick="return confirm('Deseja cancelar esse tratamento?');" class="btn-pequeno cancelar">Cancelar</a>
-                    
-                </td>
+                            <a href="TratamentosController?acao=ver&id=<%= t.getId()%>" class="btn-pequeno ver">Ver</a>
+                            <a href="TratamentosController?acao=cancelar&id=<%= t.getId()%>" onclick="return confirm('Deseja cancelar esse tratamento?');" class="btn-pequeno cancelar">Cancelar</a>
+
+                        </td>
                     </tr>
                     <% }
                         }

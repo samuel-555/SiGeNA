@@ -155,7 +155,7 @@
                         <% } %>
 <h2 class="tarefas-title">TAREFAS</h2>
 
-<c:if test="${sessionScope.cargoUsuario == 'GERENTE'}">
+<c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
     <a href="TarefaController?acao=cadastrar" class="btn">Cadastrar Tarefa</a>
 </c:if>
 
@@ -175,7 +175,7 @@
                         <th>Descrição</th>
                         <th>Prazo</th>
                         <th>Concluir</th>
-                        <c:if test="${cargo == 'GERENTE'}">
+                        <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
                             <th>Ações</th>
                         </c:if>
                     </tr>
@@ -199,27 +199,31 @@
                                 </form>
                             </td>
 
-                            <c:if test="${sessionScope.cargoUsuario == 'GERENTE' && tarefa.cpfCriador == sessionScope.CpfLogado}">
-                                <td>
-                                    <form method="post" action="TarefaController" style="display:inline">
-                                        <input type="hidden" name="acao" value="excluir">
-                                        <input type="hidden" name="id" value="${tarefa.id}">
-                                        <button type="submit"
-                                                class="btn-pequeno excluir"
-                                                onclick="return confirm('Deseja realmente excluir esta tarefa?')">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </td>
-                                
-                                <td>
-                                    <form method="post" action="TarefaController" style="display:inline">
-                                        <input type="hidden" name="acao" value="editar">
-                                        <input type="hidden" name="id" value="${tarefa.id}">
-                                        <button type="submit class="btn-pequeno editar" Excluir</button>
-                                    </form>
-                                </td>
-                            </c:if>
+                           <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'
+            and tarefa.cpfAutor eq sessionScope.CpfLogado}">
+    <td>
+        
+        <form method="post" action="TarefaController" style="display:inline">
+            <input type="hidden" name="acao" value="excluir">
+            <input type="hidden" name="id" value="${tarefa.id}">
+            <button type="submit"
+                    class="btn-pequeno excluir"
+                    onclick="return confirm('Deseja realmente excluir esta tarefa?')">
+                Excluir
+            </button>
+        </form>
+            
+        <form method="get" action="TarefaController" style="display:inline">
+            <input type="hidden" name="acao" value="editar">
+            <input type="hidden" name="id" value="${tarefa.id}">
+            <button type="submit" class="btn-pequeno editar">
+                Editar
+            </button>
+        </form>
+
+    </td>
+</c:if>
+
                             
 
                         </tr>

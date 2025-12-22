@@ -26,9 +26,9 @@ public enum TipoHistorico {
 
     ANIMAL {
         @Override
-        public String getDescricao(Animal animal, Habitat destino) {
+        public String getDescricao(Animal animal, String destino) {
             return "Animal " + animal.getNome() +
-                   " movido para o habitat " + destino.getNome();
+                   " movido para o habitat " + destino;
         }
     },
     PLANOALIMENTAR {
@@ -102,7 +102,7 @@ public enum TipoHistorico {
         );
     }
 
-    public String getDescricao(Animal animal, Habitat habitat) {
+    public String getDescricao(Animal animal, String habitat) {
         throw new UnsupportedOperationException(
                 "Este tipo não suporta descrição com Animal e Habitat"
         );

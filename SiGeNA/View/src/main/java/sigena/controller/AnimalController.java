@@ -25,7 +25,7 @@ import sigena.controller.util.ListOrdener;
 import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet(name = "AnimalController", urlPatterns = {"/AnimalController"})
-public class AnimalController extends HttpServlet {
+public class AnimalController extends Controller {
     private final GestaoAnimalService service = new GestaoAnimalService();
     private final GestaoHabitatService consultaHabitat = new GestaoHabitatService();
     private final GestaoEspeciesService consultaEspecie = new GestaoEspeciesService();
@@ -178,7 +178,8 @@ public class AnimalController extends HttpServlet {
 
         Animal novoAnimal = new Animal(nome, especie, sexo, dataDeNascimento, peso, hostil, habitat);
         
-        return service.cadastrarAnimal(novoAnimal);
+        String cpfLogado = getCpfUsuarioLogado(request);
+        return service.cadastrarAnimal(novoAnimal,cpfLogado);
     }
     
     private void excluir(HttpServletRequest request, HttpServletResponse response) throws PersistenciaException{

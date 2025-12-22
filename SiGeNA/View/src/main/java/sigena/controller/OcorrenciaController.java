@@ -24,7 +24,7 @@ import sigena.model.dao.HistoricoOcorrenciaDAO;
 import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/ocorrencias")
-public class OcorrenciaController extends HttpServlet {
+public class OcorrenciaController extends Controller {
 
     private GestaoOcorrenciaService service;
 
@@ -115,8 +115,9 @@ public class OcorrenciaController extends HttpServlet {
                 oc.setCpfCadastrador(cpf);
 
                 StatusOcorrencia statusInicial = oc.getStatus();
-
-                service.criar(oc);
+                String cpfLogado = getCpfUsuarioLogado(request);
+                
+                service.criar(oc,cpfLogado);
                 
                 GestaoNotificacaoService not = new GestaoNotificacaoService();
                 not.criarParaTodos("Nova ocorrência cadastrado");
@@ -168,8 +169,9 @@ public class OcorrenciaController extends HttpServlet {
                             novoStatus,
                             cpf
                     );
+                    
                 }
-
+                
                 service.atualizar(oc);
 
                 response.sendRedirect("ocorrencias");

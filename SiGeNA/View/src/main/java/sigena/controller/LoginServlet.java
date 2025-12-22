@@ -53,8 +53,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("TurnoLogado", turnoParaSessao);
               
                 response.sendRedirect("TarefaController");
-
-          
+                
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");
                 request.getRequestDispatcher("index.jsp").forward(request, response);

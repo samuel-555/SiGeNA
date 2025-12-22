@@ -56,14 +56,14 @@
 </head>
 <body>
     <header class="topbar">
-        <a href="home.jsp" class="titulo">
-            <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
-            <span>SiGeNA</span>
-        </a>
-        <div class="user-area">
-            <a href="LogoutServlet" class="btn-sair">Sair</a>
-        </div>
-    </header>
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
     <div class="history-container">
         <section class="search-section">

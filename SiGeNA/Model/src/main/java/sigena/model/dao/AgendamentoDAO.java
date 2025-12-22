@@ -47,7 +47,7 @@ public class AgendamentoDAO {
         String sql = """
             SELECT *
             FROM agendamentos
-            ORDER BY data_agendamento, hora_agendamento
+            ORDER BY criado_em DESC
             """;
 
         List<Agendamento> agendamentos = new ArrayList<>();

@@ -11,7 +11,11 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import sigena.model.common.exception.PersistenciaException;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/enriquecimento")
 public class EnriquecimentoController extends HttpServlet {
@@ -29,7 +33,7 @@ public class EnriquecimentoController extends HttpServlet {
                 req.getRequestDispatcher("/cadastrar-enriquecimento.jsp").forward(req, resp);
                 return;
             }
-            
+
             if ("ver".equals(action)) {
                 int id = Integer.parseInt(req.getParameter("id"));
                 Enriquecimento e = service.buscarPorId(id);
@@ -68,9 +72,13 @@ public class EnriquecimentoController extends HttpServlet {
                 lista = lista.stream()
                         .filter(e -> termo.isBlank() || (e.getNome() != null && e.getNome().toLowerCase().contains(termo)))
                         .filter(e -> {
-                            if (habitatFiltro.isBlank()) return true;
+                            if (habitatFiltro.isBlank()) {
+                                return true;
+                            }
                             List<String> habitatsEnriq = e.getHabitats();
-                            if (habitatsEnriq == null) return false;
+                            if (habitatsEnriq == null) {
+                                return false;
+                            }
                             return habitatsEnriq.stream().anyMatch(h -> h != null && h.toLowerCase().equals(habitatFiltro));
                         })
                         .toList();
@@ -78,28 +86,32 @@ public class EnriquecimentoController extends HttpServlet {
 
             if (ordem != null && !ordem.isBlank()) {
                 switch (ordem) {
-                    case "nome_az" -> lista = lista.stream()
-                            .sorted((a, b) -> {
-                                String nomeA = a.getNome() == null ? "" : a.getNome();
-                                String nomeB = b.getNome() == null ? "" : b.getNome();
-                                return nomeA.compareToIgnoreCase(nomeB);
-                            })
-                            .toList();
-                    case "nome_za" -> lista = lista.stream()
-                            .sorted((a, b) -> {
-                                String nomeA = a.getNome() == null ? "" : a.getNome();
-                                String nomeB = b.getNome() == null ? "" : b.getNome();
-                                return nomeB.compareToIgnoreCase(nomeA);
-                            })
-                            .toList();
-                    case "mais_recente" -> lista = lista.stream()
-                            .sorted(Comparator.comparing(Enriquecimento::getDataCriacao,
-                                    Comparator.nullsLast(Comparator.naturalOrder())).reversed())
-                            .toList();
-                    case "mais_antigo" -> lista = lista.stream()
-                            .sorted(Comparator.comparing(Enriquecimento::getDataCriacao,
-                                    Comparator.nullsLast(Comparator.naturalOrder())))
-                            .toList();
+                    case "nome_az" ->
+                        lista = lista.stream()
+                                .sorted((a, b) -> {
+                                    String nomeA = a.getNome() == null ? "" : a.getNome();
+                                    String nomeB = b.getNome() == null ? "" : b.getNome();
+                                    return nomeA.compareToIgnoreCase(nomeB);
+                                })
+                                .toList();
+                    case "nome_za" ->
+                        lista = lista.stream()
+                                .sorted((a, b) -> {
+                                    String nomeA = a.getNome() == null ? "" : a.getNome();
+                                    String nomeB = b.getNome() == null ? "" : b.getNome();
+                                    return nomeB.compareToIgnoreCase(nomeA);
+                                })
+                                .toList();
+                    case "mais_recente" ->
+                        lista = lista.stream()
+                                .sorted(Comparator.comparing(Enriquecimento::getDataCriacao,
+                                        Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                                .toList();
+                    case "mais_antigo" ->
+                        lista = lista.stream()
+                                .sorted(Comparator.comparing(Enriquecimento::getDataCriacao,
+                                        Comparator.nullsLast(Comparator.naturalOrder())))
+                                .toList();
                     default -> {
                     }
                 }
@@ -132,8 +144,8 @@ public class EnriquecimentoController extends HttpServlet {
                 e.setObservacoes(req.getParameter("observacoes"));
 
                 String[] habitatsArr = req.getParameterValues("habitats");
-                List<String> habitats = habitatsArr == null ? List.of() :
-                        Arrays.stream(habitatsArr).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toList());
+                List<String> habitats = habitatsArr == null ? List.of()
+                        : Arrays.stream(habitatsArr).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toList());
 
                 service.atualizarEnriquecimento(e, habitats);
                 resp.sendRedirect(req.getContextPath() + "/enriquecimento?action=ver&id=" + id);
@@ -163,6 +175,8 @@ public class EnriquecimentoController extends HttpServlet {
 
         try {
             service.criarEnriquecimento(e, habitats);
+            GestaoNotificacaoService not = new GestaoNotificacaoService();
+            not.criarParaTodos("Novo enriquecimento cadastrado");
             resp.sendRedirect(req.getContextPath() + "/enriquecimento");
 
         } catch (IllegalArgumentException ia) {
@@ -175,6 +189,8 @@ public class EnriquecimentoController extends HttpServlet {
             }
         } catch (SQLException ex) {
             throw new ServletException("Erro ao criar enriquecimento: " + ex.getMessage(), ex);
+        } catch (PersistenciaException ex) {
+            Logger.getLogger(EnriquecimentoController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

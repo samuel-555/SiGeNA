@@ -101,10 +101,6 @@ public class ProdutoController extends HttpServlet {
         }
 
         Produto produto = new Produto(nome, fornecedor, quantidade, validade, lote, tipo);
-        GestaoProdutoService service = new GestaoProdutoService();
-        service.cadastrar(produto, fornecedor);
-        GestaoNotificacaoService not = new GestaoNotificacaoService();
-        not.criarParaTodos("Novo produto cadastrado");
     }
 
     private void listar(HttpServletRequest request, HttpServletResponse response)

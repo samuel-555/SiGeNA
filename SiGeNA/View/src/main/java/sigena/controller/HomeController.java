@@ -25,6 +25,7 @@ import sigena.model.domain.util.Cargo;
 import sigena.model.service.FuncionarioService;
 import sigena.model.service.GestaoEventoService;
 import sigena.model.service.GestaoNotificacaoService;
+import sigena.model.service.GestaoProdutoService;
 import sigena.model.service.GestaoTarefaService;
 
 @WebServlet(name = "HomeController", urlPatterns = {"/HomeController"})
@@ -146,7 +147,7 @@ public class HomeController extends Controller {
     }
 
     private void cadastrar(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException, SQLException, DatabaseException {
+            throws IOException, ServletException, SQLException, DatabaseException, PersistenciaException {
 
         String nome = request.getParameter("nome");
         String texto = request.getParameter("texto");
@@ -168,7 +169,9 @@ public class HomeController extends Controller {
             abrirFormularioCadastro(request, response);
             return;
         }
-
+        
+        GestaoNotificacaoService not = new GestaoNotificacaoService();
+        not.criarParaTodos("Nova tarefa cadastrada");
         response.sendRedirect("HomeController");
     }
 

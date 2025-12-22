@@ -315,43 +315,30 @@
                 startTimer();
             }
 
-            async function confirmarConclusao(event, checkbox, nomeTarefa) {
+            function confirmarConclusao(event, checkbox, nomeTarefa) {
                 if (!checkbox.checked) {
                     return;
                 }
-                event.preventDefault();
+                if (event) {
+                    event.preventDefault();
+                }
                 if (!confirm("Deseja concluir '" + nomeTarefa + "'? Após isso, não será possível editar ou excluir.")) {
                     checkbox.checked = false;
                     return;
                 }
 
-                const form = checkbox.form;
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: form.method,
-                        body: formData
-                    });
-
-                    if (!response.ok) {
-                        throw new Error("Falha ao concluir tarefa");
-                    }
-
-                    const row = checkbox.closest('tr');
-                    if (row) {
-                        row.classList.add('row-done');
-                    }
-                    checkbox.checked = true;
-                    checkbox.disabled = true;
-
-                    const sound = document.getElementById('clickSound');
-                    if (sound)
-                        sound.play();
-                } catch (e) {
-                    checkbox.checked = false;
-                    alert("Não foi possível concluir a tarefa. Tente novamente.");
+                const row = checkbox.closest('tr');
+                if (row) {
+                    row.classList.add('row-done');
                 }
+                checkbox.checked = true;
+                checkbox.disabled = true;
+
+                const sound = document.getElementById('clickSound');
+                if (sound)
+                    sound.play();
+
+                setTimeout(() => checkbox.form.submit(), 0);
             }
 
             function toggleNotifs() {

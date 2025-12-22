@@ -22,6 +22,7 @@ import sigena.model.service.GestaoEspeciesService;
 import sigena.model.service.GestaoHabitatService;
 import sigena.model.common.util.StringUtils;
 import sigena.controller.util.ListOrdener;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet(name = "AnimalController", urlPatterns = {"/AnimalController"})
 public class AnimalController extends HttpServlet {
@@ -136,7 +137,8 @@ public class AnimalController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/AnimalController?acao=cadastrar");
                     return;
                 }
-                
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo animal cadastrado");
                 sessao.setAttribute("acaoBemSucedida", "Animal cadastrado com sucesso!");
                 response.sendRedirect(request.getContextPath() + "/AnimalController?acao=listar");
                 return;

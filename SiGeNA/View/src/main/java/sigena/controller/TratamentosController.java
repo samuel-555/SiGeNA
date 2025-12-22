@@ -19,6 +19,7 @@ import sigena.model.domain.Tratamento;
 import sigena.model.domain.Usuario;
 import sigena.model.domain.util.TipoTratamento;
 import sigena.model.service.GestaoAnimalService;
+import sigena.model.service.GestaoNotificacaoService;
 import sigena.model.service.GestaoTratamentosService;
 
 @WebServlet(name = "TratamentosController", urlPatterns = {"/TratamentosController"})
@@ -53,6 +54,8 @@ public class TratamentosController extends HttpServlet {
             try {
                 cadastrar(request);
                 request.setAttribute("mensagemSucesso", "Tratamento cadastrado com sucesso!");
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo tratamento cadastrado");
             } catch (Exception e) {
                 e.printStackTrace();
                 request.setAttribute("mensagemErro", "Erro ao cadastrar tratamento: " + e.getMessage());

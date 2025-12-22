@@ -15,6 +15,7 @@ import sigena.model.domain.Fornecedor;
 import sigena.model.service.GestaoFornecedorService;
 import sigena.model.common.util.StringUtils;
 import sigena.controller.util.ListOrdener;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet(name = "FornecedorController", urlPatterns = {"/FornecedorController"})
 public class FornecedorController extends HttpServlet {
@@ -91,6 +92,8 @@ public class FornecedorController extends HttpServlet {
                 }
                 
                 sessao.setAttribute("acaoBemSucedida", "Fornecedor cadastrado com sucesso!");
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo fornecedor cadastrado");
                 response.sendRedirect(request.getContextPath() + "/FornecedorController?acao=listar");
                 return;
             }

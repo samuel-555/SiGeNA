@@ -18,6 +18,7 @@ import sigena.model.common.exception.ValidationException;
 import sigena.model.domain.Agendamento;
 import sigena.model.domain.util.Cargo;
 import sigena.model.service.GestaoAgendamentoService;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet(name = "AgendamentoController", urlPatterns = {"/AgendamentoController"})
 public class AgendamentoController extends HttpServlet {
@@ -117,6 +118,8 @@ public class AgendamentoController extends HttpServlet {
                 Agendamento agendamento = montarAgendamento(request, false);
                 service.criarAgendamento(agendamento);
                 sessao.setAttribute("acaoBemSucedida", "Agendamento cadastrado com sucesso!");
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo agendamento cadastrado");
                 response.sendRedirect(request.getContextPath() + "/AgendamentoController?acao=listar");
                 return;
             }

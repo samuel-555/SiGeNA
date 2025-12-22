@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import sigena.model.domain.util.StatusDoacao;
 import java.util.List;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/doacoes")
 public class DoacoesController extends HttpServlet {
@@ -117,6 +118,8 @@ public class DoacoesController extends HttpServlet {
                     return;
                 }
                 service.registrarDoacao(d);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Nova doação cadastrado");
                 resp.sendRedirect("doacoes?acao=listar");
                 return;
             }

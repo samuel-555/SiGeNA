@@ -19,6 +19,7 @@ import sigena.model.domain.Evento;
 import sigena.model.domain.util.Cargo;
 import sigena.model.service.GestaoEventoService;
 import sigena.controller.util.ListOrdener;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet(name = "EventoController", urlPatterns = {"/EventoController"})
 public class EventoController extends HttpServlet {
@@ -148,6 +149,8 @@ public class EventoController extends HttpServlet {
                 }
                 
                 sessao.setAttribute("acaoBemSucedida", "Evento cadastrado com sucesso!");
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo evento cadastrado");
                 response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
                 return;
             }

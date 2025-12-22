@@ -8,7 +8,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Detalhes da Espécie</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
-        <link rel="stylesheet" href="CSS\style.css">wqq2
+        <link rel="stylesheet" href="CSS\style.css">
     </head>
     <body>
         <header><div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div></header>
@@ -49,3 +49,4 @@
         </div>
     </body>
 </html>
+

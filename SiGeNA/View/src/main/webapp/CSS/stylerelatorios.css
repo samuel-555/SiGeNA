@@ -120,7 +120,75 @@ tr:hover td {
 }
 
 .alert.sucesso {
-    background-color: var(--zoo-mint);
-    color: var(--zoo-dark-green);
-    border: 1px solid rgba(0,89,63,0.1);
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.alert.erro {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.aviso-permissao {
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 12px;
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+.acao-restrita {
+    color: #6b7280;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.sem-registros {
+    text-align: center;
+    font-style: italic;
+    color: #6b7280;
+}
+
+.status-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-toggle-hint {
+    font-size: 12px;
+    color: #4b5563;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.status-badge.apto {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.inapto {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .filtro {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

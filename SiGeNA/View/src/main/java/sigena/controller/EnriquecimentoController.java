@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,57 @@ public class EnriquecimentoController extends HttpServlet {
                 return;
             }
 
-            req.setAttribute("listaEnriquecimentos", service.listarTodos());
+            List<Enriquecimento> lista = service.listarTodos();
+            String busca = req.getParameter("busca");
+            String habitat = req.getParameter("habitat");
+            String ordem = req.getParameter("ordem");
+
+            if ((busca != null && !busca.isBlank()) || (habitat != null && !habitat.isBlank())) {
+                String termo = busca == null ? "" : busca.toLowerCase();
+                String habitatFiltro = habitat == null ? "" : habitat.toLowerCase();
+
+                lista = lista.stream()
+                        .filter(e -> termo.isBlank() || (e.getNome() != null && e.getNome().toLowerCase().contains(termo)))
+                        .filter(e -> {
+                            if (habitatFiltro.isBlank()) return true;
+                            List<String> habitatsEnriq = e.getHabitats();
+                            if (habitatsEnriq == null) return false;
+                            return habitatsEnriq.stream().anyMatch(h -> h != null && h.toLowerCase().equals(habitatFiltro));
+                        })
+                        .toList();
+            }
+
+            if (ordem != null && !ordem.isBlank()) {
+                switch (ordem) {
+                    case "nome_az" -> lista = lista.stream()
+                            .sorted((a, b) -> {
+                                String nomeA = a.getNome() == null ? "" : a.getNome();
+                                String nomeB = b.getNome() == null ? "" : b.getNome();
+                                return nomeA.compareToIgnoreCase(nomeB);
+                            })
+                            .toList();
+                    case "nome_za" -> lista = lista.stream()
+                            .sorted((a, b) -> {
+                                String nomeA = a.getNome() == null ? "" : a.getNome();
+                                String nomeB = b.getNome() == null ? "" : b.getNome();
+                                return nomeB.compareToIgnoreCase(nomeA);
+                            })
+                            .toList();
+                    case "mais_recente" -> lista = lista.stream()
+                            .sorted(Comparator.comparing(Enriquecimento::getDataCriacao,
+                                    Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                            .toList();
+                    case "mais_antigo" -> lista = lista.stream()
+                            .sorted(Comparator.comparing(Enriquecimento::getDataCriacao,
+                                    Comparator.nullsLast(Comparator.naturalOrder())))
+                            .toList();
+                    default -> {
+                    }
+                }
+            }
+
+            req.setAttribute("listaEnriquecimentos", lista);
+            req.setAttribute("habitats", service.listarHabitatsDisponiveis());
             req.getRequestDispatcher("/enriquecimento.jsp").forward(req, resp);
 
         } catch (SQLException ex) {

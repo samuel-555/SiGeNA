@@ -55,42 +55,48 @@ public class RelatorioSaudeDAO {
     }
 
     public List<RelatorioSaude> listarPorAnimal(Long animalId) throws PersistenciaException {
-        String sql = """
+        return listarPorFiltros(animalId, null);
+    }
+
+    public List<RelatorioSaude> listarTodos() throws PersistenciaException {
+        return listarPorFiltros(null, null);
+    }
+
+    public List<RelatorioSaude> listarPorFiltros(Long animalId, String status) throws PersistenciaException {
+        StringBuilder sql = new StringBuilder("""
             SELECT id, animal_id, data_relatorio, peso, status, observacoes
             FROM relatorios_saude
-            WHERE animal_id = ?
-            ORDER BY data_relatorio DESC, id DESC
-            """;
-        List<RelatorioSaude> relatorios = new ArrayList<>();
+            WHERE 1 = 1
+            """);
+        List<Object> parametros = new ArrayList<>();
 
+        sql.append(" AND UPPER(status) <> 'CANCELADO'");
+        if (animalId != null) {
+            sql.append(" AND animal_id = ?");
+            parametros.add(animalId);
+        }
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND UPPER(status) = ?");
+            parametros.add(status.toUpperCase());
+        }
+        sql.append(" ORDER BY data_relatorio DESC, id DESC");
+
+        List<RelatorioSaude> relatorios = new ArrayList<>();
         try (Connection con = ConexaoDB.getConnection();
-                PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setLong(1, animalId);
+                PreparedStatement stmt = con.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parametros.size(); i++) {
+                Object valor = parametros.get(i);
+                int indice = i + 1;
+                if (valor instanceof Long) {
+                    stmt.setLong(indice, (Long) valor);
+                } else {
+                    stmt.setString(indice, valor.toString());
+                }
+            }
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     relatorios.add(toRelatorio(rs));
                 }
-            }
-        } catch (SQLException e) {
-            throw new PersistenciaException("Nao foi possivel consultar o historico do animal: " + e.getMessage());
-        }
-
-        return relatorios;
-    }
-
-    public List<RelatorioSaude> listarTodos() throws PersistenciaException {
-        String sql = """
-            SELECT id, animal_id, data_relatorio, peso, status, observacoes
-            FROM relatorios_saude
-            ORDER BY data_relatorio DESC, id DESC
-            """;
-        List<RelatorioSaude> relatorios = new ArrayList<>();
-
-        try (Connection con = ConexaoDB.getConnection();
-                PreparedStatement stmt = con.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                relatorios.add(toRelatorio(rs));
             }
         } catch (SQLException e) {
             throw new PersistenciaException("Nao foi possivel consultar os relatorios: " + e.getMessage());
@@ -122,7 +128,7 @@ public class RelatorioSaudeDAO {
     }
 
     public void excluir(Long id) throws PersistenciaException {
-        String sql = "DELETE FROM relatorios_saude WHERE id = ?";
+        String sql = "UPDATE relatorios_saude SET status = 'CANCELADO' WHERE id = ?";
 
         try (Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql)) {

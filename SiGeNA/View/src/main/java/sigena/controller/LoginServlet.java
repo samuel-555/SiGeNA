@@ -31,10 +31,15 @@ public class LoginServlet extends HttpServlet {
             var usuario = dao.autenticar(cpf, senha);
             if (usuario != null) {
                 String nomeParaSessao = usuario.getCpf();
+                String turnoParaSessao = "Nao informado";
                 try {
                     String nomeFuncionario = dao.buscarNomePorCpf(usuario.getCpf());
                     if (nomeFuncionario != null && !nomeFuncionario.isBlank()) {
                         nomeParaSessao = nomeFuncionario;
+                    }
+                    var turno = dao.buscarTurnoPorCpf(usuario.getCpf());
+                    if (turno != null) {
+                        turnoParaSessao = turno.getDescricao();
                     }
                 } catch (PersistenciaException ignored) {
                     nomeParaSessao = usuario.getCpf();
@@ -45,10 +50,10 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("NomeLogado", nomeParaSessao);
                 session.setAttribute("cargoUsuario", usuario.getCargo());
                 session.setAttribute("UsuarioLogado", usuario);
-
-                
+                session.setAttribute("TurnoLogado", turnoParaSessao);
+              
                 response.sendRedirect("TarefaController");
-                
+
           
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");

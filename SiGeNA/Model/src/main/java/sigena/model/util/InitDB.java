@@ -129,7 +129,7 @@ public class InitDB {
                 cargo VARCHAR(30) NOT NULL,
                 area_atuacao VARCHAR(120) NOT NULL,
                 turno ENUM('MANHA','TARDE','NOITE') NOT NULL DEFAULT 'MANHA',
-                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO') 
+                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO','CANCELADO') 
                     NOT NULL DEFAULT 'ATIVO',
                 observacoes TEXT
             );
@@ -150,7 +150,11 @@ public class InitDB {
             UNION ALL
             SELECT * FROM (SELECT 'Roberto Lima', '33333333344', '123', 'VETERINARIO', 
                     'Saúde Animal', 'NOITE', 'FERIAS', 'Veterinário de plantão noturno') AS tmp3
-            WHERE NOT EXISTS (SELECT 1 FROM funcionarios WHERE nome='Roberto Lima');
+            WHERE NOT EXISTS (SELECT 1 FROM funcionarios WHERE nome='Roberto Lima')
+            UNION ALL
+            SELECT * FROM (SELECT 'Administrador Sistema', '11111111111', '123', 'GERENTE',
+                    'Administracao', 'MANHA', 'ATIVO', 'Usuario padrao do sistema') AS tmp4
+            WHERE NOT EXISTS (SELECT 1 FROM funcionarios WHERE cpf='11111111111');
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(insertExemplo);
@@ -225,13 +229,31 @@ public class InitDB {
         }
     }
 
+    public void initTarefas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS tarefas (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL,
+                texto VARCHAR(255),
+                concluida BOOLEAN NOT NULL,
+                funcionario_id INT NOT NULL,
+                dataCadastro DATETIME NOT NULL,
+                dataPConclusao DATETIME NOT NULL,
+                cpfAutor VARCHAR(255) NOT NULL
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initDoacoes() throws SQLException {
         String sql = """
         CREATE TABLE IF NOT EXISTS doacoes (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             nome_doador VARCHAR(150) NOT NULL,
             tipo VARCHAR(50) NOT NULL,
-            valor_monetario DECIMAL(10,2),
+            valor_monetario DECIMAL(15,2),
             descricao_outro VARCHAR(255),
             observacoes TEXT,
             status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
@@ -367,6 +389,77 @@ public class InitDB {
         }
     }
 
+    public void initOcorrencias() throws SQLException {
+        String sql = """
+    CREATE TABLE IF NOT EXISTS ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        descricao TEXT,
+        tipo VARCHAR(30) NOT NULL,
+        status VARCHAR(30) NOT NULL,
+        cpf_cadastrador VARCHAR(14) NOT NULL,
+        data DATETIME NOT NULL
+    );
+    """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initVisitas() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS visitas (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                nome_visitante VARCHAR(150) NOT NULL,
+                documento VARCHAR(50),
+                motivo VARCHAR(255) NOT NULL,
+                data_visita DATE NOT NULL,
+                observacoes TEXT,
+                vip BOOLEAN NOT NULL DEFAULT FALSE,
+                necessidade_especial BOOLEAN NOT NULL DEFAULT FALSE,
+                descricao_necessidade TEXT,
+                turno VARCHAR(15),
+                data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+    
+
+    public void initHistoricoStatusOcorrencia() throws SQLException {
+    String sql = """
+    CREATE TABLE IF NOT EXISTS historico_status_ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        ocorrencia_id BIGINT NOT NULL,
+        status_anterior VARCHAR(20) NULL,
+        status_novo VARCHAR(20) NOT NULL,
+        cpf_responsavel VARCHAR(14) NOT NULL,
+        data_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (ocorrencia_id) REFERENCES ocorrencia(id)
+    );
+    """;
+
+    try (Statement st = con.createStatement()) {
+        st.executeUpdate(sql);
+    }
+}
+
+    public void initHistorico() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS historico (
+            funcionarioCpf VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            descricao VARCHAR(255) NOT NULL,
+            data DATETIME NOT NULL,
+            id BIGINT AUTO_INCREMENT PRIMARY KEY
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
     public void initTodos() throws PersistenciaException {
         try {
             initHabitats();
@@ -375,6 +468,7 @@ public class InitDB {
             initUsuarios();
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
             initAnimais();
+            initHabitat_animal();
             initTratamento();
             initPlanosAlimentares();
             initEnriquecimentos();
@@ -383,6 +477,14 @@ public class InitDB {
             initRelatoriosSaude();
             initDoacoes();
             initRecibosDoacao();
+            initOcorrencias();
+            initHistoricoStatusOcorrencia();
+            initVisitas();
+            initTarefas();
+            initHistorico();
+
+            new UsuarioDAO().sincronizarFuncionariosComUsuarios();
+
             initFornecedores();
             initProdutos();
             initEventos();

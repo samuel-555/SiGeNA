@@ -31,8 +31,19 @@ public class LoginServlet extends HttpServlet {
             }
             var usuario = dao.autenticar(cpf, senha);
             if (usuario != null) {
+                String nomeParaSessao = usuario.getCpf();
+                try {
+                    String nomeFuncionario = dao.buscarNomePorCpf(usuario.getCpf());
+                    if (nomeFuncionario != null && !nomeFuncionario.isBlank()) {
+                        nomeParaSessao = nomeFuncionario;
+                    }
+                } catch (PersistenciaException ignored) {
+                    nomeParaSessao = usuario.getCpf();
+                }
+
                 HttpSession session = request.getSession();
                 session.setAttribute("CpfLogado", usuario.getCpf());
+                session.setAttribute("NomeLogado", nomeParaSessao);
                 session.setAttribute("cargoUsuario", usuario.getCargo());
                 session.setAttribute("UsuarioLogado", usuario);
 
@@ -41,6 +52,8 @@ public class LoginServlet extends HttpServlet {
                 } else {
                     response.sendRedirect("NotificacaoController");
                 }
+                session.setAttribute("UsuarioLogado", usuario1);
+                response.sendRedirect("TarefaController");
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");
                 request.getRequestDispatcher("index.jsp").forward(request, response);

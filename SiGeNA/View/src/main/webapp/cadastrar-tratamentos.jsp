@@ -15,7 +15,7 @@
     GestaoAnimalService service = new GestaoAnimalService();
     List<Animal> animais = service.listarAnimais();
     pageContext.setAttribute("animais", animais);
-    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home-gerente.jsp" : "home.jsp";
+    String paginaHome = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "home.jsp" : "home.jsp";
 %>
 <!DOCTYPE html>
 <html>

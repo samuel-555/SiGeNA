@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
 <%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@taglib uri="jakarta.tags.functions" prefix="fn" %>
@@ -12,6 +13,9 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "animais");
+    boolean podeGerenciar = temPermissaoGerenciamento(cargo, "animais");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -24,7 +28,7 @@
 </head>
 <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
   </header>
 
   <div class="container">
@@ -34,7 +38,9 @@
     </c:if>
     <c:if test="${not empty especies && not empty habitats}">
     <div class="botoes-acoes">
+        <% if (podeCadastrar) { %>
         <a href="AnimalController?acao=cadastrar" class="btn">Cadastrar Novo Animal</a>
+        <% } %>
     </div>
     <div class="pesquisa">
           Pesquaisar: <input type="text" placeholder="Digite o ID ou o nome"><br>
@@ -80,12 +86,14 @@
                 <td><c:out value="${animal.nome}"/></td>
                 <td><c:out value="${animal.especieNome}"/></td>
                 <td>
+                    <% if (podeGerenciar) { %>
                     <form action="AnimalController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${animal.id}"/>">
                         <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o animal ${animal.nome} permanentemente?')">Excluir</button>
                     </form>
-                        <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn-pequeno">Exibir</a>
+                    <% } %>
+                    <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn-pequeno">Exibir</a>
                     
                 </td>
                 </tr>

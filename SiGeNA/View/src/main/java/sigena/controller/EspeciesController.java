@@ -8,6 +8,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/EspeciesController")
 public class EspeciesController extends HttpServlet {
@@ -43,6 +44,51 @@ public class EspeciesController extends HttpServlet {
             }
 
             List<Especie> lista = service.listar();
+            String nomeBusca = request.getParameter("busca");
+            String predadorFiltro = request.getParameter("predador");
+            String ordem = request.getParameter("ordem");
+
+            if ((nomeBusca != null && !nomeBusca.isBlank()) || (predadorFiltro != null && !predadorFiltro.isBlank())) {
+                String termo = nomeBusca == null ? "" : nomeBusca.toLowerCase();
+                String filtroPredador = predadorFiltro == null ? "" : predadorFiltro.toLowerCase();
+
+                lista = lista.stream()
+                        .filter(e -> termo.isBlank() || (e.getNome() != null && e.getNome().toLowerCase().contains(termo)))
+                        .filter(e -> {
+                            if (filtroPredador.isBlank()) return true;
+                            if ("sim".equals(filtroPredador)) return e.isPredador();
+                            if ("nao".equals(filtroPredador)) return !e.isPredador();
+                            return true;
+                        })
+                        .toList();
+            }
+
+            if (ordem != null && !ordem.isBlank()) {
+                switch (ordem) {
+                    case "nome_az" -> lista = lista.stream()
+                            .sorted((a, b) -> {
+                                String nomeA = a.getNome() == null ? "" : a.getNome();
+                                String nomeB = b.getNome() == null ? "" : b.getNome();
+                                return nomeA.compareToIgnoreCase(nomeB);
+                            })
+                            .toList();
+                    case "nome_za" -> lista = lista.stream()
+                            .sorted((a, b) -> {
+                                String nomeA = a.getNome() == null ? "" : a.getNome();
+                                String nomeB = b.getNome() == null ? "" : b.getNome();
+                                return nomeB.compareToIgnoreCase(nomeA);
+                            })
+                            .toList();
+                    case "mais_recente" -> lista = lista.stream()
+                            .sorted((a, b) -> Integer.compare(b.getId(), a.getId()))
+                            .toList();
+                    case "mais_antigo" -> lista = lista.stream()
+                            .sorted((a, b) -> Integer.compare(a.getId(), b.getId()))
+                            .toList();
+                    default -> {
+                    }
+                }
+            }
             request.setAttribute("lista", lista);
             request.getRequestDispatcher("especies.jsp").forward(request, response);
         } catch (PersistenciaException e) {
@@ -65,6 +111,8 @@ public class EspeciesController extends HttpServlet {
                 e.setObservacoes(request.getParameter("observacoes"));
 
                 service.inserir(e);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Nova especie cadastrada");
                 response.sendRedirect("EspeciesController");
                 return;
             }

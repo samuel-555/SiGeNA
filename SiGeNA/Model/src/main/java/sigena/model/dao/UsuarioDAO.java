@@ -1,17 +1,22 @@
 package sigena.model.dao;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.util.Cargo;
 import sigena.model.domain.Funcionario;
+import sigena.model.domain.util.Turno;
 import sigena.model.domain.Usuario;
 import sigena.model.util.ConexaoDB;
 
 public class UsuarioDAO {
 
     private String normalizarCPF(String cpf) {
-        if (cpf == null) return null;
+        if (cpf == null) {
+            return null;
+        }
         return cpf.replaceAll("[\\.\\-]", "").trim();
     }
 
@@ -23,8 +28,7 @@ public class UsuarioDAO {
             WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ? AND senha = ?;
         """;
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, cpf);
             ps.setString(2, senha);
@@ -64,12 +68,33 @@ public class UsuarioDAO {
         }
     }
 
+    public Turno buscarTurnoPorCpf(String cpf) throws PersistenciaException {
+        cpf = normalizarCPF(cpf);
+        String sql = "SELECT turno FROM funcionarios WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ? LIMIT 1";
+
+        try (Connection con = ConexaoDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cpf);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String turnoStr = rs.getString("turno");
+                    if (turnoStr != null && !turnoStr.isBlank()) {
+                        return Turno.valueOf(turnoStr);
+                    }
+                }
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao buscar turno do funcionario: " + e.getMessage());
+        }
+    }
+
     public boolean existeCPF(String cpf) throws PersistenciaException {
         cpf = normalizarCPF(cpf);
         String sql = "SELECT 1 FROM usuarios WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ?";
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, cpf);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
@@ -86,8 +111,7 @@ public class UsuarioDAO {
             WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE cpf = ?);
         """;
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, f.getCpf());
             ps.setString(2, f.getSenha());
@@ -104,8 +128,7 @@ public class UsuarioDAO {
     public void atualizarSenhaOuCargo(Funcionario f) throws DatabaseException {
         String sql = "UPDATE usuarios SET senha=?, cargo=? WHERE funcionario_id=?";
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, f.getSenha());
             ps.setString(2, f.getCargo().name());
             ps.setInt(3, f.getId());
@@ -117,8 +140,7 @@ public class UsuarioDAO {
 
     public void deletarPorFuncionario(int funcionarioId) throws DatabaseException {
         String sql = "DELETE FROM usuarios WHERE funcionario_id=?";
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, funcionarioId);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -133,8 +155,7 @@ public class UsuarioDAO {
             FROM funcionarios f
             WHERE f.cpf NOT IN (SELECT u.cpf FROM usuarios u);
         """;
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             int novos = ps.executeUpdate();
             if (novos > 0) {
                 System.out.println("Sincronização concluída: " + novos + " usuários criados automaticamente.");
@@ -143,11 +164,11 @@ public class UsuarioDAO {
             throw new DatabaseException("Erro ao sincronizar usuários com funcionários: " + e.getMessage());
         }
     }
+
     public Usuario buscaPorId(int id) throws PersistenciaException {
         String sql = "SELECT id, cpf, senha, cargo FROM usuarios WHERE id = ?";
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
 
@@ -167,5 +188,31 @@ public class UsuarioDAO {
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao buscar usuário por ID: " + e.getMessage());
         }
+    }
+
+    public List<Usuario> listarUsuarios() throws PersistenciaException {
+        String sql = "SELECT * FROM usuarios";
+        List<Usuario> us = new ArrayList<>();
+
+        try {
+            Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String cpf = rs.getString("cpf");
+                String senha = rs.getString("senha");
+                String cargoStr = rs.getString("cargo");
+                Cargo cargo = Enum.valueOf(Cargo.class, cargoStr);
+                Usuario u = new Usuario(cpf, senha, cargo);
+                u.setId(id);
+                us.add(u);
+            }
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao fazer lista dos usuarios: " + e.getMessage());
+
+        }
+        return us;
     }
 }

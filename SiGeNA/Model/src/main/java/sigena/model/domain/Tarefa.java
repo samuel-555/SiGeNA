@@ -12,19 +12,17 @@ public class Tarefa {
     private LocalDateTime dataCadastro;
     private LocalDateTime dataPConclusao;
     private String cpfAutor;
-    private String prioridade;
     
-    public Tarefa(String nome, String texto, boolean concluida, int id_destinatario, LocalDateTime dataCadastro, LocalDateTime dataPConclusao, String prioridade) {
+    public Tarefa(String nome, String texto, boolean concluida, int id_destinatario, LocalDateTime dataCadastro, LocalDateTime dataPConclusao) {
         this.nome = nome;
         this.texto = texto;
         this.id_destinatario = id_destinatario;
-        this.concluida = false;
+        this.concluida = concluida;
         this.dataCadastro = dataCadastro;
         this.dataPConclusao = dataPConclusao;
-        this.prioridade = prioridade;
     }
     
-    public Tarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao, String cpfAutor, String prioridade) {
+    public Tarefa(String nome, String texto, int id_destinatario, LocalDateTime dataPConclusao, String cpfAutor) {
         this.nome = nome;
         this.texto = texto;
         this.id_destinatario = id_destinatario;
@@ -32,7 +30,6 @@ public class Tarefa {
         this.dataCadastro = LocalDateTime.now();
         this.dataPConclusao = dataPConclusao;
         this.cpfAutor = cpfAutor;
-        this.prioridade = prioridade;
     }
 
     public long getId() {
@@ -67,9 +64,6 @@ public class Tarefa {
         return cpfAutor;
     }
 
-    public String getPrioridade() {
-        return prioridade;
-    }
 
     public void setId(long id) {
         this.id = id;
@@ -103,7 +97,4 @@ public class Tarefa {
         this.cpfAutor = cpf;
     }
 
-    public void setPrioridade(String prioridade) {
-        this.prioridade = prioridade;
-    }
 }

@@ -2,7 +2,7 @@ package sigena.model.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import sigena.model.domain.Turno;
+import sigena.model.domain.util.Turno;
 
 public class Visita {
 
@@ -17,6 +17,7 @@ public class Visita {
     private boolean necessidadeEspecial;
     private String descricaoNecessidade;
     private Turno turno;
+    private String status;
 
     public Visita() {
     }
@@ -120,5 +121,13 @@ public class Visita {
 
     public void setTurno(Turno turno) {
         this.turno = turno;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

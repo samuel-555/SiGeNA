@@ -32,6 +32,22 @@ public class Tratamento {
         this.dataFinal = dataFinal;
         this.horario = horario;
     }
+    
+    public Tratamento(Animal animal, Usuario veterinario, String diagnostico, String medicacao, int frequencia,
+            String observacao, TipoTratamento tipoTratamento, LocalDate dataFinal, LocalTime horario) {
+        this.animal = animal;
+        this.veterinario = veterinario;
+        this.diagnostico = diagnostico;
+        this.medicacao = medicacao;
+        this.frequencia = frequencia;
+        this.observacao = observacao;
+        this.tipoTratamento = tipoTratamento;
+        this.dataFinal = dataFinal;
+        this.horario = horario;
+    }
+    
+    public Tratamento(){
+    }
 
     public void setId(int id) {
         this.id = id;

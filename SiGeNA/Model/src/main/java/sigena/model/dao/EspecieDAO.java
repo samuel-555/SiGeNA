@@ -33,7 +33,7 @@ public class EspecieDAO {
 
     public List<Especie> listar() throws PersistenciaException {
         List<Especie> lista = new ArrayList<>();
-        String sql = "SELECT * FROM especie ORDER BY nome";
+        String sql = "SELECT * FROM especie WHERE status IS NULL OR status <> 'EXCLUIDA' ORDER BY nome";
         try (Connection con = ConexaoDB.getConnection(); Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
                 Especie e = new Especie();
@@ -56,13 +56,12 @@ public class EspecieDAO {
         if (existeAnimalVinculado(id)) {
             throw new PersistenciaException("Não é possível excluir: existem animais vinculados a esta espécie.");
         }
-        String sql = "DELETE FROM especie WHERE id = ?";
-        try (Connection con = ConexaoDB.getConnection()) {
-            PreparedStatement ps = con.prepareStatement(sql);
+        String sql = "UPDATE especie SET status = 'EXCLUIDA' WHERE id = ?";
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            throw new PersistenciaException("Erro ao excluir espécie: " + ex.getMessage());
+            throw new PersistenciaException("Erro ao excluir especie: " + ex.getMessage());
         }
     }
 
@@ -129,3 +128,4 @@ public class EspecieDAO {
         return false;
     }
 }
+

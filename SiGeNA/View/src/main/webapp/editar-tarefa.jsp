@@ -17,17 +17,23 @@
     <meta charset="UTF-8">
     <title>SiGeNA - Editar Tarefa</title>
     <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
 
-<header>
-    <div class="titulo">
-        <a href="TarefaController">SiGeNA</a>
-    </div>
-</header>
+<header class="topbar">
+            <a href="HomeController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
 <div class="botoes-acoes">
-    <a href="TarefaController" class="btn">Voltar</a>
+    <a href="HomeController" class="btn">Voltar</a>
 </div>
 
 <div class="container">
@@ -35,7 +41,7 @@
 
     <div class="formulario">
 
-        <form action="${pageContext.request.contextPath}/TarefaController" method="post">
+        <form action="${pageContext.request.contextPath}/HomeController" method="post">
 
             <input type="hidden" name="acao" value="editar">
             <input type="hidden" name="id" value="${tarefa.id}">

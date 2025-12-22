@@ -42,6 +42,7 @@ public class InitDB {
               peso DOUBLE NOT NULL,
               hostil BOOLEAN NOT NULL,
               data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL,
               FOREIGN KEY (id_especie) REFERENCES especie(id)
                  ON UPDATE CASCADE
         );
@@ -56,6 +57,7 @@ public class InitDB {
             CREATE TABLE IF NOT EXISTS planos_alimentares (
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
                 animal_id BIGINT NOT NULL,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
                 data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (animal_id) REFERENCES animais(id)
                     ON DELETE CASCADE
@@ -78,6 +80,18 @@ public class InitDB {
         try (Statement st = con.createStatement()) {
             st.executeUpdate(planosSql);
             st.executeUpdate(itensSql);
+            try {
+                st.executeUpdate("ALTER TABLE planos_alimentares ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVO'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
         }
     }
 
@@ -195,14 +209,98 @@ public class InitDB {
                 habitat VARCHAR(255) NOT NULL,
                 alimentacao VARCHAR(255) NOT NULL,
                 predador BOOLEAN NOT NULL,
-                observacoes TEXT
+                observacoes TEXT,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'
             );
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE especie ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
         }
     }
 
+    public void initEnriquecimentos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS enriquecimento (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(255) NOT NULL,
+            tipo VARCHAR(255) NOT NULL,
+            especie_destinada VARCHAR(255),
+            frequencia VARCHAR(100),
+            observacoes TEXT,
+            status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
+            data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE enriquecimento ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
+        }
+    }
+
+
+    public void initAgendamentos() throws SQLException {
+        String tabelaSql = """
+            CREATE TABLE IF NOT EXISTS agendamentos (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                tipo VARCHAR(100) NOT NULL,
+                data_agendamento DATE NOT NULL,
+                hora_agendamento TIME NOT NULL,
+                responsavel VARCHAR(120) NOT NULL,
+                local VARCHAR(120) NOT NULL,
+                observacoes TEXT,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
+                criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                cancelado_em DATETIME,
+                justificativa_cancelamento TEXT
+            );
+            """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(tabelaSql);
+            try {
+                st.executeUpdate("ALTER TABLE agendamentos ADD COLUMN justificativa_cancelamento TEXT");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        // coluna ja existe
+                    } else {
+                        throw e;
+                    }
+                } else {
+                    throw e;
+                }
+            }
+        }
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_data_hora ON agendamentos(data_agendamento, hora_agendamento)");
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_responsavel ON agendamentos(responsavel)");
+        criarIndiceSeNaoExiste("CREATE INDEX idx_agendamento_local ON agendamentos(local)");
+    }
+          
+  
     public void initTratamento() throws SQLException {
         String sql = """
                      
@@ -230,31 +328,16 @@ public class InitDB {
 
     public void initTarefas() throws SQLException {
         String sql = """
-
             CREATE TABLE IF NOT EXISTS tarefas (
-
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-
                 nome VARCHAR(255) NOT NULL,
-
-                texto TEXT,
-
-                concluida BOOLEAN DEFAULT FALSE,
-
+                texto VARCHAR(255),
+                concluida BOOLEAN NOT NULL,
                 funcionario_id INT NOT NULL,
-
-                dataCadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-                dataPConclusao TIMESTAMP,
-
-                cpfAutor VARCHAR(14),
-
-                prioridade VARCHAR(50),
-
-                FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id)
-
+                dataCadastro DATETIME NOT NULL,
+                dataPConclusao DATETIME NOT NULL,
+                cpfAutor VARCHAR(255) NOT NULL
             );
-
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
@@ -325,7 +408,9 @@ public class InitDB {
                   email VARCHAR(50),
                   endereco VARCHAR(100),
                   tipo VARCHAR(50) NOT NULL,
-                  descricao TEXT
+                  descricao TEXT,
+                  data_de_insercao DATETIME NOT NULL,
+                  arquivado BOOLEAN NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {
@@ -333,23 +418,7 @@ public class InitDB {
         }
     }
 
-    public void initEnriquecimentos() throws SQLException {
-        String sql = """
-        CREATE TABLE IF NOT EXISTS enriquecimento (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            nome VARCHAR(255) NOT NULL,
-            tipo VARCHAR(255) NOT NULL,
-            especie_destinada VARCHAR(255),
-            frequencia VARCHAR(100),
-            observacoes TEXT,
-            data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        """;
-        try (Statement st = con.createStatement()) {
-            st.executeUpdate(sql);
-        }
-    }
-
+    
     public void initEnriquecimento_habitat() throws SQLException {
         String sql = """
         CREATE TABLE IF NOT EXISTS enriquecimento_habitat (
@@ -360,6 +429,40 @@ public class InitDB {
                 REFERENCES enriquecimento(id) ON DELETE CASCADE,
             CONSTRAINT fk_hab FOREIGN KEY (habitat_nome)
                 REFERENCES habitat(nome) ON DELETE CASCADE
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+    
+    public void initEventos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS eventos (
+              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+              titulo VARCHAR(100) NOT NULL, 
+              descricao TEXT,
+              data_programada DATETIME NOT NULL,
+              ocorrido BOOLEAN NOT NULL,
+              cancelado BOOLEAN NOT NULL,
+              data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initNotificacao() throws SQLException {
+        String sql = """
+                CREATE TABLE IF NOT EXISTS notificacao (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        idDestinatario INT NOT NULL,
+        titulo VARCHAR(255) NOT NULL,
+        lida BOOLEAN NOT NULL DEFAULT FALSE,
+        data_criacao DATETIME NOT NULL,
+        FOREIGN KEY (idDestinatario) REFERENCES usuarios(id)
         );
         """;
         try (Statement st = con.createStatement()) {
@@ -378,6 +481,10 @@ public class InitDB {
         data DATETIME NOT NULL
     );
     """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initVisitas() throws SQLException {
         String sql = """
@@ -392,11 +499,21 @@ public class InitDB {
                 necessidade_especial BOOLEAN NOT NULL DEFAULT FALSE,
                 descricao_necessidade TEXT,
                 turno VARCHAR(15),
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
                 data_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             """;
+
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
+            try {
+                st.executeUpdate("ALTER TABLE visitas ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVA'");
+            } catch (SQLException ignored) {
+            }
+            try {
+                st.executeUpdate("UPDATE visitas SET status='ATIVA' WHERE status IS NULL");
+            } catch (SQLException ignored) {
+            }
         }
     }
     
@@ -440,8 +557,8 @@ public class InitDB {
             initEspecies();
             initFuncionarios();
             initUsuarios();
+            new UsuarioDAO().sincronizarFuncionariosComUsuarios();
             initAnimais();
-            initHabitat_animal();
             initTratamento();
             initPlanosAlimentares();
             initEnriquecimentos();
@@ -455,13 +572,29 @@ public class InitDB {
             initVisitas();
             initTarefas();
             initHistorico();
-
             new UsuarioDAO().sincronizarFuncionariosComUsuarios();
-
+            initAgendamentos();
             initFornecedores();
             initProdutos();
+            initEventos();
+            initNotificacao();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
+        }
+    }
+
+    private void criarIndiceSeNaoExiste(String sql) throws SQLException {
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        } catch (SQLException e) {
+            String mensagem = e.getMessage();
+            if (mensagem != null) {
+                mensagem = mensagem.toLowerCase();
+                if (mensagem.contains("duplicate key name") || mensagem.contains("already exists")) {
+                    return;
+                }
+            }
+            throw e;
         }
     }
 

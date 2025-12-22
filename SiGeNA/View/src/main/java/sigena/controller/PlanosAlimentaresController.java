@@ -2,7 +2,6 @@ package sigena.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -14,12 +13,15 @@ import sigena.model.dao.PlanoAlimentarDAO;
 import sigena.model.domain.Animal;
 import sigena.model.domain.PlanoAlimentar;
 import sigena.model.domain.ItemPlanoAlimentar;
+import sigena.model.service.GestaoNotificacaoService;
+import sigena.model.service.GestaoPlanoAlimentarService;
 
 @WebServlet("/PlanosAlimentaresController")
-public class PlanosAlimentaresController extends HttpServlet {
+public class PlanosAlimentaresController extends Controller {
 
     private final PlanoAlimentarDAO dao = new PlanoAlimentarDAO();
     private final AnimalDAO animalDAO = new AnimalDAO();
+    private final GestaoPlanoAlimentarService service = new GestaoPlanoAlimentarService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,12 +34,18 @@ public class PlanosAlimentaresController extends HttpServlet {
             } else if ("ver".equals(acao)) {
                 Long id = Long.valueOf(request.getParameter("id"));
                 PlanoAlimentar plano = dao.buscarPorId(id);
+                if (plano == null) {
+                    throw new PersistenciaException("Plano alimentar nao encontrado.");
+                }
                 request.setAttribute("plano", plano);
                 request.getRequestDispatcher("ver-plano-alimentar.jsp").forward(request, response);
                 return;
             } else if ("editar".equals(acao)) {
                 Long id = Long.valueOf(request.getParameter("id"));
                 PlanoAlimentar plano = dao.buscarPorId(id);
+                if (plano == null) {
+                    throw new PersistenciaException("Plano alimentar nao encontrado.");
+                }
                 List<Animal> animais = animalDAO.listar();
                 request.setAttribute("animais", animais);
                 request.setAttribute("plano", plano);
@@ -50,8 +58,16 @@ public class PlanosAlimentaresController extends HttpServlet {
                 return;
             }
 
-            List<PlanoAlimentar> lista = dao.listar();
+            Long animalFiltro = parseLong(request.getParameter("animalId"));
+            String ingredienteFiltro = request.getParameter("ingrediente");
+
+            List<Animal> animais = animalDAO.listar();
+            List<PlanoAlimentar> lista = dao.listar(animalFiltro, ingredienteFiltro);
+
+            request.setAttribute("animais", animais);
             request.setAttribute("lista", lista);
+            request.setAttribute("animalSelecionado", animalFiltro);
+            request.setAttribute("ingredienteFiltro", ingredienteFiltro);
             request.getRequestDispatcher("planos-alimentares.jsp").forward(request, response);
         } catch (PersistenciaException e) {
             throw new ServletException("Erro no banco de dados: " + e.getMessage(), e);
@@ -80,7 +96,10 @@ public class PlanosAlimentaresController extends HttpServlet {
                         plano.addItem(new ItemPlanoAlimentar(a, g, v));
                     }
                 }
-                dao.inserir(plano);
+                String cpfLogado = getCpfUsuarioLogado(request);
+                service.cadastrar(plano, cpfLogado);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo plano cadastrado");
                 response.sendRedirect("PlanosAlimentaresController");
                 return;
             }
@@ -114,6 +133,17 @@ public class PlanosAlimentaresController extends HttpServlet {
             } else {
                 request.getRequestDispatcher("cadastrar-plano-alimentar.jsp").forward(request, response);
             }
+        }
+    }
+
+    private Long parseLong(String valor) {
+        try {
+            if (valor == null || valor.isBlank()) {
+                return null;
+            }
+            return Long.valueOf(valor);
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 }

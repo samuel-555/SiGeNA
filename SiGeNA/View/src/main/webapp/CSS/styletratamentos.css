@@ -148,6 +148,10 @@ tr:last-child td {
     border-bottom: none;
 }
 
+.btn-pequeno.cancelar {
+  background-color: #c0392b;
+}
+
 tr:hover td {
     background-color: #fafafa;
 }

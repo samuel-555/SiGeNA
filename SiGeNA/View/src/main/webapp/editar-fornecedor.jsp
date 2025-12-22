@@ -19,16 +19,20 @@
     <title>SiGeNA - Editar Fornecedor</title>
     <link rel="stylesheet" href="CSS/styleanimais.css">
     <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 
 <body>
-<header>
-    <div class="titulo">
-        <a href="<%= request.getContextPath() + 
-            ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? 
-            "/home.jsp" : "/home.jsp") %>">SiGeNA</a>
-    </div>
-</header>
+<header class="topbar">
+            <a href="HomeController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
 <div class="botoes-acoes">
     <a href="FornecedorController?acao=listar" class="btn">Voltar</a>
@@ -44,8 +48,7 @@
         <form action="FornecedorController" method="post">
 
             <label for="nome">Nome do Fornecedor:*</label>
-            <input type="text" id="nome" name="nome"
-                   value="<c:out value='${fornecedor.nome}'/>" required>
+            <input type="text" id="nome" name="nome" class="obrigatorio" value="<c:out value='${fornecedor.nome}'/>" required>
 
             <label for="telefone">Telefone:</label>
             <input type="text" id="telefone" name="telefone"
@@ -60,7 +63,7 @@
                    value="<c:out value='${fornecedor.endereco}'/>">
 
             <label for="tipo">Tipo:*</label>
-            <select name="tipo" id="tipo">
+            <select name="tipo" id="tipo" class="obrigatorio">
                 <option value="${fornecedor.tipo}">${fornecedor.tipo}</option>
 
                 <c:if test="${fornecedor.tipo != 'ALIMENTO'}">
@@ -112,12 +115,12 @@
             <input type="hidden" name="id" value="<c:out value='${fornecedor.id}'/>">
             <input type="hidden" name="acao" value="editar">
 
-            <button type="submit" class="btn-enviar">Salvar Alterações</button>
+            <button type="submit" class="btn-enviar" onclick="return confirm('Salvar alterações? Essas modificações não poderão ser desfeitas.')">Salvar Alterações</button>
         </form>
 
     </div>
 </div>
-
+<script src="JS/verificar-campos.js"></script>
 </body>
 </html>
 

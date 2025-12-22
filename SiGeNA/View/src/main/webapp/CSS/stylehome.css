@@ -133,7 +133,7 @@ body {
     border-bottom: 1px solid #eee;
     color: var(--zoo-dark-green);
 }
-.notif-item {
+.notificacao {
     padding: 10px 12px;
     font-size: 12px;
     border-bottom: 1px solid #f9f9f9;
@@ -293,8 +293,26 @@ body {
 .btn[data-id="fornecedores"] .btn-icon {
     background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995531.png');
 }
+.btn[data-id="ocorrencias"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/564/564619.png');
+}
 .btn[data-id="historico"] .btn-icon {
     background-image: url('https://cdn-icons-png.flaticon.com/512/32/32223.png');
+}
+.btn[data-id="enriquecimento"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/427/427735.png');
+}
+.btn[data-id="visitantes"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/1256/1256650.png');
+}
+.btn[data-id="agendamentos"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/747/747310.png');
+}
+.btn[data-id="doacoes"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/1077/1077035.png');
+}
+.btn[data-id="eventos"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/2921/2921222.png');
 }
 
 .carousel .btn:hover {
@@ -451,6 +469,53 @@ body {
 .footer-dark p {
     font-size: 12px;
     opacity: 0.4;
+}
+
+.btn:hover {
+  background-color: #0e7142;
+}
+
+.notificacao {
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    text-align: left;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.nao-lida {
+    background-color: #ffffff;
+    border-left: 5px solid #149b5a; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.nao-lida a {
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.nao-lida:hover {
+    background-color: #f0fdf4;
+    transform: translateX(3px); 
+    cursor: pointer;
+}
+
+.lida {
+    background-color: #e9ecef; 
+    border: 1px solid #dee2e6;
+    opacity: 0.8;
+}
+
+.lida p {
+    color: #6c757d;
+    margin: 0;
+    font-weight: normal;
+    font-size: 0.95em;
 }
 
 @media (max-width: 992px) {

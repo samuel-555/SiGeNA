@@ -22,23 +22,31 @@
   <title>SiGeNA - Cadastrar Tarefa</title>
   <link rel="stylesheet" href="CSS/style.css">
   <link rel="stylesheet" href="CSS/stylehabitat.css">
+  <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
-  <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
-  </header>
+  <header class="topbar">
+            <a href="HomeController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+    </header>
 
   <div class="container">
     <h1>Cadastrar Tarefa</h1>
 
     <div class="botoes-acoes">
-      <a href="TarefaController" class="btn">Voltar</a>
+      <a href="HomeController" class="btn">Voltar</a>
     </div>
     
     <div class="formulario">
       <h2>Cadastrar Nova Tarefa</h2>
       
-    <form action="${pageContext.request.contextPath}/TarefaController" method="post">
+    <form action="${pageContext.request.contextPath}/HomeController" method="post">
     <input type="hidden" name="acao" value="inserir">
         
         <c:if test="${not empty msgErro}">

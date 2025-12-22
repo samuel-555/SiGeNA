@@ -2,7 +2,6 @@ package sigena.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,7 +14,7 @@ import sigena.model.domain.Visita;
 import sigena.model.service.GestaoVisitaService;
 
 @WebServlet("/visitantes")
-public class VisitantesController extends HttpServlet {
+public class VisitantesController extends Controller {
 
     private final GestaoVisitaService service = new GestaoVisitaService();
 
@@ -28,7 +27,7 @@ public class VisitantesController extends HttpServlet {
             if ("excluir".equalsIgnoreCase(acao)) {
                 Long id = Long.valueOf(req.getParameter("id"));
                 service.excluir(id);
-                sessao.setAttribute("mensagemSucesso", "Visita removida com sucesso.");
+                sessao.setAttribute("mensagemSucesso", "Visita cancelada com sucesso.");
                 resp.sendRedirect("visitantes");
                 return;
             }
@@ -55,7 +54,8 @@ public class VisitantesController extends HttpServlet {
         try {
             if ("cadastrar".equalsIgnoreCase(acao)) {
                 Visita visita = construirVisita(req, false);
-                service.registrarVisita(visita);
+                String cpfLogado = getCpfUsuarioLogado(req);
+                service.registrarVisita(visita, cpfLogado);
                 sessao.setAttribute("mensagemSucesso", "Visita registrada com sucesso.");
                 resp.sendRedirect("visitantes");
                 return;
@@ -72,7 +72,7 @@ public class VisitantesController extends HttpServlet {
             if ("excluir".equalsIgnoreCase(acao)) {
                 Long id = Long.valueOf(req.getParameter("id"));
                 service.excluir(id);
-                sessao.setAttribute("mensagemSucesso", "Visita removida com sucesso.");
+                sessao.setAttribute("mensagemSucesso", "Visita cancelada com sucesso.");
                 resp.sendRedirect("visitantes");
                 return;
             }
@@ -153,7 +153,7 @@ public class VisitantesController extends HttpServlet {
         try {
             String turnoParam = req.getParameter("turno");
             if (turnoParam != null && !turnoParam.isBlank()) {
-                visita.setTurno(sigena.model.domain.Turno.valueOf(turnoParam));
+                visita.setTurno(sigena.model.domain.util.Turno.valueOf(turnoParam));
             }
         } catch (Exception ignored) {
             visita.setTurno(null);

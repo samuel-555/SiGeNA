@@ -1,5 +1,6 @@
 <%@page import="java.util.List"%>
 <%@page import="sigena.model.domain.PlanoAlimentar"%>
+<%@page import="sigena.model.domain.Animal"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
@@ -21,9 +22,19 @@
     <title>SiGeNA - Planos Alimentares</title>
     <link rel="stylesheet" href="CSS/styleplanos.css">
     <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
 <body>
-    <header><div class="titulo"><a href="<%= paginaHome %>">SiGeNA</a></div></header>
+   <header class="topbar">
+            <a href="HomeController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
     <div class="container">
         <h1>Gestão de Planos Alimentares</h1>
@@ -33,7 +44,27 @@
             <% } %>
             <a href="<%= paginaHomeComContexto %>" class="btn">Voltar para Home</a>
         </div>
+        <div class="filtros">
+            <form action="PlanosAlimentaresController" method="get">
+                <label for="animalId">Animal:</label>
+                <select name="animalId" id="animalId">
+                    <option value="">Todos</option>
+                    <% List<Animal> animaisFiltro = (List<Animal>) request.getAttribute("animais");
+                       Long animalSelecionado = (Long) request.getAttribute("animalSelecionado");
+                       if (animaisFiltro != null) {
+                           for (Animal a : animaisFiltro) { %>
+                        <option value="<%= a.getId() %>" <%= (animalSelecionado != null && animalSelecionado.equals(a.getId())) ? "selected" : "" %>><%= a.getNome() %></option>
+                    <%     }
+                       } %>
+                </select>
 
+                <label for="ingrediente">Ingrediente:</label>
+                <input type="text" name="ingrediente" id="ingrediente" placeholder="Ex: carne" value="<%= request.getAttribute("ingredienteFiltro") != null ? request.getAttribute("ingredienteFiltro") : "" %>">
+
+                <button type="submit" class="btn">Filtrar</button>
+                <a href="PlanosAlimentaresController" class="btn">Limpar</a>
+            </form>
+        </div>
         <div class="historico">
             <h2>Lista de Planos Alimentares</h2>
 
@@ -76,7 +107,7 @@
                     <td>
                         <a href="PlanosAlimentaresController?acao=ver&id=<%= p.getId() %>" class="btn-pequeno ver">Ver</a>
                         <% if (podeCadastrar) { %>
-                        <a href="PlanosAlimentaresController?acao=excluir&id=<%= p.getId() %>" class="btn-pequeno excluir">Excluir</a>
+                        <a href="PlanosAlimentaresController?acao=excluir&id=<%= p.getId() %>" class="btn-pequeno excluir" onclick="return confirm('Confirmar cancelamento?');">Cancelar</a>
                         <% } %>
                     </td>
                 </tr>

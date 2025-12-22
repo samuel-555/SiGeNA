@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("UsuarioLogado", usuario);
                 session.setAttribute("TurnoLogado", turnoParaSessao);
               
-                response.sendRedirect("TarefaController");
+                response.sendRedirect("HomeController");
                 
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");

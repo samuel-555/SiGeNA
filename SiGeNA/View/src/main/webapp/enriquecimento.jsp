@@ -91,14 +91,14 @@
                             <td><%= en.getFrequencia()%></td>
                             <td><%= String.join(", ", en.getHabitats())%></td>
                             <td>
-                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;" onsubmit="return confirm('Confirmar exclusao?');">
+                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;">
                                     <input type="hidden" name="action" value="ver"/>
                                     <input type="hidden" name="id" value="<%= en.getId()%>"/>
                                     <button type="submit" class="btn-pequeno">Ver</button>
                                 </form>
                                     
                                 <% if (podeGerenciar) { %>
-                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;">
+                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;" onsubmit="return confirm('Confirmar exclusao?');">
                                     <input type="hidden" name="action" value="deletar"/>
                                     <input type="hidden" name="id" value="<%= en.getId()%>"/>
                                     <button type="submit" class="btn-pequeno excluir">Desalocar</button>

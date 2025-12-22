@@ -38,18 +38,18 @@
 
     List<Feature> features = new ArrayList<>();
     features.add(new Feature("animais", "Gerenciamento de Animais", "AnimalController?acao=listar"));
-    features.add(new Feature("especies", "Gerenciamento de Esp\u00e9cies", "EspeciesController"));
+    features.add(new Feature("especies", "Gerenciamento de Espécies", "EspeciesController"));
     features.add(new Feature("habitat", "Gerenciamento de Habitat", "HabitatController"));
-    features.add(new Feature("tratamentos", "Gerenciamento de Tratamentos M\u00e9dicos", "tratamentos.jsp"));
+    features.add(new Feature("tratamentos", "Gerenciamento de Tratamentos Médicos", "tratamentos.jsp"));
     features.add(new Feature("planos", "Gerenciamento de Planos Alimentares", "PlanosAlimentaresController"));
     features.add(new Feature("produtos", "Gerenciamento de Produtos", "ProdutoController?acao=listar"));
-    features.add(new Feature("relatorios", "Gerenciamento de Relat\u00f3rios de Sa\u00fade", "RelatorioSaudeController"));
+    features.add(new Feature("relatorios", "Gerenciamento de Relatórios de Saúde", "RelatorioSaudeController"));
     features.add(new Feature("enriquecimento", "Gerenciamento de Enriquecimento", "enriquecimento"));
     features.add(new Feature("visitantes", "Gerenciamento de Visitantes", "visitantes"));
-    features.add(new Feature("doacoes", "Gest\u00e3o de Doa\u00e7\u00f5es", "doacoes"));
-    features.add(new Feature("fornecedores", "Gest\u00e3o de Fornecedores", "FornecedorController?acao=listar"));
-    features.add(new Feature("funcionarios", "Gerenciamento de Funcion\u00e1rios", "FuncionarioServlet"));
-    features.add(new Feature("agendamentos", "Gestao de Agendamentos", "AgendamentoController?acao=listar"));
+    features.add(new Feature("doacoes", "Gestão de Doações", "doacoes"));
+    features.add(new Feature("fornecedores", "Gestão de Fornecedores", "FornecedorController?acao=listar"));
+    features.add(new Feature("funcionarios", "Gerenciamento de Funcionários", "FuncionarioServlet"));
+    features.add(new Feature("agendamentos", "Gestão de Agendamentos", "AgendamentoController?acao=listar"));
 
     Set<String> permitido = new LinkedHashSet<>();
     if (cargo == Cargo.GERENTE) {
@@ -123,7 +123,7 @@
                 <section class="hero">
                     <h1>Funcionalidades do Sistema</h1>
                     <% if (visiveis.isEmpty()) { %>
-                        <p>Nenhuma funcionalidade dispon\u00edvel para seu perfil.</p>
+                        <p>Nenhuma funcionalidade disponível para seu perfil.</p>
                     <% } else { %>
                         <div class="carousel">
                             <% if (totalSlides > 1) { %>

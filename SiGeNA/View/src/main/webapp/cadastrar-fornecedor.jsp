@@ -24,10 +24,18 @@
         <title>SiGeNA - Gestão de Fornecedores</title>
         <link rel="stylesheet" href="CSS\styleanimais.css">
         <link rel="stylesheet" href="CSS\style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
+       <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
         </header>
         
         <div class="botoes-acoes">
@@ -39,7 +47,7 @@
         <div class="formulario">
             <form action="FornecedorController" method="post">
                 <label for="nome">Nome do Fornecedor:*</label>
-                <input type="text" id="nome" name="nome" required>
+                <input type="text" id="nome" name="nome" class="obrigatorio" required>
                 
                 <label for="telefone">Telefone:</label>
                 <input type="text" id="telefone" name="telefone">
@@ -53,7 +61,7 @@
                 
                 
                 <label for="tipo">Tipo:*</label>
-                <select name="tipo" id="tipo">
+                <select name="tipo" id="tipo" class="obrigatorio">
                     <option value="">Selecione o tipo</option>
                     <option value="ALIMENTO">ALIMENTO</option>
                     <option value="MEDICAMENTO">MEDICAMENTO</option>
@@ -69,9 +77,10 @@
                 <textarea name="descricao"></textarea>
                     
                 <input type="hidden" name="acao" value="salvar">
-                <button type="submit" class="btn-enviar">Salvar Fornecedor</button>
+                <button type="submit" class="btn-enviar" onclick="return confirm('Salvar fornecedor?')">Salvar Fornecedor</button>
             </form>
         </div>
         </div>
+        <script src="JS/verificar-campos.js"></script>
     </body>
 </html>

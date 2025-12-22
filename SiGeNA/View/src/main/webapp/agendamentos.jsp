@@ -7,6 +7,7 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    boolean gerente = "GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")));
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -16,11 +17,17 @@
         <title>SiGeNA - Gestao de Agendamentos</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
         <link rel="stylesheet" href="CSS/style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+        <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo">
-                <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
             </div>
         </header>
 
@@ -28,7 +35,9 @@
             <h1>Gestao de Agendamentos</h1>
 
             <div class="botoes-acoes">
-                <a href="AgendamentoController?acao=cadastrar" class="btn">Cadastrar Agendamento</a>
+                <% if (gerente) { %>
+                    <a href="AgendamentoController?acao=cadastrar" class="btn">Cadastrar Agendamento</a>
+                <% } %>
             </div>
 
             <div class="historico">
@@ -49,7 +58,7 @@
                         <option value="mais_antigo" ${"mais_antigo" == ordem ? "selected" : ""}>Mais antigo</option>
                     </select>
                     <button type="submit" class="btn-pequeno">Filtrar</button>
-                    <a href="AgendamentoController" class="btn-pequeno">Limpar</a>
+                    <button class="btn-pequeno"><a href="AgendamentoController">Limpar</a></button>
                 </form>
 
                 <c:if test="${not empty sessionScope.acaoBemSucedida}">
@@ -93,14 +102,16 @@
                                         <td>
                                             <div class="acoes-agendamento">
                                                 <a href="AgendamentoController?acao=ver&id=${agendamento.id}" class="btn-pequeno">Ver</a>
-                                                <c:if test="${agendamento.status == 'ATIVO'}">
-                                                    <form action="AgendamentoController" method="post" class="botao-acao" onsubmit="return solicitarJustificativa(this);">
-                                                        <input type="hidden" name="acao" value="cancelar">
-                                                        <input type="hidden" name="id" value="${agendamento.id}">
-                                                        <input type="hidden" name="justificativa" value="">
-                                                        <button type="submit" class="btn-pequeno excluir">Cancelar</button>
-                                                    </form>
-                                                </c:if>
+                                                <% if (gerente) { %>
+                                                    <c:if test="${agendamento.status == 'ATIVO'}">
+                                                        <form action="AgendamentoController" method="post" class="botao-acao" onsubmit="return solicitarJustificativa(this);">
+                                                            <input type="hidden" name="acao" value="cancelar">
+                                                            <input type="hidden" name="id" value="${agendamento.id}">
+                                                            <input type="hidden" name="justificativa" value="">
+                                                            <button type="submit" class="btn-pequeno excluir">Cancelar</button>
+                                                        </form>
+                                                    </c:if>
+                                                <% } %>
                                             </div>
                                         </td>
                                     </tr>

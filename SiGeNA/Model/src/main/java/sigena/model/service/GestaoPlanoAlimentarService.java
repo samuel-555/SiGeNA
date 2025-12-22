@@ -3,7 +3,7 @@ package sigena.model.service;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.PlanoAlimentarDAO;
 import sigena.model.domain.PlanoAlimentar;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoPlanoAlimentarService {
 

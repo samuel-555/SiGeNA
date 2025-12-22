@@ -1,5 +1,7 @@
 package sigena.model.domain;
 
+import sigena.model.domain.util.StatusDoacao;
+import sigena.model.domain.util.DoacaoTipo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

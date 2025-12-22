@@ -7,6 +7,10 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    if (!"GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario")))) {
+        response.sendRedirect("home.jsp");
+        return;
+    }
     boolean edicao = request.getAttribute("agendamento") != null;
 %>
 <!DOCTYPE html>
@@ -17,21 +21,23 @@
         <title>SiGeNA - Gestao de Agendamentos</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
         <link rel="stylesheet" href="CSS/style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+        <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo">
-                <a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp")%>">SiGeNA</a>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
             </div>
         </header>
 
-        <div class="botoes-acoes">
-            <a href="AgendamentoController?acao=listar" class="btn">Voltar</a>
-        </div>
-
         <div class="container">
             <h1>Gestao de Agendamentos</h1>
-
+            <a href="home.jsp" class="btn-sair" style="background: var(--zoo-mint); color: var(--zoo-dark-green); margin-right: 10px;">Voltar</a>
             <div class="formulario">
                 <h2><%= edicao ? "Editar Agendamento" : "Marcar Novo Agendamento" %></h2>
                 <c:if test="${not empty sessionScope.campoInvalidoErro}">

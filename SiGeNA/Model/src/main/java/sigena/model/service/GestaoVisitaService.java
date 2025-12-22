@@ -9,7 +9,7 @@ import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.ValidationException;
 import sigena.model.dao.VisitaDAO;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 import sigena.model.domain.Visita;
 import sigena.model.util.ConexaoDB;
 import sigena.model.util.InitDB;

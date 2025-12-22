@@ -1,8 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ page import="sigena.model.domain.Doacao" %>
 <%@ page import="sigena.model.domain.ReciboDoacao" %>
+
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
@@ -27,10 +28,19 @@
     <title>SiGeNA - Doações</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/stylefuncionario.css">
+    <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
-<header>
-    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
+
+<header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
 </header>
 
 <div class="container">
@@ -42,18 +52,26 @@
         <% } %>
     </div>
 
-    <c:if test="${not empty mensagemSucesso}">
-        <div style="color:green;padding:8px 0;"><strong>${mensagemSucesso}</strong></div>
-    </c:if>
-    <c:if test="${not empty mensagemErro}">
-        <div style="color:#b00;padding:8px 0;"><strong>${mensagemErro}</strong></div>
-    </c:if>
-    <c:if test="${not empty erroCadastro}">
-        <div style="color:#b00;padding:8px 0;"><strong>${erroCadastro}</strong></div>
-    </c:if>
-    <c:if test="${not empty erroAtualizacao}">
-        <div style="color:#b00;padding:8px 0;"><strong>${erroAtualizacao}</strong></div>
-    </c:if>
+    <form method="get" action="doacoes" class="filtro">
+        <input type="text" name="doador" placeholder="Nome do doador" value="${param.doador}" />
+
+        <select name="tipo">
+            <option value="">Todos os tipos</option>
+            <option value="MONETARIA" ${param.tipo == 'MONETARIA' ? 'selected' : ''}>Monet�ria</option>
+            <option value="OUTRO" ${param.tipo == 'OUTRO' ? 'selected' : ''}>Outro</option>
+        </select>
+
+        <input type="text" name="valorDescricao" placeholder="Valor ou descri��o" value="${param.valorDescricao}" />
+        <input type="date" name="data" value="${param.data}" />
+
+        <select name="recibo">
+            <option value="">Com ou sem recibo</option>
+            <option value="SIM" ${param.recibo == 'SIM' ? 'selected' : ''}>Somente com recibo</option>
+            <option value="NAO" ${param.recibo == 'NAO' ? 'selected' : ''}>Somente sem recibo</option>
+        </select>
+
+        <button type="submit" class="btn">Pesquisar</button>
+    </form>
 
     <div class="historico">
         <h2>Lista de Doações</h2>
@@ -63,35 +81,62 @@
                     <th>Doador</th>
                     <th>Tipo</th>
                     <th>Valor/Descrição</th>
+                    <th>Observações</th>
                     <th>Data</th>
-                    <th>Status</th>
                     <th>Recibo</th>
                     <th>Ações</th>
                 </tr>
             </thead>
+
             <tbody>
-                <%
-                    java.util.List<Doacao> lista = (java.util.List<Doacao>) request.getAttribute("doacoes");
-                    if (lista != null) {
-                        for (Doacao d : lista) {
-                %>
+            <%
+                java.util.List<Doacao> lista = (java.util.List<Doacao>) request.getAttribute("doacoes");
+                if (lista != null) {
+                    for (Doacao d : lista) {
+            %>
                 <tr>
                     <td><%= d.getNomeDoador() %></td>
                     <td><%= d.getTipo().name() %></td>
+
                     <td>
                         <%
                             if (d.isMonetaria()) {
-                                out.print(d.getValorMonetario() != null ? String.format("R$ %.2f", d.getValorMonetario()) : "-");
+                                out.print(d.getValorMonetario() != null
+                                    ? String.format("R$ %.2f", d.getValorMonetario())
+                                    : "-");
                             } else {
                                 out.print(d.getDescricaoOutro() != null ? d.getDescricaoOutro() : "-");
                             }
                         %>
                     </td>
-                    <td><%= d.getDataDoacao() != null ? d.getDataDoacao().toString() : "-" %></td>
-                    <td><%= d.getStatus() != null ? d.getStatus().name() : "-" %></td>
+
+                    <td>
+                        <%
+                            String obs = d.getObservacoes();
+                            if (obs != null && !obs.isBlank()) {
+                        %>
+                            <button type="button" class="btn-pequeno"
+                                    onclick="toggleObs('obs-<%= d.getId() %>')">
+                                Ver
+                            </button>
+
+                            <div id="obs-<%= d.getId() %>"
+                                 style="display:none; margin-top:6px; background:#f5f5f5; padding:6px; border-radius:4px;">
+                                <%= obs %>
+                            </div>
+                        <%
+                            } else {
+                                out.print("-");
+                            }
+                        %>
+                    </td>
+
+                    <td><%= d.getDataDoacao() != null ? d.getDataDoacao() : "-" %></td>
+
                     <td>
                         <%
                             if (d.isReciboEmitido()) {
+                                out.print("Emitido");
                                 ReciboDoacao r = (ReciboDoacao) request.getAttribute("reciboEdicao");
                                 if (r != null && r.getDoacaoId() != null && r.getDoacaoId().equals(d.getId())) {
                                     out.print(r.getCodigo());
@@ -103,22 +148,24 @@
                             }
                         %>
                     </td>
+
                     <td>
                         <% if (podeGerenciar) { %>
                         <a class="btn-pequeno editar" href="doacoes?acao=editar&id=<%= d.getId() %>">Editar</a>
 
-                        <form action="doacoes" method="post" style="display:inline" onsubmit="return confirm('Confirmar cancelamento?');">
+                        <form action="doacoes" method="post" style="display:inline"
+                              onsubmit="return confirm('Confirmar cancelamento?');">
                             <input type="hidden" name="acao" value="cancelar"/>
                             <input type="hidden" name="id" value="<%= d.getId() %>"/>
-                            <button class="btn-pequeno excluir" type="submit">Cancelar</button>
+                            <button class="btn-pequeno excluir" type="submit">Excluir</button>
                         </form>
                         <% } %>
                     </td>
                 </tr>
-                <%
-                        }
+            <%
                     }
-                %>
+                }
+            %>
             </tbody>
         </table>
     </div>
@@ -164,7 +211,16 @@
     <%
         }
     %>
-
 </div>
+
+<script>
+    function toggleObs(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === "none" || el.style.display === "")
+            ? "block"
+            : "none";
+    }
+</script>
+
 </body>
 </html>

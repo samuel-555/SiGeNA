@@ -35,12 +35,19 @@
   <title>SiGeNA - Gestão de Habitat</title>
   <link rel="stylesheet" href="CSS\style.css">
   <link rel="stylesheet" href="CSS\stylehabitat.css">
+  <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
-  <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
-  </header>
-
+  <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
   <div class="container">
     <h1>Gestão de Habitat</h1>
 
@@ -54,10 +61,44 @@
     <div class="lista-de-habitats">
       <h2>Lista de Habitats</h2>
       
-    <c:if test="${empty habitats}">
+    <form id="formBusca"
+      action="HabitatController"
+      method="get"
+      class="form-busca">
+
+        <input type="hidden" name="acao" value="buscar">
+
+        <input type="text"
+           name="q"
+           placeholder="Buscar por nome ou tipo do habitat"
+           value="${param.q}"
+           onkeyup="buscar()">
+    </form>
+           
+    <script>
+        let timer;
+
+        function buscar() {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                document.getElementById("formBusca").submit();
+            }, 500);
+        }
+    </script>
+      
+    <c:if test="${empty habitats and empty param.q}">
         <p>Nenhum habitat cadastrado.</p>
     </c:if>
+
+    <c:if test="${empty habitats and not empty param.q}">
+        <p style="color:#c00; font-weight:bold;">
+            Nenhum habitat encontrado para a busca "<c:out value='${param.q}'/>".
+        </p>
+    </c:if>
+        
     <c:if test="${not empty habitats}">
+    
+    
   <table>
     <thead>
       <tr>
@@ -92,7 +133,7 @@
                         
                       <input type="hidden" name="acao" value="excluir">
                       <input type="hidden" name="nome" value="${habitat.nome}">
-                      <button class="btn-pequeno excluir">Excluir</button>
+                      <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Deseja realmente excluir este habitat?')">Excluir</button>
                  </form>
               </c:if>
             </td>

@@ -4,7 +4,7 @@
  */
 package sigena.model.domain;
 import java.util.Date;
-import java.sql.Timestamp;
+import sigena.model.domain.util.TipoHistorico;
 
 public class Historico {
     

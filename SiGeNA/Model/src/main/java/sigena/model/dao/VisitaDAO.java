@@ -218,7 +218,7 @@ public class VisitaDAO {
         String turnoStr = rs.getString("turno");
         if (turnoStr != null && !turnoStr.isBlank()) {
             try {
-                v.setTurno(sigena.model.domain.Turno.valueOf(turnoStr));
+                v.setTurno(sigena.model.domain.util.Turno.valueOf(turnoStr));
             } catch (IllegalArgumentException ignored) {
             }
         }

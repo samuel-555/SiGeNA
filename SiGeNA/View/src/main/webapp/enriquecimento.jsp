@@ -20,11 +20,17 @@
         <title>SiGeNA - Cadastrar Enriquecimento</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
         <link rel="stylesheet" href="CSS\\style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo">
-                <a href="<%= request.getContextPath() + "/home.jsp"%>">SiGeNA</a>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
             </div>
         </header>
         <div class="container">
@@ -98,7 +104,7 @@
                                 </form>
                                     
                                 <% if (podeGerenciar) { %>
-                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;">
+                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;" onsubmit="return confirm('Confirmar exclusão?');">
                                     <input type="hidden" name="action" value="deletar"/>
                                     <input type="hidden" name="id" value="<%= en.getId()%>"/>
                                     <button type="submit" class="btn-pequeno excluir">Desalocar</button>

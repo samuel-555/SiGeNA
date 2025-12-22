@@ -25,11 +25,19 @@
   <title>SiGeNA - Gestão de Fornecedores</title>
   <link rel="stylesheet" href="CSS\styleanimais.css">
   <link rel="stylesheet" href="CSS\style.css">
+  <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
-  <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
-  </header>
+  <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
   <div class="container">
     <h1>Gestão de Fornecedores</h1>
@@ -39,8 +47,31 @@
         <a href="FornecedorController?acao=cadastrar" class="btn">Cadastrar Novo Fornecedor</a>
         <% } %>
     </div>
+    <div class="pesquisa">
+          Pesquaisar: <input type="text" placeholder="Digite o ID ou o nome"><br>
+          Filtrar tipo: <select class="filtro">
+                    <option value="">Todos</option>
+                    <option value="ALIMENTO">ALIMENTO</option>
+                    <option value="MEDICAMENTO">MEDICAMENTO</option>
+                    <option value="EQUIPAMENTO">EQUIPAMENTO</option>
+                    <option value="HIGIENE E LIMPEZA">HIGIENE E LIMPEZA</option>
+                    <option value="ACESSORIOS">ACESSÓRIOS</option>
+                    <option value="SERVICOS">SERVIÇOS</option>
+                    <option value="VARIADOS">VARIADOS</option>
+                    <option value="OUTROS">OUTROS</option>
+                </select><br>
+                </select>
+          
+          Ordenar por: <select class="sequencia">
+            <option value="adicionado" data-ordem="crescente">Adicionado recentemente</option>
+            <option value="adicionado" data-ordem="decrescente">Mais antigo</option>
+            <option value="alfabetica" data-ordem="crescente">Alfabética A-Z</option>
+            <option value="alfabetica" data-ordem="decrescente">Alfabética Z-A</option>
+          </select>
+
+    </div>
     <c:if test="${empty fornecedores}">
-        <p>Nenhum fornecedor cadastrado.</p>
+        <p>Nenhum fornecedor encontrado.</p>
     </c:if>
     <c:if test="${not empty sessionScope.acaoBemSucedida}">
         <p class="sucesso"><c:out value="${sessionScope.acaoBemSucedida}"/></p>
@@ -69,7 +100,7 @@
                     <form action="FornecedorController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${fornecedor.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir">Remover</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o fornecedor ${fornecedor.nome} permanentemente?')">Excluir</button>
                     </form>
                     <% } %>
                     <a href="FornecedorController?acao=exibir&id=<c:out value="${fornecedor.id}"/>" class="btn-pequeno">Exibir</a>
@@ -84,5 +115,7 @@
     </c:if>
     
   </div>
+      <script src="JS/pesquisa.js">
+    </script>
 </body>
 </html>

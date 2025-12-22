@@ -20,10 +20,18 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>SiGeNA - Gestão de Habitat</title>
         <link rel="stylesheet" href="CSS\style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
         </header>
         
         <div class="botoes-acoes">
@@ -38,7 +46,8 @@
                 <input type="hidden" name="nomeAntigo" value="${habitat.nome}"/>                
 
                 <label for="nome">Nome do Habitat:</label>
-                <input type="text" id="nome" name="nome" placeholder="Savana doida" value="${habitat.nome}" required>
+                <input type="text" id="nome" value="${habitat.nome}" disabled>
+                <input type="hidden" name="nome" value="${habitat.nome}">
 
                 <label for="tipo">Tipo de Habitat:</label>
                 <input type="text" id="tipo" name="tipo" placeholder="Terra" value="${habitat.tipo}" required>

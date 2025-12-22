@@ -24,10 +24,18 @@
         <title>SiGeNA - Gestão de Animais</title>
         <link rel="stylesheet" href="CSS\styleanimais.css">
         <link rel="stylesheet" href="CSS\style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
         </header>
         
         <div class="botoes-acoes">
@@ -39,10 +47,10 @@
         <div class="formulario">
             <form action="AnimalController" method="post">
                 <label for="nome">Nome do Animal:*</label>
-                <input type="text" id="nome" name="nome" placeholder="Ex: Simba" required>
+                <input type="text" id="nome" name="nome" class="obrigatorio" placeholder="Ex: Simba" required>
                 
                 <label for="especie">Espécie:*</label>
-                <select name="especie" id="especie">
+                <select name="especie" id="especie" class="obrigatorio">
                     <option value="-1">Selecione uma espécie</option>
                     <c:forEach items="${especies}" var="especie">
                         <option value="${especie.id}">${especie.nome}</option>
@@ -57,10 +65,10 @@
                 </select>
                 
                 <label for="dataDeNascimento">Data de nascimento:*</label>
-                <input type="date" max="<%=hoje%>" id="dataDeNascimento" name="dataDeNascimento" required>
+                <input type="date" max="<%=hoje%>" id="dataDeNascimento" name="dataDeNascimento" class="obrigatorio" required>
 
                 <label for="peso">Peso (kg):*</label>
-                <input type="number" id="peso" name="peso" min="0" step="0.1" placeholder="Ex: 190.5" required>
+                <input type="number" id="peso" name="peso" class="obrigatorio" min="0" step="0.1" placeholder="Ex: 190.5" required>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="hostil" name="hostil" value="true">
@@ -68,7 +76,7 @@
                 </div>
                 
                 <label for="habitat">Habitat:*</label>
-                <select name="habitat" id="habitat">
+                <select name="habitat" id="habitat" class="obrigatorio">
                     <option value="">Selecione um habitat</option>
                     <c:forEach items="${habitats}" var="habitat">
                         <option value="${habitat.nome}">${habitat.nome}</option>
@@ -81,9 +89,10 @@
                 </c:if>
                     
                 <input type="hidden" name="acao" value="salvar">
-                <button type="submit" class="btn-enviar">Salvar Animal</button>
+                <button type="submit" class="btn-enviar" onclick="return confirm('Salvar animal?')">Salvar Animal</button>
             </form>
         </div>
         </div>
+        <script src="JS/verificar-campos.js"></script>
     </body>
 </html>

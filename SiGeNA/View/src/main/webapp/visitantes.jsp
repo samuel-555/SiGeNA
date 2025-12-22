@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
     HttpSession sessao = request.getSession(false);
@@ -19,15 +19,21 @@
 <head>
     <meta charset="UTF-8">
     <title>SiGeNA - Gestão de Visitantes</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/stylehome.css">
     <link rel="stylesheet" href="CSS/stylevisitantes.css">
+    <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
-<header>
-    <div class="titulo">
-        <a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a>
-    </div>
-</header>
+    <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
 <div class="container">
     <h1>Gestão de Visitantes</h1>
@@ -67,9 +73,9 @@
                     <label>Turno:</label>
                     <select name="turno" required>
                         <option value="">Selecione</option>
-                        <option value="MANHA" <%= (visitaEdicao != null && sigena.model.domain.Turno.MANHA.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.MANHA.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Manhã</option>
-                        <option value="TARDE" <%= (visitaEdicao != null && sigena.model.domain.Turno.TARDE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.TARDE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Tarde</option>
-                        <option value="NOITE" <%= (visitaEdicao != null && sigena.model.domain.Turno.NOITE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.Turno.NOITE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Noite</option>
+                        <option value="MANHA" <%= (visitaEdicao != null && sigena.model.domain.util.Turno.MANHA.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.util.Turno.MANHA.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Manhã</option>
+                        <option value="TARDE" <%= (visitaEdicao != null && sigena.model.domain.util.Turno.TARDE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.util.Turno.TARDE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Tarde</option>
+                        <option value="NOITE" <%= (visitaEdicao != null && sigena.model.domain.util.Turno.NOITE.equals(visitaEdicao.getTurno())) || (dadosFormulario != null && sigena.model.domain.util.Turno.NOITE.equals(dadosFormulario.getTurno())) ? "selected" : "" %>>Noite</option>
                     </select>
 
                     <div class="checks-linha">

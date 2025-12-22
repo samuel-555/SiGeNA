@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import sigena.model.dao.HistoricoDAO;
 import sigena.model.domain.Historico;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoHistoricoService {
     private final HistoricoDAO dao;

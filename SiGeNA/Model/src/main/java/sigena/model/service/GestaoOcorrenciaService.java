@@ -3,17 +3,22 @@ package sigena.model.service;
 import sigena.model.dao.OcorrenciaDAO;
 import sigena.model.domain.Ocorrencia;
 import java.util.List;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoOcorrenciaService {
 
     private final OcorrenciaDAO dao;
+    private final GestaoHistoricoService historicoService;
 
     public GestaoOcorrenciaService(OcorrenciaDAO dao) {
         this.dao = dao;
+        historicoService = new GestaoHistoricoService();
     }
 
-    public void criar(Ocorrencia o) {
+    public void criar(Ocorrencia o,String cpf) {
         dao.criar(o);
+        historicoService.registrar(TipoHistorico.OCORRENCIA,TipoHistorico.OCORRENCIA.getDescricao(o.getDescricao()), cpf);
+        
     }
 
     public List<Ocorrencia> listar() {

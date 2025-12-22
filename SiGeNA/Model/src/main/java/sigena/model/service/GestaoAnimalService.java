@@ -8,18 +8,21 @@ import sigena.model.dao.AnimalDAO;
 import sigena.model.dao.EspecieDAO;
 import sigena.model.dao.HabitatDAO;
 import sigena.model.domain.util.AnimalSexo;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoAnimalService {
     private final AnimalDAO animalDAO = new AnimalDAO();
     private final EspecieDAO especieDAO = new EspecieDAO();
     private final HabitatDAO habitatDAO = new HabitatDAO();
+    private final GestaoHistoricoService historicoService = new GestaoHistoricoService();
     
-    public boolean cadastrarAnimal(Animal animal) throws PersistenciaException{
+    public boolean cadastrarAnimal(Animal animal, String cpf) throws PersistenciaException{
         if(!conferirCampos(animal))
             return false;
         
         animalDAO.cadastrar(animal);
         habitatDAO.inserirAnimalAlocado(animal.getHabitatNome(), animal.getId());
+        historicoService.registrar(TipoHistorico.ANIMAL, TipoHistorico.ANIMAL.getDescricao(animal, animal.getHabitatNome()), cpf);
         
         return true;
     }

@@ -7,6 +7,7 @@ import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.util.Cargo;
 import sigena.model.domain.Funcionario;
+import sigena.model.domain.util.Turno;
 import sigena.model.domain.Usuario;
 import sigena.model.util.ConexaoDB;
 
@@ -64,6 +65,28 @@ public class UsuarioDAO {
             return null;
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao buscar nome do funcionÇ­rio: " + e.getMessage());
+        }
+    }
+
+    public Turno buscarTurnoPorCpf(String cpf) throws PersistenciaException {
+        cpf = normalizarCPF(cpf);
+        String sql = "SELECT turno FROM funcionarios WHERE REPLACE(REPLACE(cpf,'.',''),'-','') = ? LIMIT 1";
+
+        try (Connection con = ConexaoDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cpf);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String turnoStr = rs.getString("turno");
+                    if (turnoStr != null && !turnoStr.isBlank()) {
+                        return Turno.valueOf(turnoStr);
+                    }
+                }
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new PersistenciaException("Erro ao buscar turno do funcionario: " + e.getMessage());
         }
     }
 

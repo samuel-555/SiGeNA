@@ -1,4 +1,4 @@
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%!
     boolean temPermissaoCadastro(Cargo cargo, String funcionalidade) {
         if (cargo == null) {

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
@@ -22,10 +22,18 @@
         <title>Gestão de Relatórios de Saúde</title>
         <link rel="stylesheet" href="CSS/style.css">
         <link rel="stylesheet" href="CSS/stylerelatorios.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo"><a href="<%= homeDestino %>">SiGeNA</a></div>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
         </header>
         <main class="relatorio-main">
             <h1>Gestão de Relatórios de Saúde</h1>
@@ -75,10 +83,15 @@
                                        value="${not empty relatorioEdicao ? relatorioEdicao.peso : ''}"
                                        placeholder="Ex: 12.5">
 
-                                <label>Condição Geral:</label>
-                                <input type="text" name="status" maxlength="255"
-                                       value="${not empty relatorioEdicao ? relatorioEdicao.status : ''}"
-                                       placeholder="Ex: Saudável, sem anormalidades" required>
+                                <label>Status do animal:</label>
+                                <div class="status-checkbox">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="apto" value="APTO"
+                                               <c:if test="${empty relatorioEdicao || relatorioEdicao.status == 'APTO'}">checked</c:if>>
+                                        Apto para atividades
+                                    </label>
+                                    <span class="status-toggle-hint">Desmarque para registrar como inapto.</span>
+                                </div>
 
                                 <label>Observações:</label>
                                 <textarea name="observacoes" rows="4" placeholder="Detalhes adicionais sobre o exame."><c:out value='${not empty relatorioEdicao ? relatorioEdicao.observacoes : ""}'/></textarea>
@@ -117,6 +130,12 @@
                                     </option>
                                 </c:forEach>
                             </select>
+                            <label for="statusFiltro">Status:</label>
+                            <select id="statusFiltro" name="statusFiltro">
+                                <option value="">Todos</option>
+                                <option value="APTO" <c:if test="${statusSelecionado == 'APTO'}">selected</c:if>>Aptos</option>
+                                <option value="INAPTO" <c:if test="${statusSelecionado == 'INAPTO'}">selected</c:if>>Inaptos</option>
+                            </select>
                             <button type="submit" class="btn filtro-btn">Consultar Histórico</button>
                         </form>
                     </div>
@@ -128,7 +147,7 @@
                                     <th>Animal</th>
                                     <th>Data</th>
                                     <th>Peso</th>
-                                    <th>Condição</th>
+                                    <th>Status</th>
                                     <th>Observações</th>
                                     <th class="acoes-header">Ações</th>
                                 </tr>
@@ -146,7 +165,7 @@
                                                 <td>${relatorio.animal.nome}</td>
                                                 <td>${relatorio.dataRelatorioFormatado}</td>
                                                 <td>
-                                                    <c:choose>
+                                                <c:choose>
                                                         <c:when test="${not empty relatorio.peso}">
                                                             ${relatorio.peso} kg
                                                         </c:when>
@@ -155,7 +174,19 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </td>
-                                                <td>${relatorio.status}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${relatorio.status == 'APTO'}">
+                                                            <span class="status-badge apto">Apto</span>
+                                                        </c:when>
+                                                        <c:when test="${relatorio.status == 'INAPTO'}">
+                                                            <span class="status-badge inapto">Inapto</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="status-badge">-</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td class="col-observacoes">
                                                     <c:out value='${relatorio.observacoes}'/>
                                                 </td>
@@ -164,10 +195,10 @@
                                                         <c:choose>
                                                             <c:when test="${podeEditarRelatorio}">
                                                                 <a class="btn editar" href="RelatorioSaudeController?acao=editar&id=${relatorio.id}">Editar</a>
-                                                                <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente excluir este relatório?');">
+                                                                <form method="post" action="RelatorioSaudeController" onsubmit="return confirm('Deseja realmente cancelar este relatório?');">
                                                                     <input type="hidden" name="acao" value="excluir">
                                                                     <input type="hidden" name="relatorioId" value="${relatorio.id}">
-                                                                    <button type="submit" class="btn excluir">Excluir</button>
+                                                                    <button type="submit" class="btn excluir">Cancelar</button>
                                                                 </form>
                                                             </c:when>
                                                             <c:otherwise>

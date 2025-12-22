@@ -133,7 +133,7 @@ body {
     border-bottom: 1px solid #eee;
     color: var(--zoo-dark-green);
 }
-.notif-item {
+.notificacao {
     padding: 10px 12px;
     font-size: 12px;
     border-bottom: 1px solid #f9f9f9;
@@ -502,6 +502,8 @@ body {
     margin: 0;
     font-weight: normal;
     font-size: 0.95em;
+}
+
 @media (max-width: 992px) {
     .header-info-center {
         display: none;

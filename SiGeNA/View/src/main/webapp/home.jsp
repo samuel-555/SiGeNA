@@ -33,22 +33,32 @@
     }
 
     List<Feature> features = new ArrayList<>();
-    features.add(new Feature("animais", "Animais", "AnimalController?acao=listar"));
-    features.add(new Feature("especies", "Espécies", "EspeciesController"));
-    features.add(new Feature("habitat", "Habitat", "HabitatController"));
-    features.add(new Feature("tratamentos", "Tratamentos", "tratamentos.jsp"));
-    features.add(new Feature("planos", "Alimentação", "PlanosAlimentaresController"));
-    features.add(new Feature("produtos", "Estoque", "ProdutoController?acao=listar"));
-    features.add(new Feature("relatorios", "Saúde", "RelatorioSaudeController"));
-    features.add(new Feature("fornecedores", "Fornecedores", "FornecedorController?acao=listar"));
-    features.add(new Feature("funcionarios", "Funcionários", "FuncionarioServlet"));
+    features.add(new Feature("animais", "Gerenciamento de Animais", "AnimalController?acao=listar"));
+    features.add(new Feature("especies", "Gerenciamento de Espécies", "EspeciesController"));
+    features.add(new Feature("habitat", "Gerenciamento de Habitat", "HabitatController"));
+    features.add(new Feature("tratamentos", "Gerenciamento de Tratamentos Médicos", "tratamentos.jsp"));
+    features.add(new Feature("planos", "Gerenciamento de Planos Alimentares", "PlanosAlimentaresController"));
+    features.add(new Feature("produtos", "Gerenciamento de Produtos", "ProdutoController?acao=listar"));
+    features.add(new Feature("relatorios", "Gerenciamento de Relatórios de Saúde", "RelatorioSaudeController"));
+    features.add(new Feature("enriquecimento", "Gerenciamento de Enriquecimento", "enriquecimento"));
+    features.add(new Feature("visitantes", "Gerenciamento de Visitantes", "visitantes"));
+    features.add(new Feature("doacoes", "Gestão de Doações", "doacoes"));
+    features.add(new Feature("fornecedores", "Gestão de Fornecedores", "FornecedorController?acao=listar"));
+    features.add(new Feature("funcionarios", "Gerenciamento de Funcionários", "FuncionarioServlet"));
+    features.add(new Feature("agendamentos", "Gestão de Agendamentos", "AgendamentoController?acao=listar"));
     features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias.jsp"));
     features.add(new Feature("historico", "Histórico", "HistoricoController?acao=buscar"));
-    
+    features.add(new Feature("eventos", "Eventos", "EventoController?acao=listar"));
 
     Set<String> permitido = new LinkedHashSet<>();
     if (cargo == Cargo.GERENTE) {
-        for (Feature f : features) permitido.add(f.id);
+        for (Feature f : features) permitido.add(f.id); 
+    } else if (cargo == Cargo.ZOOTECNISTA) {
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "enriquecimento"));
+    } else if (cargo == Cargo.VETERINARIO) {
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento"));
+    } else if (cargo == Cargo.TRATADOR) {
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos"));
     } else {
         permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios"));
     }
@@ -95,21 +105,24 @@
                 <div class="notif-dropdown" id="notifDropdown">
                     <div class="notif-header">Notificações</div>
                     <div class="notif-body">
-                        <c:choose>
-                            <c:when test="${empty tarefas and empty tarefasAtrasadas}">
-                                <div class="notif-item">Sem novas notificações</div>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="t" items="${tarefasAtrasadas}">
-                                    <div class="notif-item" style="color:#e03131"><b>Atrasada:</b> ${t.nome}</div>
-                                </c:forEach>
-                                <c:forEach var="t" items="${tarefas}">
-                                    <c:if test="${!t.concluida}">
-                                        <div class="notif-item"><b>Pendente:</b> ${t.nome}</div>
-                                    </c:if>
-                                </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
+                         <c:forEach var="n" items="${notificacoes}">
+                 <div class="notificacao ${n.lida ? 'lida' : 'nao-lida'}">
+
+                    <c:if test="${!n.lida}">
+                        <form id="form-${n.id}" action="NotificacaoController" method="post">
+                            <input type="hidden" name="id" value="${n.id}">
+                        </form>
+                        <a href="#" onclick="document.getElementById('form-${n.id}').submit(); return false;">
+                            ${n.titulo}
+                        </a>
+                    </c:if>
+
+                    <c:if test="${n.lida}">
+                        <p>${n.titulo}</p>
+                    </c:if>
+
+                </div>
+                </c:forEach>
                     </div>
                 </div>
             </div>

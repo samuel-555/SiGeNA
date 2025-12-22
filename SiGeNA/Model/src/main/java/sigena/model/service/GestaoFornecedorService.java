@@ -21,6 +21,10 @@ public class GestaoFornecedorService {
     public List<Fornecedor> listarFornecedores(String busca, String filtro) throws PersistenciaException {
         return fornecedorDAO.listar(busca, filtro);
     }
+    
+    public List<Fornecedor> listarFornecedores() throws PersistenciaException {
+        return fornecedorDAO.listar("","");
+    }
 
     public Fornecedor buscarFornecedor(Long id) throws PersistenciaException {
         return fornecedorDAO.buscarPorId(id);

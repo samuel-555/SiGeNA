@@ -49,7 +49,7 @@
     features.add(new Feature("animais", "Gestão de Animais", "AnimalController?acao=listar"));
     features.add(new Feature("especies", "Gerenciamento de Espécies", "EspeciesController"));
     features.add(new Feature("habitat", "Gestão de Habitat", "HabitatController"));
-    features.add(new Feature("tratamentos", "Gestão de Tratamentos Médicos", "tratamentos.jsp"));
+    features.add(new Feature("tratamentos", "Gestão de Tratamentos Médicos", "TratamentosController"));
     features.add(new Feature("planos", "Gestão de Planos Alimentares", "PlanosAlimentaresController"));
     features.add(new Feature("produtos", "Gestão de Produtos", "ProdutoController?acao=listar"));
     features.add(new Feature("relatorios", "Gestão de Relatórios de Saúde", "RelatorioSaudeController"));
@@ -60,7 +60,7 @@
     features.add(new Feature("funcionarios", "Gestão de Funcionários", "FuncionarioServlet"));
     features.add(new Feature("agendamentos", "Gestão de Agendamentos", "AgendamentoController?acao=listar"));
     features.add(new Feature("eventos", "Gestão de Eventos", "EventoController?acao=listar"));
-    features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias.jsp"));
+    features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias"));
     features.add(new Feature("historico", "Histórico", "HistoricoController?acao=buscar"));
 
     Set<String> permitido = new LinkedHashSet<>();
@@ -69,13 +69,13 @@
             permitido.add(f.id);
         }
     } else if (cargo == Cargo.ZOOTECNISTA) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "enriquecimento"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "enriquecimento", "ocorrencias"));
     } else if (cargo == Cargo.VETERINARIO) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento", "eventos"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento", "eventos", "ocorrencias"));
     } else if (cargo == Cargo.TRATADOR) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos", "eventos"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos", "eventos", "ocorrencias"));
     } else {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "ocorrencias"));
     }
 
     List<Feature> visiveis = new ArrayList<>();

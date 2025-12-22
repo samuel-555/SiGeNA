@@ -54,12 +54,10 @@
                 </select>
 
                 <label>Data:</label>
-                <input type="date" name="data" max="<%= java.time.LocalDate.now() %>" value="${oc != null ? oc.data.toLocalDate() : ''}" required>
+                <input type="date" name="data" max="<%= java.time.LocalDate.now()%>" value="<%= oc != null && oc.getData() != null ? oc.getData().toLocalDate() : ""%>" required>
 
                 <label>Hora:</label>
-                <input type="time" name="hora"
-       value="<%= oc != null && oc.getData() != null ? oc.getData().toLocalTime() : "" %>"
-       required />
+                <input type="time" name="hora" value="<%= oc != null && oc.getData() != null ? oc.getData().toLocalTime() : ""%>" required>
 
 
                 <label>Descrição:</label>

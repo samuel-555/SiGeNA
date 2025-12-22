@@ -41,7 +41,7 @@
 
         <div class="container">
             <h1>Gestão de Ocorrências</h1>
-            
+
             <div class="botoes-acoes">
                 <a href="cadastrar-ocorrencias.jsp" class="btn">Registrar Nova Ocorrência</a>
             </div>
@@ -106,7 +106,7 @@
                             <td><%= oc.getData() != null ? oc.getData().toLocalTime() : "-"%></td>
                             <td><%= oc.getDescricao() != null ? oc.getDescricao() : "-"%></td>
 
-                            
+
                             <td>
                                 <%
                                     boolean resolvida = oc.getStatus() == StatusOcorrencia.RESOLVIDO;
@@ -118,13 +118,19 @@
                                     Editar
                                 </a>
 
-                                <form action="ocorrencias" method="post" style="display:inline">
+                                <form action="ocorrencias"
+                                      method="post"
+                                      style="display:inline"
+                                      onsubmit="return confirm('Tem certeza que deseja cancelar esta ocorrência?');">
+
                                     <input type="hidden" name="acao" value="cancelar">
                                     <input type="hidden" name="id" value="<%= oc.getId()%>">
+
                                     <button class="btn-pequeno excluir" type="submit">
                                         Cancelar
                                     </button>
                                 </form>
+
                                 <% } else { %>
                                 <span style="color: gray;">Encerrada</span>
                                 <% } %>
@@ -170,12 +176,13 @@
 
                     <label>Data:</label>
                     <input type="date" name="data"
-                           value="<%= ocEd.getData() != null ? ocEd.getData().toLocalDate() : ""%>" required/>
+                           value="<%= ocEd.getData() != null ? ocEd.getData().toLocalDate() : ""%>"
+                           required/>
 
                     <label>Hora:</label>
                     <input type="time" name="hora"
-                           value="<%= ocEd.getData() != null ? ocEd.getData().toLocalTime() : ""%>" required/>
-
+                           value="<%= ocEd.getData() != null ? ocEd.getData().toLocalTime() : ""%>"
+                           required/>
                     <button type="submit" class="btn">Salvar</button>
                     <a href="ocorrencias" class="btn cancelar">Cancelar</a>
                 </form>

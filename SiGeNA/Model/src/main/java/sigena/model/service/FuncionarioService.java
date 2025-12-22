@@ -7,6 +7,7 @@ import sigena.model.common.exception.BusinessException;
 import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.ValidationException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class FuncionarioService {
 
@@ -49,7 +50,21 @@ public class FuncionarioService {
         return funcionarioDAO.buscarPorId(id);
     }
 
-    public java.util.List<Funcionario> listar() throws SQLException, DatabaseException {
+    public List<Funcionario> buscarComFiltro(
+            String nome,
+            String cargo,
+            String turno,
+            String estado
+    ) throws DatabaseException {
+
+        return funcionarioDAO.buscarComFiltro(nome, cargo, turno, estado);
+    }
+
+    public List<Funcionario> listar(String busca) throws DatabaseException {
+        return funcionarioDAO.listar(busca);
+    }
+
+    public List<Funcionario> listar() throws DatabaseException {
         return funcionarioDAO.listar();
     }
 

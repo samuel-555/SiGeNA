@@ -109,15 +109,38 @@ public class FuncionarioDAO {
     }
 
     public List<Funcionario> listar() throws DatabaseException {
+        return listar(null);
+    }
+
+    public List<Funcionario> listar(String busca) throws DatabaseException {
+
         List<Funcionario> lista = new ArrayList<>();
-        String sql = """
-        SELECT * FROM funcionarios  WHERE estado <> 'CANCELADO' ORDER BY nome; 
-        """;
 
-        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM funcionarios ");
+        sql.append("WHERE 1=1 ");
+        sql.append("AND estado <> 'CANCELADO' ");
 
-            while (rs.next()) {
-                lista.add(mapFuncionario(rs));
+        boolean temBusca = busca != null && !busca.isBlank();
+        if (temBusca) {
+            sql.append("AND (nome LIKE ? OR cpf LIKE ?) ");
+        }
+
+        sql.append("ORDER BY nome");
+
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int index = 1;
+
+            if (temBusca) {
+                ps.setString(index++, "%" + busca + "%");
+                ps.setString(index++, "%" + busca + "%");
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapFuncionario(rs));
+                }
             }
 
         } catch (SQLException e) {
@@ -127,39 +150,100 @@ public class FuncionarioDAO {
         return lista;
     }
 
-    public int contarAtivosPorAreaTurnoExcetoId(
-            int idFuncionario,
-            String areaAtuacao,
-            Turno turno
+    public List<Funcionario> buscarComFiltro(
+            String nome,
+            String cargo,
+            String turno,
+            String estado
     ) throws DatabaseException {
 
-        String sql = """
-        SELECT COUNT(*)
-        FROM funcionarios
-        WHERE area_atuacao = ?
-          AND turno = ?
-          AND estado = 'ATIVO'
-          AND id <> ?
-    """;
+        List<Funcionario> lista = new ArrayList<>();
 
-        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        StringBuilder sql = new StringBuilder("""
+        SELECT * FROM funcionarios
+        WHERE estado <> 'CANCELADO'
+    """);
 
-            ps.setString(1, areaAtuacao);
-            ps.setString(2, turno.name());
-            ps.setInt(3, idFuncionario);
+        List<Object> params = new ArrayList<>();
+
+        if (nome != null && !nome.isBlank()) {
+            sql.append(" AND nome LIKE ?");
+            params.add("%" + nome + "%");
+        }
+
+        if (cargo != null && !cargo.isBlank()) {
+            sql.append(" AND cargo = ?");
+            params.add(cargo);
+        }
+
+        if (turno != null && !turno.isBlank()) {
+            sql.append(" AND turno = ?");
+            params.add(turno);
+        }
+
+        if (estado != null && !estado.isBlank()) {
+            sql.append(" AND estado = ?");
+            params.add(estado);
+        }
+
+        sql.append(" ORDER BY nome");
+
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+                while (rs.next()) {
+                    lista.add(mapFuncionario(rs));
                 }
             }
 
         } catch (SQLException e) {
-            throw new DatabaseException("Erro ao contar funcionários ativos: " + e.getMessage());
+            throw new DatabaseException("Erro ao pesquisar funcionários: " + e.getMessage());
         }
 
-        return 0;
+        return lista;
     }
+    
+    public int contarAtivosPorAreaTurnoExcetoId(
+        int id,
+        String areaAtuacao,
+        Turno turno
+) throws DatabaseException {
+
+    String sql = """
+        SELECT COUNT(*) 
+        FROM funcionarios
+        WHERE estado = 'ATIVO'
+          AND area_atuacao = ?
+          AND turno = ?
+          AND id <> ?
+    """;
+
+    try (Connection con = ConexaoDB.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, areaAtuacao);
+        ps.setString(2, turno.name());
+        ps.setInt(3, id);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+
+    } catch (SQLException e) {
+        throw new DatabaseException(
+            "Erro ao contar funcionários ativos por setor e turno: " + e.getMessage()
+        );
+    }
+
+    return 0;
+}
+
 
     public List<Funcionario> pesquisar(
             String nome,
@@ -174,7 +258,8 @@ public class FuncionarioDAO {
         StringBuilder sql = new StringBuilder("""
         SELECT * FROM funcionarios
         WHERE estado <> 'CANCELADO'
-    """);
+    """
+        );
 
         if (nome != null && !nome.isEmpty()) {
             sql.append(" AND nome LIKE ?");

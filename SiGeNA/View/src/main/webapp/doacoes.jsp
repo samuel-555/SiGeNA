@@ -57,11 +57,11 @@
 
         <select name="tipo">
             <option value="">Todos os tipos</option>
-            <option value="MONETARIA" ${param.tipo == 'MONETARIA' ? 'selected' : ''}>Monet�ria</option>
+            <option value="MONETARIA" ${param.tipo == 'MONETARIA' ? 'selected' : ''}>Monetária</option>
             <option value="OUTRO" ${param.tipo == 'OUTRO' ? 'selected' : ''}>Outro</option>
         </select>
 
-        <input type="text" name="valorDescricao" placeholder="Valor ou descri��o" value="${param.valorDescricao}" />
+        <input type="text" name="valorDescricao" placeholder="Valor ou descrição" value="${param.valorDescricao}" />
         <input type="date" name="data" value="${param.data}" />
 
         <select name="recibo">
@@ -189,11 +189,11 @@
                 <input type="text" name="valorAtualizacao" value="<%= ed.getValorMonetario() != null ? ed.getValorMonetario() : "" %>" />
             </c:if>
             <c:if test="${ed.tipo != 'MONETARIA'}">
-                <label>Nova Descri‡Æo:</label>
+                <label>Nova Descrição:</label>
                 <input type="text" name="descricaoAtualizacao" value="<%= ed.getDescricaoOutro() != null ? ed.getDescricaoOutro() : "" %>" />
             </c:if>
 
-            <button type="submit" class="btn">Salvar Altera‡äes</button>
+            <button type="submit" class="btn">Salvar Alterações</button>
             <a href="doacoes" class="btn cancelar">Voltar</a>
         </form>
 
@@ -202,7 +202,7 @@
             if (recibo != null) {
         %>
             <div style="margin-top:12px;">
-                <strong>Recibo:</strong> C¢digo: <%= recibo.getCodigo() %> - Emitido em: <%= recibo.getDataEmissao() %>
+                <strong>Recibo:</strong> Código: <%= recibo.getCodigo() %> - Emitido em: <%= recibo.getDataEmissao() %>
             </div>
         <%
             }

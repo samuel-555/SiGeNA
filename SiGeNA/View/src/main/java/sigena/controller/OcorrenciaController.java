@@ -201,12 +201,20 @@ public class OcorrenciaController extends Controller {
                 return;
             }
 
+        } catch (IllegalArgumentException e) {
+
+            request.setAttribute("mensagemErro", e.getMessage());
+            request.setAttribute("ocorrencias", service.listar());
+            request.getRequestDispatcher("ocorrencias.jsp").forward(request, response);
+
         } catch (Exception e) {
             e.printStackTrace();
 
-            request.setAttribute("mensagemErro", "Erro ao processar ocorrência.");
+            request.setAttribute("mensagemErro", "Erro interno ao processar ocorrência.");
+            request.setAttribute("ocorrencias", service.listar());
             request.getRequestDispatcher("ocorrencias.jsp").forward(request, response);
         }
+
     }
 
     private Ocorrencia montarOcorrencia(HttpServletRequest request) throws PersistenciaException {
@@ -232,8 +240,13 @@ public class OcorrenciaController extends Controller {
         LocalDate data = LocalDate.parse(dataStr);
         LocalTime hora = LocalTime.parse(horaStr);
 
-        if (data.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("A data da ocorrência não pode ser futura.");
+
+        LocalDateTime dataHoraInformada = LocalDateTime.of(data, hora);
+
+        if (dataHoraInformada.isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException(
+                    "A data e hora da ocorrência não podem ser futuras."
+            );
         }
 
         Ocorrencia oc = new Ocorrencia();

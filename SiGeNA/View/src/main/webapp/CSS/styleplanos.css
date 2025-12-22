@@ -157,3 +157,11 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--zoo-dark-green);
     box-shadow: 0 0 0 4px rgba(0,89,63,0.05);
 }
+
+table td:last-child {
+    text-align: center;
+}
+
+table td:last-child .btn-pequeno {
+    margin: 0 4px;
+}

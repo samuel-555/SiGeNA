@@ -43,7 +43,7 @@
                 
                 <label for="especie">Espécie:*</label>
                 <select name="especie" id="especie" class="obrigatorio">
-                    <option value="">Selecione uma espécie</option>
+                    <option value="-1">Selecione uma espécie</option>
                     <c:forEach items="${especies}" var="especie">
                         <option value="${especie.id}">${especie.nome}</option>
                     </c:forEach>

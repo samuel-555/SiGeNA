@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
         obrigatorios.forEach(campo => {
             let valor = campo.value;
 
-            if (valor === null || valor === undefined || valor.trim() === "") {
+            if (valor === null || valor === undefined || valor.trim() === "" || valor == -1) {
                 valido = false;
                 campo.focus();
                 return;
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!valido) {
             event.preventDefault();
-            window.alert("Por favor, preencha todos os campos obrigatórios marcados com *.");
+            window.alert("Por favor, preencha todos os campos obrigatórios, marcados com *.");
         }
     });
 });

@@ -2,7 +2,6 @@ package sigena.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -14,12 +13,14 @@ import sigena.model.dao.PlanoAlimentarDAO;
 import sigena.model.domain.Animal;
 import sigena.model.domain.PlanoAlimentar;
 import sigena.model.domain.ItemPlanoAlimentar;
+import sigena.model.service.GestaoPlanoAlimentarService;
 
 @WebServlet("/PlanosAlimentaresController")
-public class PlanosAlimentaresController extends HttpServlet {
+public class PlanosAlimentaresController extends Controller {
 
     private final PlanoAlimentarDAO dao = new PlanoAlimentarDAO();
     private final AnimalDAO animalDAO = new AnimalDAO();
+    private final GestaoPlanoAlimentarService service = new GestaoPlanoAlimentarService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -94,7 +95,8 @@ public class PlanosAlimentaresController extends HttpServlet {
                         plano.addItem(new ItemPlanoAlimentar(a, g, v));
                     }
                 }
-                dao.inserir(plano);
+                String cpfLogado = getCpfUsuarioLogado(request);
+                service.cadastrar(plano, cpfLogado);
                 response.sendRedirect("PlanosAlimentaresController");
                 return;
             }

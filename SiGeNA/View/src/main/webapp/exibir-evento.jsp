@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
 
 <%
@@ -8,6 +9,8 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeGerenciarEventos = temPermissaoGerenciamento(cargo, "eventos");
 %>
 
 <!DOCTYPE html>
@@ -23,7 +26,7 @@
 <body>
 
 <header class="topbar">
-            <a href="TarefaController" class="titulo">
+            <a href="HomeController" class="titulo">
                 <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
                 <span>SiGeNA</span>
             </a>
@@ -94,7 +97,9 @@
         <div class="botoes-acoes">
 
             <c:if test="${not evento.cancelado and not evento.ocorrido}">
+                <% if (podeGerenciarEventos) { %>
                 <a href="EventoController?acao=editar&id=${evento.id}" class="btn">Editar</a>
+                <% } %>
 
                 <form action="EventoController" method="post" style="display:inline">
                     <input type="hidden" name="acao" value="cancelar">

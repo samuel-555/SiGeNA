@@ -24,7 +24,7 @@ public class GestaoTarefaService {
         if (!validarData(dataPConclusao)) {
             throw new DataInvalidaException("A data de conclusão deve ser posterior ao momento atual.");
         }
-
+            
         Tarefa tarefa = new Tarefa(nome, texto, id_destinatario, dataPConclusao, cpfAutor);
         dao.inserir(tarefa);
     }
@@ -39,7 +39,7 @@ public class GestaoTarefaService {
 
     public void editar(long id, String nome, String texto, int idDestinatario, LocalDateTime dataPConclusao, String cpfAutor, String cpfLogado)
             throws DataInvalidaException {
-
+        
         if (!validarData(dataPConclusao)) {
             throw new DataInvalidaException("A data de conclusão deve ser posterior ao momento atual.");
         }
@@ -49,7 +49,11 @@ public class GestaoTarefaService {
         if (tarefaBanco == null) {
             throw new IllegalArgumentException("Tarefa não encontrada.");
         }
-
+        
+        if (tarefaBanco.getConcluida()) {
+            throw new IllegalStateException("Tarefa concluída não pode ser editada.");
+        }
+        
         if (!tarefaBanco.getCpfAutor().equals(cpfLogado)) {
             throw new SecurityException("Permissão negada: você não é o autor desta tarefa.");
         }
@@ -64,9 +68,11 @@ public class GestaoTarefaService {
 
     public void editarConcluida(long id, boolean concluida, String cpf) {
         Tarefa tarefa = dao.buscar(id);
-        if (tarefa == null) {
+        if (tarefa == null) 
             throw new IllegalArgumentException("Tarefa não encontrada.");
-        }
+        
+        if (tarefa.getConcluida())
+            throw new IllegalStateException("Tarefa já está concluída");
 
         dao.editarConcluida(id, concluida);
 
@@ -80,12 +86,16 @@ public class GestaoTarefaService {
     }
 
     public void excluir(Tarefa tarefa, String cpfLogado) {
-        if (!tarefa.getCpfAutor().equals(cpfLogado)) {
-            throw new SecurityException("Permissão negada: você não pode excluir uma tarefa que não criou.");
-        }
+
+        if (tarefa.getConcluida())
+            throw new IllegalStateException("Tarefa concluída não pode ser excluída");
+
+        if (!tarefa.getCpfAutor().equals(cpfLogado))
+            throw new SecurityException("Usuário não autorizado");
 
         dao.excluir(tarefa);
     }
+
 
     public boolean validarData(LocalDateTime data) {
         if (data == null) {
@@ -106,3 +116,4 @@ public class GestaoTarefaService {
         return dao.listarDoDiaPorCpf(cpf);
     }
 }
+    

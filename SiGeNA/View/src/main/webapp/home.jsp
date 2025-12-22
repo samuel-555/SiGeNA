@@ -193,64 +193,105 @@
             </section>
         </c:if>
 
-        <section class="tarefas-section">
-            <div class="tarefas-header">
-                <h2 class="tarefas-title">Tarefas do Dia</h2>
-                <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
-                    <a href="TarefaController?acao=cadastrar" class="btn-primary">Criar Nova Tarefa</a>
-                </c:if>
-            </div>
-            <div class="tarefas-container">
-                <c:choose>
-                    <c:when test="${empty tarefas}">
-                        <div style="padding: 40px; text-align: center; color: #999;"><p>Não há tarefas para hoje.</p></div>
-                    </c:when>
-                    <c:otherwise>
-                        <table class="modern-table">
-                            <thead>
-                                <tr><th>Nome</th><th>Descrição</th><th>Prazo</th><th>Status</th><th style="text-align:right">Ações</th></tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="tarefa" items="${tarefas}">
-                                    <tr class="${tarefa.concluida ? 'row-done' : ''}">
-                                        <td class="task-name">${tarefa.nome}</td>
-                                        <td>${tarefa.texto}</td>
-                                        <td>${tarefa.dataPConclusao}</td>
-                                        <td>
-                                            <form method="post" action="TarefaController">
-                                                <input type="hidden" name="acao" value="concluir">
-                                                <input type="hidden" name="id" value="${tarefa.id}">
-                                                <input type="hidden" name="status" value="true">
-                                                <input type="checkbox" class="task-checkbox" 
-                                                       <c:if test="${tarefa.concluida}">checked disabled</c:if>
-                                                       onchange="confirmarConclusao(this, '${tarefa.nome}')">
-                                            </form>
-                                        </td>
-                                        <td style="text-align:right">
-                                            <c:choose>
-                                                <c:when test="${!tarefa.concluida}">
-                                                    <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
-                                                        <a href="TarefaController?acao=editar&id=${tarefa.id}" class="btn-action editar">Editar</a>
-                                                        <form action="TarefaController" method="POST" style="display:inline;" onsubmit="return confirm('Excluir esta tarefa?')">
-                                                            <input type="hidden" name="acao" value="excluir">
-                                                            <input type="hidden" name="id" value="${tarefa.id}">
-                                                            <button type="submit" class="btn-action excluir" style="border:none; background:none; color:#e03131; cursor:pointer; font-weight:700;">EXCLUIR</button>
-                                                        </form>
-                                                    </c:if>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span style="font-size: 10px; color: #2ecc71; font-weight: 800; text-transform: uppercase;">✔ Concluída</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </section>
+       <section class="tarefas-section">
+    <div class="tarefas-header">
+        <h2 class="tarefas-title">Tarefas do Dia</h2>
+
+        <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
+            <a href="TarefaController?acao=cadastrar" class="btn-primary">
+                Criar Nova Tarefa
+            </a>
+        </c:if>
+    </div>
+
+    <div class="tarefas-container">
+        <c:choose>
+            <c:when test="${empty tarefas}">
+                <div style="padding: 40px; text-align: center; color: #999;">
+                    <p>Não há tarefas para hoje.</p>
+                </div>
+            </c:when>
+
+            <c:otherwise>
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Prazo</th>
+                            <th>Marcar como concluída</th>
+                            <th style="text-align:right">Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <c:forEach var="tarefa" items="${tarefas}">
+                            <tr class="${tarefa.concluida ? 'row-done' : ''}">
+                                <td class="task-name">${tarefa.nome}</td>
+                                <td>${tarefa.texto}</td>
+                                <td>${tarefa.dataPConclusao}</td>
+
+                                <td>
+                                    <form method="post"
+                                          action="TarefaController"
+                                          onsubmit="return false;">
+
+                                        <input type="hidden" name="acao" value="concluir">
+                                        <input type="hidden" name="id" value="${tarefa.id}">
+                                        <input type="hidden" name="status" value="true">
+
+                                        <input type="checkbox"
+                                               class="task-checkbox"
+                                               <c:if test="${tarefa.concluida}">
+                                                   checked disabled
+                                               </c:if>
+                                               onclick="confirmarConclusao(this, '${tarefa.nome}')">
+                                    </form>
+                                </td>
+
+                                <td style="text-align:right">
+                                    <c:choose>
+                                        <c:when test="${tarefa.concluida}">
+                                            <span style="
+                                                font-size: 11px;
+                                                color: #2ecc71;
+                                                font-weight: 800;
+                                                text-transform: uppercase;">
+                                                ✔ Concluída
+                                            </span>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
+                                                <a href="TarefaController?acao=editar&id=${tarefa.id}"
+                                                   class="btn-action editar">
+                                                    Editar
+                                                </a>
+
+                                                <form action="TarefaController"
+                                                      method="post"
+                                                      style="display:inline;"
+                                                      onsubmit="return confirm('Excluir esta tarefa?')">
+                                                    <input type="hidden" name="acao" value="excluir">
+                                                    <input type="hidden" name="id" value="${tarefa.id}">
+                                                    <button type="submit"
+                                                            class="btn-action excluir"
+                                                            style="border:none; background:none;">
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</section>
     </main>
 
     <footer class="footer-dark">
@@ -276,16 +317,25 @@
         function resetTimer() { clearInterval(autoPlayInterval); startTimer(); }
         
         function confirmarConclusao(checkbox, nomeTarefa) {
-            if (checkbox.checked) {
-                if (confirm("Deseja concluir '" + nomeTarefa + "'? Após isso, não será possível editar ou excluir.")) {
-                    const sound = document.getElementById('clickSound');
-                    if(sound) sound.play();
-                    setTimeout(() => checkbox.form.submit(), 300);
-                } else {
-                    checkbox.checked = false;
-                }
-            }
+            if (checkbox.disabled) return;
+            
+        checkbox.checked = false;
+
+        if (!confirm(
+            "Deseja concluir '" + nomeTarefa +
+            "'?\nApós isso, não será possível editar ou excluir."
+        )) {
+            return;
         }
+        
+        checkbox.checked = true;
+
+        const form = checkbox.closest("form");
+
+        setTimeout(() => {
+            form.submit();
+         }, 100);
+}
 
         function toggleNotifs() { 
             const d = document.getElementById('notifDropdown');

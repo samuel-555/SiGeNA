@@ -89,15 +89,19 @@ public class TarefaController extends Controller {
 
         try {
             switch (acao) {
-                case "inserir" ->
+                case "inserir":
                     cadastrar(request, response);
-                case "editar" ->
+                    break;
+                case "editar" :
                     editar(request, response);
-                case "excluir" ->
+                    break;
+                case "excluir":
                     excluir(request, response);
-                case "concluir" ->
+                    break;
+                case "concluir":
                     concluir(request, response);
-                default ->
+                    break;
+                default:
                     response.sendRedirect("TarefaController");
             }
         } catch (Exception e) {
@@ -165,6 +169,10 @@ public class TarefaController extends Controller {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
+        catch (IllegalStateException e) {
+            response.sendRedirect("TarefaController");
+            return;
+}
 
         response.sendRedirect("TarefaController");
     }
@@ -189,6 +197,10 @@ public class TarefaController extends Controller {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
+        catch (IllegalStateException e) {
+            response.sendRedirect("TarefaController");
+            return;
+        }
 
         response.sendRedirect("TarefaController");
     }
@@ -206,7 +218,7 @@ public class TarefaController extends Controller {
             GestaoTarefaService service = new GestaoTarefaService();
             service.editarConcluida(id, true, cpf);
         }
-
+        
         response.sendRedirect("TarefaController");
     }
 }

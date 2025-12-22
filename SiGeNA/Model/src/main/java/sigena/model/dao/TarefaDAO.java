@@ -104,7 +104,7 @@ public class TarefaDAO {
 
     
     public void editar(long id, Tarefa tarefa){
-        String sql = "UPDATE tarefas SET nome=?, texto=?, concluida=?, funcionario_id=?, dataCadastro=?, dataPConclusao=? WHERE id=?";
+        String sql = "UPDATE tarefas SET nome=?, texto=?, concluida=?, funcionario_id=?, dataCadastro=?, dataPConclusao=? WHERE id=? AND concluida = false";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
@@ -125,7 +125,7 @@ public class TarefaDAO {
     }
     
     public void editarConcluida(long id, boolean concluida){
-        String sql = "UPDATE tarefas SET concluida=? WHERE id=?";
+        String sql = "UPDATE tarefas SET concluida=? WHERE id=? AND concluida = false";
 
         try(Connection con = ConexaoDB.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
@@ -142,7 +142,7 @@ public class TarefaDAO {
     
     public void excluir(Tarefa tarefa) {
         Long id = tarefa.getId();
-        String sql = "DELETE FROM tarefas WHERE id=?";
+        String sql = "DELETE FROM tarefas WHERE id=? AND concluida = false";
         
         try(Connection con = ConexaoDB.getConnection();
           
@@ -191,39 +191,41 @@ public class TarefaDAO {
     
     public List<Tarefa> listarDoDia() {
 
-        List<Tarefa> lista = new ArrayList<>();
+    List<Tarefa> lista = new ArrayList<>();
 
-        String sql = """
-            SELECT id, nome, texto, concluida, funcionario_id, dataCadastro, dataPConclusao, cpfAutor
-            FROM tarefas
-            WHERE DATE(dataPConclusao) = CURRENT_DATE
-            ORDER BY dataPConclusao
-        """;
+    String sql = """
+        SELECT id, nome, texto, concluida, funcionario_id,
+               dataCadastro, dataPConclusao, cpfAutor
+        FROM tarefas
+        WHERE dataPConclusao >= CURRENT_DATE
+          AND dataPConclusao < CURRENT_DATE + INTERVAL 1 DAY
+        ORDER BY dataPConclusao
+    """;
 
-        try (Connection con = ConexaoDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+    try (Connection con = ConexaoDB.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                Tarefa tarefa = new Tarefa(
-                    rs.getString("nome"),
-                    rs.getString("texto"),
-                    rs.getBoolean("concluida"),
-                    rs.getInt("funcionario_id"),
-                    rs.getObject("dataCadastro", LocalDateTime.class),
-                    rs.getObject("dataPConclusao", LocalDateTime.class)
-                );
-                tarefa.setId(rs.getLong("id"));
-                tarefa.setCpfAutor(rs.getString("cpfAutor"));
-                lista.add(tarefa);
-            }
-        } 
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        while (rs.next()) {
+            Tarefa tarefa = new Tarefa(
+                rs.getString("nome"),
+                rs.getString("texto"),
+                rs.getBoolean("concluida"),
+                rs.getInt("funcionario_id"),
+                rs.getObject("dataCadastro", LocalDateTime.class),
+                rs.getObject("dataPConclusao", LocalDateTime.class)
+            );
+            tarefa.setId(rs.getLong("id"));
+            tarefa.setCpfAutor(rs.getString("cpfAutor"));
+            lista.add(tarefa);
         }
-
-        return lista;
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
+
+    return lista;
+}
+
 
     
     public List<Tarefa> listarDoDiaPorUsuario(int idUsuario) {
@@ -272,40 +274,42 @@ public class TarefaDAO {
 
     String sql = """
         SELECT t.id, t.nome, t.texto, t.concluida,
-               t.funcionario_id, t.dataCadastro, t.dataPConclusao,t.cpfAutor
+               t.funcionario_id, t.dataCadastro,
+               t.dataPConclusao, t.cpfAutor
         FROM tarefas t
         JOIN funcionarios f ON f.id = t.funcionario_id
         WHERE f.cpf = ?
-          AND DATE(t.dataPConclusao) = CURRENT_DATE
+          AND t.dataPConclusao >= CURRENT_DATE
+          AND t.dataPConclusao < CURRENT_DATE + INTERVAL 1 DAY
         ORDER BY t.dataPConclusao
     """;
 
     try (Connection con = ConexaoDB.getConnection();
          PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, cpf);
+        ps.setString(1, cpf);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Tarefa tarefa = new Tarefa(
-                        rs.getString("nome"),
-                        rs.getString("texto"),
-                        rs.getBoolean("concluida"),
-                        rs.getInt("funcionario_id"),
-                        rs.getObject("dataCadastro", LocalDateTime.class),
-                        rs.getObject("dataPConclusao", LocalDateTime.class)
-                    );
-                    tarefa.setId(rs.getLong("id"));
-                    tarefa.setCpfAutor(rs.getString("cpfAutor"));
-                    lista.add(tarefa);
-                }
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Tarefa tarefa = new Tarefa(
+                    rs.getString("nome"),
+                    rs.getString("texto"),
+                    rs.getBoolean("concluida"),
+                    rs.getInt("funcionario_id"),
+                    rs.getObject("dataCadastro", LocalDateTime.class),
+                    rs.getObject("dataPConclusao", LocalDateTime.class)
+                );
+                tarefa.setId(rs.getLong("id"));
+                tarefa.setCpfAutor(rs.getString("cpfAutor"));
+                lista.add(tarefa);
             }
-        } 
-        catch (SQLException e){
-            throw new RuntimeException(e);
         }
-
-        return lista;
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
+
+    return lista;
+}
+
 
 }

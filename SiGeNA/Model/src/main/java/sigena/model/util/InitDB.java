@@ -42,6 +42,7 @@ public class InitDB {
               peso DOUBLE NOT NULL,
               hostil BOOLEAN NOT NULL,
               data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL,
               FOREIGN KEY (id_especie) REFERENCES especie(id)
                  ON UPDATE CASCADE
         );
@@ -93,6 +94,7 @@ public class InitDB {
             }
         }
     }
+
     public void initRelatoriosSaude() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS relatorios_saude (
@@ -140,7 +142,7 @@ public class InitDB {
                 cargo VARCHAR(30) NOT NULL,
                 area_atuacao VARCHAR(120) NOT NULL,
                 turno ENUM('MANHA','TARDE','NOITE') NOT NULL DEFAULT 'MANHA',
-                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO') 
+                estado ENUM('ATIVO','FERIAS','LICENCA_MATERNIDADE','LICENCA_PATERNIDADE','AFASTADO','CANCELADO') 
                     NOT NULL DEFAULT 'ATIVO',
                 observacoes TEXT
             );
@@ -323,7 +325,7 @@ public class InitDB {
             st.executeUpdate(sql);
         }
     }
-    
+
     public void initTarefas() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS tarefas (
@@ -333,7 +335,8 @@ public class InitDB {
                 concluida BOOLEAN NOT NULL,
                 funcionario_id INT NOT NULL,
                 dataCadastro DATETIME NOT NULL,
-                dataPConclusao DATETIME NOT NULL
+                dataPConclusao DATETIME NOT NULL,
+                cpfAutor VARCHAR(255) NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {
@@ -341,13 +344,13 @@ public class InitDB {
         }
     }
 
-public void initDoacoes() throws SQLException {
-    String sql = """
+    public void initDoacoes() throws SQLException {
+        String sql = """
         CREATE TABLE IF NOT EXISTS doacoes (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             nome_doador VARCHAR(150) NOT NULL,
             tipo VARCHAR(50) NOT NULL,
-            valor_monetario DECIMAL(10,2),
+            valor_monetario DECIMAL(15,2),
             descricao_outro VARCHAR(255),
             observacoes TEXT,
             status VARCHAR(20) NOT NULL DEFAULT 'ATIVA',
@@ -357,14 +360,13 @@ public void initDoacoes() throws SQLException {
         );
     """;
 
-    try (Statement stmt = con.createStatement()) {
-        stmt.execute(sql);
+        try (Statement stmt = con.createStatement()) {
+            stmt.execute(sql);
+        }
     }
-}
-
 
     public void initRecibosDoacao() throws SQLException {
-    String sql = """
+        String sql = """
         CREATE TABLE IF NOT EXISTS recibo_doacao (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             doacao_id BIGINT NOT NULL,
@@ -374,11 +376,10 @@ public void initDoacoes() throws SQLException {
         );
         """;
 
-    try (Statement st = con.createStatement()) {
-        st.executeUpdate(sql);
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
     }
-}
-
 
     public void initProdutos() throws SQLException {
         String sql = """ 
@@ -407,7 +408,9 @@ public void initDoacoes() throws SQLException {
                   email VARCHAR(50),
                   endereco VARCHAR(100),
                   tipo VARCHAR(50) NOT NULL,
-                  descricao TEXT
+                  descricao TEXT,
+                  data_de_insercao DATETIME NOT NULL,
+                  arquivado BOOLEAN NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {
@@ -428,6 +431,56 @@ public void initDoacoes() throws SQLException {
                 REFERENCES habitat(nome) ON DELETE CASCADE
         );
         """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+    
+    public void initEventos() throws SQLException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS eventos (
+              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+              titulo VARCHAR(100) NOT NULL, 
+              descricao TEXT,
+              data_programada DATETIME NOT NULL,
+              ocorrido BOOLEAN NOT NULL,
+              cancelado BOOLEAN NOT NULL,
+              data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initNotificacao() throws SQLException {
+        String sql = """
+                CREATE TABLE IF NOT EXISTS notificacao (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        idDestinatario INT NOT NULL,
+        titulo VARCHAR(255) NOT NULL,
+        lida BOOLEAN NOT NULL DEFAULT FALSE,
+        data_criacao DATETIME NOT NULL,
+        FOREIGN KEY (idDestinatario) REFERENCES usuarios(id)
+        );
+        """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
+
+    public void initOcorrencias() throws SQLException {
+        String sql = """
+    CREATE TABLE IF NOT EXISTS ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        descricao TEXT,
+        tipo VARCHAR(30) NOT NULL,
+        status VARCHAR(30) NOT NULL,
+        cpf_cadastrador VARCHAR(14) NOT NULL,
+        data DATETIME NOT NULL
+    );
+    """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
         }
@@ -464,6 +517,25 @@ public void initDoacoes() throws SQLException {
         }
     }
     
+
+    public void initHistoricoStatusOcorrencia() throws SQLException {
+    String sql = """
+    CREATE TABLE IF NOT EXISTS historico_status_ocorrencia (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        ocorrencia_id BIGINT NOT NULL,
+        status_anterior VARCHAR(20) NULL,
+        status_novo VARCHAR(20) NOT NULL,
+        cpf_responsavel VARCHAR(14) NOT NULL,
+        data_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (ocorrencia_id) REFERENCES ocorrencia(id)
+    );
+    """;
+
+    try (Statement st = con.createStatement()) {
+        st.executeUpdate(sql);
+    }
+}
+
     public void initHistorico() throws SQLException {
         String sql = """
         CREATE TABLE IF NOT EXISTS historico (
@@ -485,6 +557,7 @@ public void initDoacoes() throws SQLException {
             initEspecies();
             initFuncionarios();
             initUsuarios();
+            new UsuarioDAO().sincronizarFuncionariosComUsuarios();
             initAnimais();
             initTratamento();
             initPlanosAlimentares();
@@ -494,6 +567,8 @@ public void initDoacoes() throws SQLException {
             initRelatoriosSaude();
             initDoacoes();
             initRecibosDoacao();
+            initOcorrencias();
+            initHistoricoStatusOcorrencia();
             initVisitas();
             initTarefas();
             initHistorico();
@@ -501,6 +576,8 @@ public void initDoacoes() throws SQLException {
             initAgendamentos();
             initFornecedores();
             initProdutos();
+            initEventos();
+            initNotificacao();
         } catch (SQLException | DatabaseException e) {
             throw new PersistenciaException("Erro ao inicializar tabelas: " + e.getMessage());
         }

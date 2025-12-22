@@ -7,7 +7,7 @@ import sigena.model.domain.Animal;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.HabitatVazioException;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoHabitatService {
    
@@ -93,6 +93,14 @@ public class GestaoHabitatService {
     
     public Habitat buscar(String nome){
         return dao.buscar(nome);
+    }
+    
+    public List<Habitat> buscarPorNomeOuTipo(String termo) {
+
+        if (termo == null || termo.isBlank()) 
+            return dao.listar();
+    
+        return dao.buscarPorNomeOuTipo(termo);
     }
     
     public void excluir(Habitat habitat) throws HabitatVazioException {

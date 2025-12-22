@@ -1,3 +1,4 @@
+<%@page import="sigena.model.domain.util.TipoProduto"%>
 <%@page import="java.util.List"%>
 <%@page import="sigena.model.domain.Produto"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -19,6 +20,7 @@
         : "home.jsp";
 
     String paginaHomeComContexto = request.getContextPath() + "/" + paginaHome;
+    pageContext.setAttribute("tiposProduto", TipoProduto.values());
 %>
 
 <!DOCTYPE html>

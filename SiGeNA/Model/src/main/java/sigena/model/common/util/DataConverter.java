@@ -1,8 +1,10 @@
-package sigena.model.domain.util;
+package sigena.model.common.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.Period;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class DataConverter {
     public static LocalDate toLocalDate(String data) {
@@ -10,6 +12,14 @@ public class DataConverter {
             return null;
         
         LocalDate dataOb = LocalDate.parse(data);
+        return dataOb;
+    }
+    
+    public static LocalDateTime toLocalDateTime(String data) {
+        if(data == null || data.isBlank())
+            return null;
+        
+        LocalDateTime dataOb = LocalDateTime.parse(data);
         return dataOb;
     }
     
@@ -22,6 +32,15 @@ public class DataConverter {
         return dataString;
     }
     
+    public static String toStringFormat(LocalTime tempo) {
+        if(tempo == null)
+            return null;
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String tempoString = tempo.format(formatter);
+        return tempoString;
+    }
+    
     public static String toAge(LocalDate data) {
         if(data == null)
             return null;
@@ -30,5 +49,14 @@ public class DataConverter {
         Period periodo = Period.between(data, hoje);
         
         return String.format("%d ano(s) e %d mês(es)", periodo.getYears(), periodo.getMonths());
+    }
+    
+    public static String toHTMLFormat(LocalDateTime data) {
+        if(data == null)
+            return "";
+        
+        DateTimeFormatter htmlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        
+        return data.format(htmlFormatter);
     }
 }

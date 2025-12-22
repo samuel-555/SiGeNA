@@ -3,7 +3,7 @@ package sigena.model.domain.util;
 public enum StatusTratamento {
     EM_ANDAMENTO("Em_andamento"),
     CONCLUIDO("Concluido"),
-    ENCERRADO("Encerrado");
+    CANCELADO("Cancelado");
     
     private String status;
     
@@ -13,9 +13,5 @@ public enum StatusTratamento {
     
     public String getStatus(){
         return status;
-    }
-    
-    
-    
-    
+    } 
 }

@@ -2,7 +2,6 @@ package sigena.controller;
 
 import java.io.IOException;
 import sigena.model.dao.UsuarioDAO;
-import sigena.model.domain.Usuario;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -22,7 +21,6 @@ public class LoginServlet extends HttpServlet {
             cpf = cpf.trim();
         }
         String senha = request.getParameter("senha");
-        Usuario usuario1 = new Usuario(cpf, senha);
 
         try {
             if (cpf == null || !cpf.matches("\\d{11}")) {
@@ -51,9 +49,12 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("CpfLogado", usuario.getCpf());
                 session.setAttribute("NomeLogado", nomeParaSessao);
                 session.setAttribute("cargoUsuario", usuario.getCargo());
-                session.setAttribute("UsuarioLogado", usuario1);
+                session.setAttribute("UsuarioLogado", usuario);
                 session.setAttribute("TurnoLogado", turnoParaSessao);
-                response.sendRedirect("home.jsp");
+              
+                response.sendRedirect("TarefaController");
+
+          
             } else {
                 request.setAttribute("erro", "CPF ou senha inválidos!");
                 request.getRequestDispatcher("index.jsp").forward(request, response);

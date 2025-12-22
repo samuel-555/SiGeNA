@@ -8,8 +8,8 @@ import sigena.model.dao.DoacaoDAO;
 import sigena.model.dao.ReciboDoacaoDAO;
 import sigena.model.domain.Doacao;
 import sigena.model.domain.ReciboDoacao;
-import sigena.model.domain.StatusDoacao;
-import sigena.model.domain.DoacaoTipo;
+import sigena.model.domain.util.StatusDoacao;
+import sigena.model.domain.util.DoacaoTipo;
 
 
 public class GestaoDoacaoService {

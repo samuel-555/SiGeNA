@@ -1,52 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+:root {
+    --zoo-dark-green: #00593f;
+    --zoo-mint: #e6f4eb;
+    --zoo-orange: #e86526;
+    --zoo-orange-hover: #d1541b;
+    --text-dark: #1a1a1a;
+    --text-gray: #4a4a4a;
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #fcfcfc;
+    color: var(--text-dark);
+    line-height: 1.6;
 }
 
 header {
-    background-color: #149b5a;
-    height: 60px;
+    background-color: var(--white);
+    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    box-shadow: var(--shadow);
 }
 
 .titulo {
-    background-color: #0e7142;
-    color: #fff;
-    font-weight: bold;
+    background-color: var(--zoo-mint);
+    color: var(--zoo-dark-green);
+    font-weight: 800;
     font-size: 20px;
-    padding: 10px 25px;
-    border-radius: 20px;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .titulo:hover {
-  background-color: #149b5a;
+    background-color: var(--zoo-dark-green);
+    color: var(--white);
+    transform: translateY(-2px);
 }
 
 main {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 60px);
-    background-color: #fff;
-}
-
-header a {
-    color: inherit;
-    text-decoration: none;
-    cursor: pointer;
+    min-height: calc(100vh - 80px);
+    padding: 40px 20px;
 }
 
 .mensagem {
-    color: red;
-    margin-top: 10px;
-    font-size: 13px;
+    color: #dc2626;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 600;
     text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fef2f2;
 }
 
 .sucesso {
-    color: #149b5a;
+    color: var(--zoo-dark-green);
+    background: var(--zoo-mint);
+}
+
+.btn-base {
+    background-color: var(--zoo-dark-green);
+    color: var(--white);
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-base:hover {
+    background-color: #004430;
+    box-shadow: 0 5px 15px rgba(0,89,63,0.2);
 }

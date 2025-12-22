@@ -6,10 +6,10 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import sigena.model.domain.Cargo;
+import sigena.model.domain.util.Cargo;
 import sigena.model.domain.Funcionario;
-import sigena.model.domain.Turno;
-import sigena.model.domain.EstadoFuncionario;
+import sigena.model.domain.util.Turno;
+import sigena.model.domain.util.EstadoFuncionario;
 import sigena.model.service.FuncionarioService;
 import sigena.model.common.exception.BusinessException;
 import sigena.model.common.exception.DatabaseException;
@@ -36,7 +36,9 @@ public class FuncionarioServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!exigirGerente(req, resp)) return;
+        if (!exigirGerente(req, resp)) {
+            return;
+        }
 
         String acao = req.getParameter("acao");
 
@@ -67,7 +69,9 @@ public class FuncionarioServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!exigirGerente(req, resp)) return;
+        if (!exigirGerente(req, resp)) {
+            return;
+        }
 
         req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
@@ -96,10 +100,11 @@ public class FuncionarioServlet extends HttpServlet {
                 service.atualizar(f);
                 resp.sendRedirect(req.getContextPath() + "/FuncionarioServlet");
 
-            } else if ("deletar".equals(acao)) {
+            } else if ("cancelar".equals(acao)) {
                 int id = Integer.parseInt(req.getParameter("id"));
-                String setor = req.getParameter("setor");
+                String setor = req.getParameter("area");
                 String turno = req.getParameter("turno");
+
                 service.deletar(id, setor, turno);
                 resp.sendRedirect(req.getContextPath() + "/FuncionarioServlet");
             }

@@ -54,6 +54,11 @@ public class HabitatController extends Controller {
             request.getRequestDispatcher("editar-habitat.jsp").forward(request, response);
             return;
         }
+        if ("buscar".equals(acao)) {
+            buscar(request, response);
+            return;
+        }   
+
         
         List<Habitat> habitats = service.listarHabitats();
         request.setAttribute("habitats", habitats);
@@ -159,6 +164,17 @@ public class HabitatController extends Controller {
         }
 
         request.getRequestDispatcher("habitats.jsp").forward(request, response);
-}
-            
+    }
+    
+    private void buscar(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        String termo = request.getParameter("q");
+
+        GestaoHabitatService service = new GestaoHabitatService();
+        List<Habitat> habitats = service.buscarPorNomeOuTipo(termo);
+
+        request.setAttribute("habitats", habitats);
+        request.getRequestDispatcher("habitats.jsp").forward(request, response);
+    }
 }

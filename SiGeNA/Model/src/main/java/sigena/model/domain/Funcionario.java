@@ -1,5 +1,9 @@
 package sigena.model.domain;
 
+import sigena.model.domain.util.Turno;
+import sigena.model.domain.util.EstadoFuncionario;
+import sigena.model.domain.util.Cargo;
+
 public class Funcionario {
 
     private int id;

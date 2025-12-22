@@ -1,5 +1,6 @@
 package sigena.model.service;
 
+import java.util.List;
 import sigena.model.dao.UsuarioDAO;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.DatabaseException;
@@ -56,5 +57,9 @@ public class GestaoUsuarioService {
             throw new PersistenciaException("CPF não informado.");
         }
         return usuarioDAO.existeCPF(cpf);
+    }
+    
+    public List<Usuario> listarUsuarios() throws PersistenciaException {
+        return usuarioDAO.listarUsuarios();
     }
 }

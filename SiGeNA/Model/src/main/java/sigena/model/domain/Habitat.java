@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package sigena.model.domain;
-import sigena.model.service.GestaoHabitatService;
 
 
 public class Habitat {

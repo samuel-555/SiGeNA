@@ -39,12 +39,12 @@
         <div class="formulario">
             <form action="EventoController" method="post">
                 <label for="nome">Título do evento:*</label>
-                <input type="text" id="titulo" name="titulo" value="<c:out value="${evento.titulo}"/>" required>
+                <input type="text" id="titulo" name="titulo" class="obrigatorio" value="<c:out value="${evento.titulo}"/>" required>
                 
                 <label for="descricao">Descrição:</label>
                 <textarea name="descricao"><c:out value="${evento.descricao}"/></textarea>
 
-                <label>Data e horário previstos:*<input type="datetime-local" name="data-programada" id="data-programada" value="<c:out value="${evento.dataProgramada}"/>" required></label>
+                <label>Data e horário previstos:*<input type="datetime-local" name="data-programada" class="obrigatorio" id="data-programada" value="<c:out value="${evento.dataProgramada}"/>" required></label>
                 
                 <input type="hidden" name="acao" value="editar">
                 <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
@@ -62,5 +62,6 @@
 
             input.min = agora.toISOString().slice(0, 16);
         </script>
+        <script src="JS/verificar-campos.js"></script>
     </body>
 </html>

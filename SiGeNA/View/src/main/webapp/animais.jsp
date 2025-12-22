@@ -83,7 +83,7 @@
                     <form action="AnimalController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${animal.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir">Remover</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o animal ${animal.nome} permanentemente?')">Excluir</button>
                     </form>
                         <a href="AnimalController?acao=exibir&id=<c:out value="${animal.id}"/>" class="btn-pequeno">Exibir</a>
                     

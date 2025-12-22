@@ -39,12 +39,12 @@
         <div class="formulario">
             <form action="EventoController" method="post">
                 <label for="nome">Título do evento:*</label>
-                <input type="text" id="titulo" name="titulo" required>
+                <input type="text" id="titulo" name="titulo" class="obrigatorio" required>
                 
                 <label for="descricao">Descrição:</label>
                 <textarea name="descricao"></textarea>
 
-                <label>Data e horário previstos:*<input type="datetime-local" name="data-programada" id="data-programada" required></label>
+                <label>Data e horário previstos:*<input type="datetime-local" name="data-programada" id="data-programada" class="obrigatorio" required></label>
                 
                 <c:if test="${not empty sessionScope.campoInvalidoErro}">
                     <div class="mensagem"><c:out value="${sessionScope.campoInvalidoErro}"/></div>
@@ -66,6 +66,6 @@
 
             input.min = agora.toISOString().slice(0, 16);
         </script>
-
+        <script src="JS/verificar-campos.js"></script>
     </body>
 </html>

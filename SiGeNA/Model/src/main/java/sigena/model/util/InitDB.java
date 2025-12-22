@@ -42,6 +42,7 @@ public class InitDB {
               peso DOUBLE NOT NULL,
               hostil BOOLEAN NOT NULL,
               data_de_insercao DATETIME NOT NULL,
+              arquivado BOOLEAN NOT NULL,
               FOREIGN KEY (id_especie) REFERENCES especie(id)
                  ON UPDATE CASCADE
         );
@@ -289,7 +290,8 @@ public class InitDB {
                   endereco VARCHAR(100),
                   tipo VARCHAR(50) NOT NULL,
                   descricao TEXT,
-                  data_de_insercao DATETIME NOT NULL
+                  data_de_insercao DATETIME NOT NULL,
+                  arquivado BOOLEAN NOT NULL
             );
             """;
         try (Statement st = con.createStatement()) {

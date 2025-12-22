@@ -16,7 +16,7 @@ import sigena.model.util.ConexaoDB;
 
 public class AnimalDAO {
     public void cadastrar(Animal animal) throws PersistenciaException {
-        String sql = "INSERT INTO animais (nome, id_especie, sexo, data_de_nascimento, peso, hostil, data_de_insercao) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        String sql = "INSERT INTO animais (nome, id_especie, sexo, data_de_nascimento, peso, hostil, data_de_insercao, arquivado) VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)";
         
         try(Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -45,9 +45,9 @@ public class AnimalDAO {
                 + "WHERE (id LIKE ? OR nome LIKE ?)";
         
         if(filtro != null && !filtro.isEmpty())
-            sql += " AND id_especie = ?";
+            sql += " AND id_especie = ? ";
         
-        sql += " ORDER BY data_de_insercao ASC;";
+        sql += "AND arquivado = false ORDER BY data_de_insercao ASC;";
         
         List<Animal> animais = new ArrayList<>();
         
@@ -75,7 +75,9 @@ public class AnimalDAO {
     }
     
     public void excluir(Long id) throws PersistenciaException {
-        String sql = "DELETE FROM animais WHERE id = ?";
+        String sql = "UPDATE animais "
+                + "SET arquivado = true "
+                + "WHERE id = ?;";
         
         try(Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -93,7 +95,7 @@ public class AnimalDAO {
                 + "FROM animais "
                 + "JOIN habitat_animal "
                 + "ON animais.id = habitat_animal.animal_id "
-                + "WHERE animais.id = ?;";
+                + "WHERE animais.id = ? AND arquivado = false;";
         
         Animal animal = null;
         
@@ -119,7 +121,7 @@ public class AnimalDAO {
                 + "data_de_nascimento = ?, "
                 + "peso = ?, "
                 + "hostil = ? "
-                + "WHERE id = ?";
+                + "WHERE id = ? AND arquivado = false";
         
         try(Connection con = ConexaoDB.getConnection();) {
             try (PreparedStatement stmt = con.prepareStatement(sqlAnimal, Statement.RETURN_GENERATED_KEYS)){

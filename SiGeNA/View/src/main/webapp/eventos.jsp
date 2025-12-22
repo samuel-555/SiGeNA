@@ -119,7 +119,7 @@
                   <form action="EventoController" method="post">
                   <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat} permanentemente?')">Remover</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat} permanentemente?')">Excluir</button>
                   </form>
                   <form action="EventoController" method="post">
                         <input type="hidden" name="acao" value="cancelar">

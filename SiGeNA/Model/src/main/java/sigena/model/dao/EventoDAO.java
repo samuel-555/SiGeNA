@@ -107,7 +107,7 @@ public class EventoDAO {
     public void cancelar(Long id) throws PersistenciaException {
         String sql = "UPDATE eventos "
                 + "SET cancelado = true "
-                + "WHERE id = ?;";
+                + "WHERE id = ? AND arquivado = false;";
         
         try(Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -121,7 +121,7 @@ public class EventoDAO {
     public void ativar(Long id) throws PersistenciaException {
         String sql = "UPDATE eventos "
                 + "SET cancelado = false "
-                + "WHERE id = ?;";
+                + "WHERE id = ? AND arquivado = false;";
         
         try(Connection con = ConexaoDB.getConnection();
                 PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

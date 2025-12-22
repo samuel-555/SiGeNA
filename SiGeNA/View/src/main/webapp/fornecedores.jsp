@@ -85,7 +85,7 @@
                     <form action="FornecedorController" method="post" class="botao-acao">
                         <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${fornecedor.id}"/>">
-                        <button type="submit" class="btn-pequeno excluir">Remover</button>
+                        <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o fornecedor ${fornecedor.nome} permanentemente?')">Excluir</button>
                     </form>
                         <a href="FornecedorController?acao=exibir&id=<c:out value="${fornecedor.id}"/>" class="btn-pequeno">Exibir</a>
                     

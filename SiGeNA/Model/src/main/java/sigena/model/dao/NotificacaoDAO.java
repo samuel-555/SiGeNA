@@ -107,5 +107,28 @@ public class NotificacaoDAO {
         }
         return null;
     }
+    
+    public boolean eventoJaNotificado(int id, String titulo, LocalDateTime data){
+        String sql = "SELECT 1 FROM notificacao WHERE idDestinatario = ? "
+        + "AND titulo = ? AND data_criacao BETWEEN ? AND ?";
+        
+        LocalDateTime inicioDia = data.toLocalDate().atStartOfDay();
+        LocalDateTime fimDia = data.toLocalDate().atTime(23, 59, 59);
+        
+        try {
+            Connection con = ConexaoDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.setString(2, titulo);
+            ps.setTimestamp(3, Timestamp.valueOf(inicioDia));
+            ps.setTimestamp(4, Timestamp.valueOf(fimDia));
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;  
+    }
 
 }

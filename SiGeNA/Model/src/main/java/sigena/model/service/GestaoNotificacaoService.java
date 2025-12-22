@@ -1,5 +1,6 @@
 package sigena.model.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.NotificacaoDAO;
@@ -27,5 +28,9 @@ public class GestaoNotificacaoService {
     
     public Notificacao buscarPorId(Long id){
         return dao.buscarPorId(id);
+    }
+    
+    public boolean eventoJaNotificado(int id, String titulo, LocalDateTime data){
+        return dao.eventoJaNotificado(id, titulo, data);
     }
 }

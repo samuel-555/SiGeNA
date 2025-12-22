@@ -353,7 +353,7 @@ public class InitDB {
 
     public void initNotificacao() throws SQLException {
         String sql = """
-                CREATE TABLE notificacao (
+                CREATE TABLE IF NOT EXISTS notificacao (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         idDestinatario INT NOT NULL,
         titulo VARCHAR(255) NOT NULL,

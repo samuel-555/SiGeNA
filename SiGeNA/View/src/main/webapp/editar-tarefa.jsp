@@ -23,7 +23,7 @@
 <body>
 
 <header class="topbar">
-            <a href="TarefaController" class="titulo">
+            <a href="HomeController" class="titulo">
                 <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
                 <span>SiGeNA</span>
             </a>
@@ -33,7 +33,7 @@
         </header>
 
 <div class="botoes-acoes">
-    <a href="TarefaController" class="btn">Voltar</a>
+    <a href="HomeController" class="btn">Voltar</a>
 </div>
 
 <div class="container">
@@ -41,7 +41,7 @@
 
     <div class="formulario">
 
-        <form action="${pageContext.request.contextPath}/TarefaController" method="post">
+        <form action="${pageContext.request.contextPath}/HomeController" method="post">
 
             <input type="hidden" name="acao" value="editar">
             <input type="hidden" name="id" value="${tarefa.id}">

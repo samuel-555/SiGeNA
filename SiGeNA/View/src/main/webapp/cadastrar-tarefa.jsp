@@ -27,7 +27,7 @@
 </head>
 <body>
   <header class="topbar">
-            <a href="TarefaController" class="titulo">
+            <a href="HomeController" class="titulo">
                 <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
                 <span>SiGeNA</span>
             </a>
@@ -40,13 +40,13 @@
     <h1>Cadastrar Tarefa</h1>
 
     <div class="botoes-acoes">
-      <a href="TarefaController" class="btn">Voltar</a>
+      <a href="HomeController" class="btn">Voltar</a>
     </div>
     
     <div class="formulario">
       <h2>Cadastrar Nova Tarefa</h2>
       
-    <form action="${pageContext.request.contextPath}/TarefaController" method="post">
+    <form action="${pageContext.request.contextPath}/HomeController" method="post">
     <input type="hidden" name="acao" value="inserir">
         
         <c:if test="${not empty msgErro}">

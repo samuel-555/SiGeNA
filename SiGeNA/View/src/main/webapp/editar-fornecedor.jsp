@@ -44,8 +44,7 @@
         <form action="FornecedorController" method="post">
 
             <label for="nome">Nome do Fornecedor:*</label>
-            <input type="text" id="nome" name="nome"
-                   value="<c:out value='${fornecedor.nome}'/>" required>
+            <input type="text" id="nome" name="nome" class="obrigatorio" value="<c:out value='${fornecedor.nome}'/>" required>
 
             <label for="telefone">Telefone:</label>
             <input type="text" id="telefone" name="telefone"
@@ -60,7 +59,7 @@
                    value="<c:out value='${fornecedor.endereco}'/>">
 
             <label for="tipo">Tipo:*</label>
-            <select name="tipo" id="tipo">
+            <select name="tipo" id="tipo" class="obrigatorio">
                 <option value="${fornecedor.tipo}">${fornecedor.tipo}</option>
 
                 <c:if test="${fornecedor.tipo != 'ALIMENTO'}">
@@ -112,12 +111,12 @@
             <input type="hidden" name="id" value="<c:out value='${fornecedor.id}'/>">
             <input type="hidden" name="acao" value="editar">
 
-            <button type="submit" class="btn-enviar">Salvar Alterações</button>
+            <button type="submit" class="btn-enviar" onclick="return confirm('Salvar alterações? Essas modificações não poderão ser desfeitas.')">Salvar Alterações</button>
         </form>
 
     </div>
 </div>
-
+<script src="JS/verificar-campos.js"></script>
 </body>
 </html>
 

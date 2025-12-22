@@ -35,6 +35,8 @@
             <a href="RelatorioSaudeController" class="btn">Gestão de Relatórios de Saúde</a>
             <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
             <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
+            <a href="FornecedorController?acao=listar" class="btn">Gestão de Fornecedores</a>
+            <a href="EventoController?acao=listar" class="btn">Gestão de Eventos</a>
         </div>
         <div class="tarefas">
 

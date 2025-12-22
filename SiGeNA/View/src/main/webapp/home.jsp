@@ -33,22 +33,22 @@
     }
 
     List<Feature> features = new ArrayList<>();
-    features.add(new Feature("animais", "Gerenciamento de Animais", "AnimalController?acao=listar"));
+    features.add(new Feature("animais", "Gestão de Animais", "AnimalController?acao=listar"));
     features.add(new Feature("especies", "Gerenciamento de Espécies", "EspeciesController"));
-    features.add(new Feature("habitat", "Gerenciamento de Habitat", "HabitatController"));
-    features.add(new Feature("tratamentos", "Gerenciamento de Tratamentos Médicos", "tratamentos.jsp"));
-    features.add(new Feature("planos", "Gerenciamento de Planos Alimentares", "PlanosAlimentaresController"));
-    features.add(new Feature("produtos", "Gerenciamento de Produtos", "ProdutoController?acao=listar"));
-    features.add(new Feature("relatorios", "Gerenciamento de Relatórios de Saúde", "RelatorioSaudeController"));
-    features.add(new Feature("enriquecimento", "Gerenciamento de Enriquecimento", "enriquecimento"));
-    features.add(new Feature("visitantes", "Gerenciamento de Visitantes", "visitantes"));
+    features.add(new Feature("habitat", "Gestão de Habitat", "HabitatController"));
+    features.add(new Feature("tratamentos", "Gestão de Tratamentos Médicos", "tratamentos.jsp"));
+    features.add(new Feature("planos", "Gestão de Planos Alimentares", "PlanosAlimentaresController"));
+    features.add(new Feature("produtos", "Gestão de Produtos", "ProdutoController?acao=listar"));
+    features.add(new Feature("relatorios", "Gestão de Relatórios de Saúde", "RelatorioSaudeController"));
+    features.add(new Feature("enriquecimento", "Gestão de Enriquecimento", "enriquecimento"));
+    features.add(new Feature("visitantes", "Gestão de Visitantes", "visitantes"));
     features.add(new Feature("doacoes", "Gestão de Doações", "doacoes"));
     features.add(new Feature("fornecedores", "Gestão de Fornecedores", "FornecedorController?acao=listar"));
-    features.add(new Feature("funcionarios", "Gerenciamento de Funcionários", "FuncionarioServlet"));
+    features.add(new Feature("funcionarios", "Gestão de Funcionários", "FuncionarioServlet"));
     features.add(new Feature("agendamentos", "Gestão de Agendamentos", "AgendamentoController?acao=listar"));
+    features.add(new Feature("eventos", "Gestão de Eventos", "EventoController?acao=listar"));
     features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias.jsp"));
     features.add(new Feature("historico", "Histórico", "HistoricoController?acao=buscar"));
-    features.add(new Feature("eventos", "Eventos", "EventoController?acao=listar"));
 
     Set<String> permitido = new LinkedHashSet<>();
     if (cargo == Cargo.GERENTE) {
@@ -56,9 +56,9 @@
     } else if (cargo == Cargo.ZOOTECNISTA) {
         permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "enriquecimento"));
     } else if (cargo == Cargo.VETERINARIO) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento", "eventos"));
     } else if (cargo == Cargo.TRATADOR) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos", "eventos"));
     } else {
         permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios"));
     }

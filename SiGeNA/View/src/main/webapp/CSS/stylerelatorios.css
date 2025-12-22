@@ -43,6 +43,10 @@ header {
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: stretch;
 }
 
 .tabela-wrapper {
@@ -92,6 +96,47 @@ tr:hover td {
     font-size: 13px;
 }
 
+.card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.formulario label {
+    display: block;
+    font-weight: 600;
+}
+
+.formulario input,
+.formulario select,
+.formulario textarea {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filtro {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.filtro .btn {
+    align-self: flex-start;
+}
+
 .btn-action {
     background-color: var(--zoo-mint);
     color: var(--zoo-dark-green);
@@ -109,6 +154,41 @@ tr:hover td {
 .btn-action:hover {
     background-color: var(--zoo-dark-green);
     color: var(--white);
+}
+
+.relatorio-main .acoes-wrapper .btn {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.relatorio-main .acoes-wrapper .btn:hover {
+    background-color: #1d4ed8;
+}
+
+.relatorio-main .acoes-wrapper .btn.excluir {
+    background-color: #dc2626;
+}
+
+.relatorio-main .acoes-wrapper .btn.excluir:hover {
+    background-color: #b91c1c;
+}
+
+.relatorio-main .acoes-wrapper {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .alert {

@@ -11,7 +11,7 @@
     <header>
         <div class="titulo">SiGeNA</div>
     </header>
-    <main>
+    <main>  <div class="titulo">SiGeNA</div>
         <div class="login-box">
             <form action="LoginServlet" method="post">
                 <label for="cpf">CPF:</label>

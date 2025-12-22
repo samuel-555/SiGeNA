@@ -58,14 +58,38 @@ public class FuncionarioServlet extends HttpServlet {
         }
     }
 
-    private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
+    private void listar(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+
+    String nome   = req.getParameter("nome");
+    String cargo  = req.getParameter("cargo");
+    String turno  = req.getParameter("turno");
+    String estado = req.getParameter("estado");
+
+    try {
+        // se algum filtro foi preenchido → pesquisa com filtro
+        if ((nome != null && !nome.isBlank()) ||
+            (cargo != null && !cargo.isBlank()) ||
+            (turno != null && !turno.isBlank()) ||
+            (estado != null && !estado.isBlank())) {
+
+            req.setAttribute(
+                "funcionarios",
+                service.buscarComFiltro(nome, cargo, turno, estado)
+            );
+
+        } else {
+            // sem filtros → lista tudo
             req.setAttribute("funcionarios", service.listar());
-        } catch (Exception e) {
-            req.setAttribute("erro", e.getMessage());
         }
-        req.getRequestDispatcher("funcionario.jsp").forward(req, resp);
+
+    } catch (Exception e) {
+        req.setAttribute("erro", e.getMessage());
     }
+
+    req.getRequestDispatcher("funcionario.jsp").forward(req, resp);
+}
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -46,7 +46,7 @@
     features.add(new Feature("fornecedores", "Gestão de Fornecedores", "FornecedorController?acao=listar"));
     features.add(new Feature("funcionarios", "Gerenciamento de Funcionários", "FuncionarioServlet"));
     features.add(new Feature("agendamentos", "Gestão de Agendamentos", "AgendamentoController?acao=listar"));
-    features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias.jsp"));
+    features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias"));
     features.add(new Feature("historico", "Histórico", "HistoricoController?acao=buscar"));
     features.add(new Feature("eventos", "Eventos", "EventoController?acao=listar"));
 
@@ -54,13 +54,13 @@
     if (cargo == Cargo.GERENTE) {
         for (Feature f : features) permitido.add(f.id); 
     } else if (cargo == Cargo.ZOOTECNISTA) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "enriquecimento"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "enriquecimento", "ocorrencias"));
     } else if (cargo == Cargo.VETERINARIO) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "relatorios", "enriquecimento", "ocorrencias"));
     } else if (cargo == Cargo.TRATADOR) {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "visitantes", "planos", "produtos", "relatorios", "enriquecimento", "agendamentos", "ocorrencias"));
     } else {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "ocorrencias"));
     }
 
     List<Feature> visiveis = new ArrayList<>();

@@ -3,7 +3,7 @@ package sigena.model.domain;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import sigena.model.domain.util.AnimalSexo;
-import sigena.model.domain.util.DataConverter;
+import sigena.model.common.util.DataConverter;
 
 public class Animal {
     private Long id;

@@ -1,5 +1,7 @@
 package sigena.model.domain;
 
+import sigena.model.domain.util.Cargo;
+
 public class Usuario {
 
     private int id;

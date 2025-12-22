@@ -1,19 +1,25 @@
 <%@page import="sigena.model.domain.Especie"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Detalhes da Espécie</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
-        <link rel="stylesheet" href="CSS\style.css">wqq2
+        <link rel="stylesheet" href="CSS\style.css">
     </head>
     <body>
-        <header><div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div></header>
+        <header><div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div></header>
 
         <div class="container">
             <h1>Detalhes da Espécie</h1>
             <%
+                HttpSession sessao = request.getSession(false);
+                Cargo cargo = (sessao != null) ? (Cargo) sessao.getAttribute("cargoUsuario") : null;
+                boolean podeGerenciar = temPermissaoGerenciamento(cargo, "especies");
+
                 Especie e = (Especie) request.getAttribute("especie");
                 if (e != null) {
             %>
@@ -35,9 +41,12 @@
             %>
 
             <div class="botoes-acoes">
+                <% if (podeGerenciar) { %>
                 <a href="EspeciesController?acao=editar&id=<%= e.getId() %>" class="btn">Editar</a>
+                <% } %>
                 <a href="EspeciesController" class="btn">Voltar</a>
             </div>
         </div>
     </body>
 </html>
+

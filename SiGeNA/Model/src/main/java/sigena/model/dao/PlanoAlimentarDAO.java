@@ -18,9 +18,12 @@ import sigena.model.util.ConexaoDB;
 
 public class PlanoAlimentarDAO {
 
+    private static final String STATUS_ATIVO = "ATIVO";
+    private static final String STATUS_CANCELADO = "CANCELADO";
+
     private static final String SQL_INSERIR_PLANO = """
-            INSERT INTO planos_alimentares (animal_id, data_criacao)
-            VALUES (?, NOW())
+            INSERT INTO planos_alimentares (animal_id, status, data_criacao)
+            VALUES (?, ?, NOW())
             """;
 
     private static final String SQL_INSERIR_ITEM = """
@@ -37,15 +40,16 @@ public class PlanoAlimentarDAO {
             """;
 
     private static final String SQL_LISTAR_PLANOS = """
-            SELECT id, animal_id, data_criacao
+            SELECT id, animal_id, status, data_criacao
             FROM planos_alimentares
+            WHERE status IS NULL OR UPPER(status) <> 'CANCELADO'
             ORDER BY id DESC
             """;
 
     private static final String SQL_BUSCAR_PLANO = """
-            SELECT id, animal_id, data_criacao
+            SELECT id, animal_id, status, data_criacao
             FROM planos_alimentares
-            WHERE id = ?
+            WHERE id = ? AND (status IS NULL OR UPPER(status) <> 'CANCELADO')
             """;
 
     private static final String SQL_BUSCAR_ITENS = """
@@ -56,7 +60,11 @@ public class PlanoAlimentarDAO {
             """;
 
     private static final String SQL_EXCLUIR_PLANO = """
-            DELETE FROM planos_alimentares WHERE id = ?
+            UPDATE planos_alimentares SET status = 'CANCELADO' WHERE id = ?
+            """;
+
+    private static final String SQL_BUSCAR_STATUS = """
+            SELECT status FROM planos_alimentares WHERE id = ?
             """;
 
     private final AnimalDAO animalDAO = new AnimalDAO();
@@ -91,6 +99,13 @@ public class PlanoAlimentarDAO {
             boolean autoCommitAnterior = con.getAutoCommit();
             try {
                 con.setAutoCommit(false);
+                String statusAtual = buscarStatus(con, plano.getId());
+                if (statusAtual == null) {
+                    throw new PersistenciaException("Plano alimentar nao encontrado.");
+                }
+                if (STATUS_CANCELADO.equalsIgnoreCase(statusAtual)) {
+                    throw new PersistenciaException("Plano alimentar cancelado nao pode ser editado.");
+                }
                 atualizarPlano(plano, con);
                 limparItens(plano.getId(), con);
                 inserirItens(plano.getItens(), plano.getId(), con);
@@ -112,6 +127,13 @@ public class PlanoAlimentarDAO {
         }
         try (Connection con = ConexaoDB.getConnection();
                 PreparedStatement ps = con.prepareStatement(SQL_EXCLUIR_PLANO)) {
+            String statusAtual = buscarStatus(con, id);
+            if (statusAtual == null) {
+                throw new PersistenciaException("Plano alimentar nao encontrado.");
+            }
+            if (STATUS_CANCELADO.equalsIgnoreCase(statusAtual)) {
+                throw new PersistenciaException("Plano alimentar ja cancelado.");
+            }
             ps.setLong(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -120,14 +142,53 @@ public class PlanoAlimentarDAO {
     }
 
     public List<PlanoAlimentar> listar() throws PersistenciaException {
+        return listar(null, null);
+    }
+
+    public List<PlanoAlimentar> listar(Long animalId, String ingrediente) throws PersistenciaException {
         List<PlanoAlimentar> planos = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT id, animal_id, status, data_criacao
+                FROM planos_alimentares
+                WHERE status IS NULL OR UPPER(status) <> 'CANCELADO'
+                """);
+        List<Object> params = new ArrayList<>();
+
+        if (animalId != null) {
+            sql.append(" AND animal_id = ?");
+            params.add(animalId);
+        }
+        if (ingrediente != null && !ingrediente.isBlank()) {
+            sql.append("""
+                    AND EXISTS (
+                        SELECT 1
+                        FROM itens_plano_alimentar
+                        WHERE itens_plano_alimentar.plano_id = planos_alimentares.id
+                          AND LOWER(itens_plano_alimentar.alimento) LIKE ?
+                    )
+                    """);
+            params.add("%" + ingrediente.trim().toLowerCase() + "%");
+        }
+
+        sql.append(" ORDER BY id DESC");
+
         try (Connection con = ConexaoDB.getConnection();
-                PreparedStatement ps = con.prepareStatement(SQL_LISTAR_PLANOS);
-                ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object valor = params.get(i);
+                int idx = i + 1;
+                if (valor instanceof Long) {
+                    ps.setLong(idx, (Long) valor);
+                } else {
+                    ps.setString(idx, valor.toString());
+                }
+            }
+            try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 PlanoAlimentar plano = mapearPlano(rs);
                 plano.setItens(buscarItens(plano.getId(), con));
                 planos.add(plano);
+            }
             }
         } catch (SQLException e) {
             throw new PersistenciaException("Erro ao listar planos alimentares: " + e.getMessage());
@@ -158,6 +219,7 @@ public class PlanoAlimentarDAO {
     private Long inserirPlano(PlanoAlimentar plano, Connection con) throws SQLException {
         try (PreparedStatement ps = con.prepareStatement(SQL_INSERIR_PLANO, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, plano.getAnimal().getId());
+            ps.setString(2, STATUS_ATIVO);
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -220,9 +282,24 @@ public class PlanoAlimentarDAO {
         Long id = rs.getLong("id");
         Long animalId = rs.getLong("animal_id");
         Animal animal = animalDAO.buscarPorId(animalId);
+        String status = rs.getString("status");
         Timestamp timestamp = rs.getTimestamp("data_criacao");
         LocalDateTime dataCriacao = timestamp != null ? timestamp.toLocalDateTime() : null;
-        return new PlanoAlimentar(id, animal, dataCriacao);
+        PlanoAlimentar plano = new PlanoAlimentar(id, animal, dataCriacao);
+        plano.setStatus(status);
+        return plano;
+    }
+
+    private String buscarStatus(Connection con, Long id) throws SQLException {
+        try (PreparedStatement ps = con.prepareStatement(SQL_BUSCAR_STATUS)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status");
+                }
+            }
+        }
+        return null;
     }
 
     private List<ItemPlanoAlimentar> buscarItens(Long planoId, Connection con) throws SQLException {

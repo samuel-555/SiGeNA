@@ -1,5 +1,13 @@
-    <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="sigena.model.domain.util.StatusTratamento"%>
+<%@page import="sigena.model.service.GestaoAnimalService"%>
+<%@page import="sigena.model.domain.Animal"%>
+<%@page import="sigena.model.domain.util.TipoTratamento"%>
+<%@page import="sigena.model.domain.Tratamento"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.List"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
     HttpSession sessao = request.getSession(false);
@@ -7,6 +15,13 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    pageContext.setAttribute("tiposTratamento", TipoTratamento.values());
+    pageContext.setAttribute("tiposStatus", StatusTratamento.values());
+    GestaoAnimalService service = new GestaoAnimalService();
+    List<Animal> animais = service.listarAnimais();
+    pageContext.setAttribute("animais", animais);
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrar = temPermissaoCadastro(cargo, "tratamentos");
 %>
 <!DOCTYPE html>
 <html>
@@ -18,31 +33,120 @@
     </head>
     <body>
   <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
   </header>
 
-  <div class="container">
-    <h1>Gestão de Tratamentos Médicos</h1>
+        <div class="container">
+            <h1>Gestão de Tratamentos Médicos</h1>
 
     <div class="botoes-acoes">
+        <% if (podeCadastrar) { %>
         <button class="btn"><a href="cadastrar-tratamentos.jsp">Registrar Novo Tratamento</a></button>
+        <% } %>
     </div>
 
-     <c:if test="${not empty mensagemSucesso}">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ${mensagemSucesso}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
+            </div>
 
-    <c:if test="${not empty mensagemErro}">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ${mensagemErro}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
+            <c:if test="${not empty mensagemSucesso}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ${mensagemSucesso}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
 
-    </div>
-  </div>
-</body>
+            <c:if test="${not empty mensagemErro}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${mensagemErro}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
+
+            <div class="historico">
+
+                <h2>Lista de Tratamentos</h2>
+                <div class="barra-filtros">
+                    <form action="TratamentosController" method="GET" class="form-filtros">
+
+                        <input type="hidden" name="acao" value="listar">
+
+                        <div class="grupo-input">
+                            <label for="busca">Buscar:</label>
+                            <input type="text" name="busca" id="busca" class="form-control" placeholder="Nome do animal..." 
+                                   value="<%= request.getParameter("busca") != null ? request.getParameter("busca") : ""%>">
+                        </div>
+
+                        <div class="grupo-input">
+                            <label for="status">Status</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="">Todos</option>
+                                <c:forEach var="status" items="${tiposStatus}">
+                                    <option value="${status}">${status.status}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="grupo-input">
+                            <label for="tipo">Tipo:</label>
+                            <select name="tipo" id="tipo" class="form-control">
+                                <option value="">Todos</option>
+                                <c:forEach var="tipo" items="${tiposTratamento}">
+                                    <option value="${tipo}">${tipo.tipo}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="grupo-botoes">
+                            <button type="submit" class="btn-pequeno">Filtrar</button>
+                            <a href="TratamentosController?acao=listar" class="link-limpar">Limpar</a>
+                        </div>
+                    </form>
+                </div>
+                <%
+                    String erro = (String) request.getAttribute("erro");
+                    if (erro != null) {
+                %>
+                <p style="color:red;"><%= erro%></p>
+                <% } %>
+                <table>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Animal</th>
+                        <th>Veterinario</th>
+                        <th>Medicação</th>
+                        <th>Status</th>
+                    </tr>
+
+                    <%
+                        List<Tratamento> lista = (List<Tratamento>) request.getAttribute("lista");
+
+                        if (lista != null && !lista.isEmpty()) {
+                            for (Tratamento t : lista) {
+                                if (lista.size() != 0) {
+                    %>
+
+                    <tr>
+                        <td><%= t.getTipoTratamento()%></td>
+                        <td><%= t.getAnimal().getNome()%></td>
+                        <td><%= (t.getMedico() != null)
+                                ? t.getMedico().getCpf()
+                                : "Sem médico"%></td>
+                        <td><%= t.getMedicacao()%></td>
+                        <td><%= t.getStatusTratamento().replace("_", " ")%></td>
+                        <td>
+                            <a href="TratamentosController?acao=ver&id=<%= t.getId()%>" class="btn-pequeno ver">Ver</a>
+                            <a href="TratamentosController?acao=cancelar&id=<%= t.getId()%>" onclick="return confirm('Deseja cancelar esse tratamento?');" class="btn-pequeno cancelar">Cancelar</a>
+
+                        </td>
+                    </tr>
+                    <% }
+                        }
+                    } else {
+                    %>
+
+                    <tr><td colspan="8">Nenhum tratamento cadastrado.</td></tr>
+                    <%}%>
+                </table>
+            </div>
+        </div>
+    </body>
 </html>

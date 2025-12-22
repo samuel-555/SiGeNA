@@ -29,12 +29,13 @@
     </head>
     <body>
         <header>
-            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>" >SiGeNA</a></div>
+            <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>" >SiGeNA</a></div>
         </header>
 
         <div class="container">
             <h1>Gestão de Produtos / Estoque</h1>
-
+            <a href="ProdutoController?acao=listar" class="btn">Voltar</a>
+            
             <div class="formulario">
                 <h2>Adicionar Novo Item</h2>
                 <form method="POST" action="ProdutoController">

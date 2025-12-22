@@ -1,0 +1,15 @@
+.titulo {
+    background-color: var(--zoo-mint);
+    color: var(--zoo-dark-green);
+    font-weight: 800;
+    font-size: 18px;
+    padding: 10px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.titulo:hover {
+    background-color: var(--zoo-dark-green);
+    color: var(--white);
+}

@@ -5,19 +5,18 @@ import java.time.LocalDate;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Animal;
-import sigena.model.domain.Cargo;
+import sigena.model.domain.util.Cargo;
 import sigena.model.domain.RelatorioSaude;
 import sigena.model.service.GestaoAnimalService;
 import sigena.model.service.RelatorioSaudeService;
 
 @WebServlet(name = "RelatorioSaudeController", urlPatterns = {"/RelatorioSaudeController"})
-public class RelatorioSaudeController extends HttpServlet {
+public class RelatorioSaudeController extends Controller {
 
     private final RelatorioSaudeService relatorioService = new RelatorioSaudeService();
     private final GestaoAnimalService animalService = new GestaoAnimalService();
@@ -43,7 +42,7 @@ public class RelatorioSaudeController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         if (!isGerente(request)) {
-            redirecionarComMensagem(request, response, "Usuário sem permissão para alterar relatórios.", true);
+            redirecionarComMensagem(request, response, "Usuario sem permissão para alterar relatórios.", true);
             return;
         }
 
@@ -67,7 +66,7 @@ public class RelatorioSaudeController extends HttpServlet {
             }
             if ("excluir".equals(acao)) {
                 excluirRelatorio(request);
-                redirecionarComMensagem(request, response, "Relatório excluído.", false);
+                redirecionarComMensagem(request, response, "Relatório cancelado.", false);
                 return;
             }
 
@@ -82,28 +81,22 @@ public class RelatorioSaudeController extends HttpServlet {
         request.setAttribute("animais", animais);
 
         String acao = request.getParameter("acao");
-        List<RelatorioSaude> relatorios;
+        Long animalId = parseLong(request.getParameter("animalId"));
+        String statusFiltro = normalizarStatus(request.getParameter("statusFiltro"));
 
-        if ("historico".equals(acao)) {
-            Long animalId = parseLong(request.getParameter("animalId"));
-            if (animalId != null) {
-                relatorios = relatorioService.consultarHistorico(animalId);
-                request.setAttribute("animalSelecionado", animalId);
-            } else {
-                relatorios = relatorioService.listarTodos();
-            }
-        } else if ("editar".equals(acao) && usuarioGerente) {
+        if ("editar".equals(acao) && usuarioGerente) {
             Long relatorioId = parseLong(request.getParameter("id"));
             if (relatorioId != null) {
                 RelatorioSaude relatorio = relatorioService.buscarPorId(relatorioId);
                 request.setAttribute("relatorioEdicao", relatorio);
                 request.setAttribute("animalSelecionado", relatorio.getAnimal().getId());
             }
-            relatorios = relatorioService.listarTodos();
-        } else {
-            relatorios = relatorioService.listarTodos();
+        } else if ("historico".equals(acao)) {
+            request.setAttribute("animalSelecionado", animalId);
         }
 
+        List<RelatorioSaude> relatorios = relatorioService.listarFiltrado(animalId, statusFiltro);
+        request.setAttribute("statusSelecionado", statusFiltro);
         request.setAttribute("relatorios", relatorios);
     }
 
@@ -111,9 +104,10 @@ public class RelatorioSaudeController extends HttpServlet {
         Long animalId = parseRequiredLong(request.getParameter("animalId"), "Animal obrigatório.");
         LocalDate data = parseData(request.getParameter("dataRelatorio"));
         Double peso = parsePeso(request.getParameter("peso"));
-        String status = request.getParameter("status");
+        boolean apto = isAptoMarcado(request.getParameter("apto"));
         String observacoes = request.getParameter("observacoes");
-        relatorioService.registrarCheckup(animalId, data, peso, status, observacoes);
+        String cpfLogado = getCpfUsuarioLogado(request);
+        relatorioService.registrarCheckup(animalId, data, peso, apto, observacoes, cpfLogado);
     }
 
     private void atualizarRelatorio(HttpServletRequest request) throws PersistenciaException {
@@ -121,9 +115,9 @@ public class RelatorioSaudeController extends HttpServlet {
         Long animalId = parseRequiredLong(request.getParameter("animalId"), "Animal obrigatório.");
         LocalDate data = parseData(request.getParameter("dataRelatorio"));
         Double peso = parsePeso(request.getParameter("peso"));
-        String status = request.getParameter("status");
+        boolean apto = isAptoMarcado(request.getParameter("apto"));
         String observacoes = request.getParameter("observacoes");
-        relatorioService.atualizarRelatorio(relatorioId, animalId, data, peso, status, observacoes);
+        relatorioService.atualizarRelatorio(relatorioId, animalId, data, peso, apto, observacoes);
     }
 
     private void adicionarObservacao(HttpServletRequest request) throws PersistenciaException {
@@ -209,5 +203,24 @@ public class RelatorioSaudeController extends HttpServlet {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Peso informado inválido.");
         }
+    }
+
+    private boolean isAptoMarcado(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return false;
+        }
+        String normalizado = valor.trim().toUpperCase();
+        return "APTO".equals(normalizado) || "TRUE".equals(normalizado) || "ON".equals(normalizado);
+    }
+
+    private String normalizarStatus(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
+        String normalizado = valor.trim().toUpperCase();
+        if (!"APTO".equals(normalizado) && !"INAPTO".equals(normalizado)) {
+            return null;
+        }
+        return normalizado;
     }
 }

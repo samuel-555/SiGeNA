@@ -18,13 +18,12 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>SiGeNA - Gestão de Animais</title>
-        <link rel="stylesheet" href="CSS\styleanimais.css">
+        <title>SiGeNA - Gestão de Habitat</title>
         <link rel="stylesheet" href="CSS\style.css">
     </head>
     <body>
         <header>
-            <div class="titulo"><a href="<%= request.getContextPath() + ("GERENTE".equals(String.valueOf(session.getAttribute("cargoUsuario"))) ? "/home-gerente.jsp" : "/home.jsp") %>">SiGeNA</a></div>
+            <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
         </header>
         
         <div class="botoes-acoes">
@@ -35,11 +34,12 @@
             <h1>Editar Habitat</h1>
         <div class="formulario">
             <form action="${pageContext.request.contextPath}/HabitatController" method="post">
-                <input type="hidden" name="acao" value="editar">
+                <input type="hidden" name="acao" value="editar-manutencao">
                 <input type="hidden" name="nomeAntigo" value="${habitat.nome}"/>                
 
                 <label for="nome">Nome do Habitat:</label>
-                <input type="text" id="nome" name="nome" placeholder="Savana doida" value="${habitat.nome}" required>
+                <input type="text" id="nome" value="${habitat.nome}" disabled>
+                <input type="hidden" name="nome" value="${habitat.nome}">
 
                 <label for="tipo">Tipo de Habitat:</label>
                 <input type="text" id="tipo" name="tipo" placeholder="Terra" value="${habitat.tipo}" required>

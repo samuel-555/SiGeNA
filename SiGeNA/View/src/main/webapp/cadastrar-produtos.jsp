@@ -34,7 +34,8 @@
 
         <div class="container">
             <h1>Gestão de Produtos / Estoque</h1>
-
+            <a href="ProdutoController?acao=listar" class="btn">Voltar</a>
+            
             <div class="formulario">
                 <h2>Adicionar Novo Item</h2>
                 <form method="POST" action="ProdutoController">

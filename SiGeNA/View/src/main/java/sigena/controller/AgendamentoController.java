@@ -16,7 +16,7 @@ import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.ValidationException;
 import sigena.model.domain.Agendamento;
-import sigena.model.domain.Cargo;
+import sigena.model.domain.util.Cargo;
 import sigena.model.service.GestaoAgendamentoService;
 
 @WebServlet(name = "AgendamentoController", urlPatterns = {"/AgendamentoController"})

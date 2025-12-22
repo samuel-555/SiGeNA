@@ -28,11 +28,7 @@
     <body>
 
         <header>
-            <div class="titulo">
-                <a href="<%= request.getContextPath() + (cargo == Cargo.GERENTE ? "/home-gerente.jsp" : "/home.jsp")%>">
-                    SiGeNA
-                </a>
-            </div>
+            <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
         </header>
 
         <div class="container">

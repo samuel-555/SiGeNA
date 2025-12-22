@@ -44,7 +44,6 @@
         <% if (podeCadastrar) { %>
         <a href="cadastrar-produtos.jsp" class="btn">Adicionar Novo Produto</a>
         <% } %>
-        <a href="<%= paginaHomeComContexto %>" class="btn">Voltar para Home</a>
     </div>
 
     <div class="historico">

@@ -212,6 +212,7 @@ table td:nth-child(7) {
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
+}
 tr:hover td {
     background-color: #fafafa;
 }

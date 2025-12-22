@@ -24,7 +24,7 @@
 
         <div class="container">
             <h1><%= oc != null ? "Editar Ocorrência" : "Registrar Ocorrência"%></h1>
-
+            <a href="ocorrencias.jsp" class="btn">Voltar</a>
             <form action="ocorrencias" method="post">
 
                 <c:choose>

@@ -7,7 +7,7 @@ import sigena.model.common.exception.DatabaseException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.util.Cargo;
 import sigena.model.domain.Funcionario;
-import sigena.model.domain.Turno;
+import sigena.model.domain.util.Turno;
 import sigena.model.domain.Usuario;
 import sigena.model.util.ConexaoDB;
 

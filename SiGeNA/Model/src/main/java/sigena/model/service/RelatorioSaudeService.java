@@ -7,7 +7,7 @@ import sigena.model.dao.AnimalDAO;
 import sigena.model.dao.RelatorioSaudeDAO;
 import sigena.model.domain.Animal;
 import sigena.model.domain.RelatorioSaude;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 
 public class RelatorioSaudeService {
 

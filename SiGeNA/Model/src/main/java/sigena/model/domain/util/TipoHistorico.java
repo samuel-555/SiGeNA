@@ -2,17 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package sigena.model.domain;
-
+package sigena.model.domain.util;
 import java.sql.Date;
-import sigena.model.domain.util.TipoTratamento;
+import sigena.model.domain.Animal;
+import sigena.model.domain.Habitat;
+import sigena.model.domain.Tarefa;
 
 
 public enum TipoHistorico {
 
     ESTADO {
         @Override
-        public String getDescricao(EstadoFuncionario estadoAntigo, EstadoFuncionario estadoNovo){
+        public String getDescricao(EstadoFuncionario estadoAntigo,EstadoFuncionario estadoNovo){
             return "Estado alterado de " + estadoAntigo.name() + "para "+ estadoNovo.name();
         }
     },

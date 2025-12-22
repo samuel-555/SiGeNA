@@ -153,7 +153,7 @@ public class VisitantesController extends HttpServlet {
         try {
             String turnoParam = req.getParameter("turno");
             if (turnoParam != null && !turnoParam.isBlank()) {
-                visita.setTurno(sigena.model.domain.Turno.valueOf(turnoParam));
+                visita.setTurno(sigena.model.domain.util.Turno.valueOf(turnoParam));
             }
         } catch (Exception ignored) {
             visita.setTurno(null);

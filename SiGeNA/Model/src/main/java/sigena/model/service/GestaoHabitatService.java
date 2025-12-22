@@ -7,7 +7,7 @@ import sigena.model.domain.Animal;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.exception.HabitatVazioException;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoHabitatService {
    

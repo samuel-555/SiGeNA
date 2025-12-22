@@ -293,9 +293,13 @@ body {
 .btn[data-id="fornecedores"] .btn-icon {
     background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995531.png');
 }
+.btn[data-id="ocorrencias"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/564/564619.png');
+}
 .btn[data-id="historico"] .btn-icon {
     background-image: url('https://cdn-icons-png.flaticon.com/512/32/32223.png');
 }
+
 
 .carousel .btn:hover {
     transform: translateY(-8px);

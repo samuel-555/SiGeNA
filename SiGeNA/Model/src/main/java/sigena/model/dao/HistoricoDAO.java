@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import sigena.model.domain.Historico;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 import sigena.model.util.ConexaoDB;
 
 public class HistoricoDAO {

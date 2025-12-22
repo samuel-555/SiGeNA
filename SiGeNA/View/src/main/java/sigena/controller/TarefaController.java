@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import sigena.model.common.exception.DataInvalidaException;
 import sigena.model.common.exception.DatabaseException;
-import sigena.model.domain.Cargo;
+import sigena.model.domain.util.Cargo;
 import sigena.model.domain.Tarefa;
 import sigena.model.service.FuncionarioService;
 import sigena.model.service.GestaoTarefaService;

@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Animal;
-import sigena.model.domain.Cargo;
+import sigena.model.domain.util.Cargo;
 import sigena.model.domain.RelatorioSaude;
 import sigena.model.service.GestaoAnimalService;
 import sigena.model.service.RelatorioSaudeService;

@@ -7,7 +7,7 @@ import sigena.model.common.exception.DataInvalidaException;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.TarefaDAO;
 import sigena.model.domain.Tarefa;
-import sigena.model.domain.TipoHistorico;
+import sigena.model.domain.util.TipoHistorico;
 
 public class GestaoTarefaService {
 
@@ -24,7 +24,7 @@ public class GestaoTarefaService {
             throw new DataInvalidaException("A data de conclusão deve ser posterior ao momento atual.");
         }
 
-        Tarefa tarefa = new Tarefa(nome, texto, id_destinatario, dataPConclusao, cpfAutor, "Média");
+        Tarefa tarefa = new Tarefa(nome, texto, id_destinatario, dataPConclusao, cpfAutor);
         dao.inserir(tarefa);
     }
 

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ page import="java.util.*" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -42,13 +42,15 @@
     features.add(new Feature("relatorios", "Saúde", "RelatorioSaudeController"));
     features.add(new Feature("fornecedores", "Fornecedores", "FornecedorController?acao=listar"));
     features.add(new Feature("funcionarios", "Funcionários", "FuncionarioServlet"));
+    features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias.jsp"));
     features.add(new Feature("historico", "Histórico", "HistoricoController?acao=buscar"));
+    
 
     Set<String> permitido = new LinkedHashSet<>();
     if (cargo == Cargo.GERENTE) {
         for (Feature f : features) permitido.add(f.id);
     } else {
-        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios", "historico"));
+        permitido.addAll(Arrays.asList("animais", "especies", "habitat", "tratamentos", "planos", "produtos", "relatorios"));
     }
 
     List<Feature> visiveis = new ArrayList<>();
@@ -80,29 +82,6 @@
             <div class="header-box"><span class="h-label">Cargo</span><span class="h-value"><%= cargoDescricao %></span></div>
             <div class="header-box"><span class="h-label">CPF</span><span class="h-value"><%= sessao.getAttribute("CpfLogado") %></span></div>
             <div class="header-box"><span class="h-label">Turno</span><span class="h-value">Integral</span></div>
-            
-            <a href="AnimalController?acao=listar" class="btn">Gestão de Animais</a>
-            <a href="EspeciesController" class="btn">Gestão de Espécies</a>
-            <a href="PlanosAlimentaresController" class="btn">Gestão de Planos Alimentares</a>
-            <a href="HabitatController?acao=listar" class="btn">Gestão de Habitat</a>
-            <a href="tratamentos.jsp" class="btn">Gestão de Tratamentos Medicos</a>
-            <a href="ProdutoController?acao=listar" class="btn">Gestão de Estoque</a>
-            <a href="enriquecimento" class="btn">Gestão de Enriquecimento</a>
-            <a href="ocorrencias" class="btn"> Fazer ocorrencia</a>
-        </div>
-        <div class="tarefas">
-            
-            
-            <c:forEach var= "funcionario" items="${funcionarios}">
-                <c:set var="tarefas" value="${tarefa.destinatario.cpf == usuario.cpf}"/>
-                <c:if test="${funcionario.estado == ATIVO}"> 
-                    
-                    <c:if test="${empty tarefas}">
-                        <p>Sem tarefas cadastradas para hoje></p>
-                    </c:if>
-                        
-        <div class="welcome-banner">
-            Bem-vindo, <%= nomeUsuario %>!
         </div>
 
         <div class="user-area">

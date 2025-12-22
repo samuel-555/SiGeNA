@@ -2,7 +2,7 @@ package sigena.model.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import sigena.model.domain.Turno;
+import sigena.model.domain.util.Turno;
 
 public class Visita {
 

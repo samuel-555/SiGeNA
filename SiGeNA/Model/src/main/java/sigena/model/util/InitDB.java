@@ -230,31 +230,16 @@ public class InitDB {
 
     public void initTarefas() throws SQLException {
         String sql = """
-
             CREATE TABLE IF NOT EXISTS tarefas (
-
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-
                 nome VARCHAR(255) NOT NULL,
-
-                texto TEXT,
-
-                concluida BOOLEAN DEFAULT FALSE,
-
+                texto VARCHAR(255),
+                concluida BOOLEAN NOT NULL,
                 funcionario_id INT NOT NULL,
-
-                dataCadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-                dataPConclusao TIMESTAMP,
-
-                cpfAutor VARCHAR(14),
-
-                prioridade VARCHAR(50),
-
-                FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id)
-
+                dataCadastro DATETIME NOT NULL,
+                dataPConclusao DATETIME NOT NULL,
+                cpfAutor VARCHAR(255) NOT NULL
             );
-
             """;
         try (Statement st = con.createStatement()) {
             st.executeUpdate(sql);
@@ -378,6 +363,10 @@ public class InitDB {
         data DATETIME NOT NULL
     );
     """;
+        try (Statement st = con.createStatement()) {
+            st.executeUpdate(sql);
+        }
+    }
 
     public void initVisitas() throws SQLException {
         String sql = """

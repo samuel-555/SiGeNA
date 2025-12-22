@@ -186,33 +186,106 @@
             <% }%>
         </div>
 
-        <main class="content-wrapper">
-            <c:if test="${not empty tarefasAtrasadas}">
-                <section class="tarefas-section" style="padding-top: 20px;">
-                    <h2 class="tarefas-title" style="color: #dc2626;">⚠ Tarefas Atrasadas</h2>
-                    <div class="tarefas-container" style="border-left: 5px solid #dc2626;">
-                        <table class="modern-table">
-                            <tbody>
-                                <c:forEach var="tarefa" items="${tarefasAtrasadas}">
-                                    <tr>
-                                        <td class="task-name" style="color: #dc2626;">${tarefa.nome}</td>
-                                        <td>${tarefa.texto}</td>
-                                        <td style="color: #dc2626; font-weight: bold;">Vencimento: ${tarefa.dataPConclusao}</td>
-                                        <td>
-                                            <form method="post" action="HomeController">
-                                                <input type="hidden" name="acao" value="concluir">
-                                                <input type="hidden" name="id" value="${tarefa.id}">
-                                                <input type="hidden" name="status" value="true">
-                                                <input type="checkbox" class="task-checkbox" onchange="confirmarConclusao(this, '${tarefa.nome}')">
-                                            </form>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-            </c:if>
+       <section class="tarefas-section">
+    <div class="tarefas-header">
+        <h2 class="tarefas-title">Tarefas do Dia</h2>
+
+        <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
+            <a href="TarefaController?acao=cadastrar" class="btn-primary">
+                Criar Nova Tarefa
+            </a>
+        </c:if>
+    </div>
+
+    <div class="tarefas-container">
+        <c:choose>
+            <c:when test="${empty tarefas}">
+                <div style="padding: 40px; text-align: center; color: #999;">
+                    <p>Não há tarefas para hoje.</p>
+                </div>
+            </c:when>
+
+            <c:otherwise>
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Prazo</th>
+                            <th>Marcar como concluída</th>
+                            <th style="text-align:right">Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <c:forEach var="tarefa" items="${tarefas}">
+                            <tr class="${tarefa.concluida ? 'row-done' : ''}">
+                                <td class="task-name">${tarefa.nome}</td>
+                                <td>${tarefa.texto}</td>
+                                <td>${tarefa.dataPConclusao}</td>
+
+                                <td>
+                                    <form method="post"
+                                          action="TarefaController"
+                                          onsubmit="return false;">
+
+                                        <input type="hidden" name="acao" value="concluir">
+                                        <input type="hidden" name="id" value="${tarefa.id}">
+                                        <input type="hidden" name="status" value="true">
+
+                                        <input type="checkbox"
+                                               class="task-checkbox"
+                                               <c:if test="${tarefa.concluida}">
+                                                   checked disabled
+                                               </c:if>
+                                               onclick="confirmarConclusao(this, '${tarefa.nome}')">
+                                    </form>
+                                </td>
+
+                                <td style="text-align:right">
+                                    <c:choose>
+                                        <c:when test="${tarefa.concluida}">
+                                            <span style="
+                                                font-size: 11px;
+                                                color: #2ecc71;
+                                                font-weight: 800;
+                                                text-transform: uppercase;">
+                                                ✔ Concluída
+                                            </span>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <c:if test="${sessionScope.cargoUsuario.name() eq 'GERENTE'}">
+                                                <a href="TarefaController?acao=editar&id=${tarefa.id}"
+                                                   class="btn-action editar">
+                                                    Editar
+                                                </a>
+
+                                                <form action="TarefaController"
+                                                      method="post"
+                                                      style="display:inline;"
+                                                      onsubmit="return confirm('Excluir esta tarefa?')">
+                                                    <input type="hidden" name="acao" value="excluir">
+                                                    <input type="hidden" name="id" value="${tarefa.id}">
+                                                    <button type="submit"
+                                                            class="btn-action excluir"
+                                                            style="border:none; background:none;">
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</section>
+    </main>
 
             <section class="tarefas-section">
                 <div class="tarefas-header">
@@ -279,52 +352,37 @@
             <p>© 2025 SiGeNA - CEFET-MG Informática</p>
         </footer>
 
-        <script>
-            const slides = document.querySelectorAll('.slide');
-            const indicadores = document.querySelectorAll('.indicadores span');
-            let paginaAtual = 0;
-            let autoPlayInterval;
+        function atualizarSlide() {
+            slides.forEach((s, i) => {
+                s.classList.toggle('active', i === paginaAtual);
+                if (indicadores[i]) indicadores[i].classList.toggle('ativo', i === paginaAtual);
+            });
+        }
+        function mudarPagina(dir) { paginaAtual = (paginaAtual + dir + slides.length) % slides.length; atualizarSlide(); resetTimer(); }
+        function irParaPagina(idx) { paginaAtual = idx; atualizarSlide(); resetTimer(); }
+        function startTimer() { autoPlayInterval = setInterval(() => { paginaAtual = (paginaAtual + 1) % slides.length; atualizarSlide(); }, 5000); }
+        function resetTimer() { clearInterval(autoPlayInterval); startTimer(); }
+        
+        function confirmarConclusao(checkbox, nomeTarefa) {
+            if (checkbox.disabled) return;
+            
+        checkbox.checked = false;
 
-            function atualizarSlide() {
-                slides.forEach((s, i) => {
-                    s.classList.toggle('active', i === paginaAtual);
-                    if (indicadores[i])
-                        indicadores[i].classList.toggle('ativo', i === paginaAtual);
-                });
-            }
-            function mudarPagina(dir) {
-                paginaAtual = (paginaAtual + dir + slides.length) % slides.length;
-                atualizarSlide();
-                resetTimer();
-            }
-            function irParaPagina(idx) {
-                paginaAtual = idx;
-                atualizarSlide();
-                resetTimer();
-            }
-            function startTimer() {
-                autoPlayInterval = setInterval(() => {
-                    paginaAtual = (paginaAtual + 1) % slides.length;
-                    atualizarSlide();
-                }, 5000);
-            }
-            function resetTimer() {
-                clearInterval(autoPlayInterval);
-                startTimer();
-            }
+        if (!confirm(
+            "Deseja concluir '" + nomeTarefa +
+            "'?\nApós isso, não será possível editar ou excluir."
+        )) {
+            return;
+        }
+        
+        checkbox.checked = true;
 
-            function confirmarConclusao(checkbox, nomeTarefa) {
-                if (checkbox.checked) {
-                    if (confirm("Deseja concluir '" + nomeTarefa + "'? Após isso, não será possível editar ou excluir.")) {
-                        const sound = document.getElementById('clickSound');
-                        if (sound)
-                            sound.play();
-                        setTimeout(() => checkbox.form.submit(), 300);
-                    } else {
-                        checkbox.checked = false;
-                    }
-                }
-            }
+        const form = checkbox.closest("form");
+
+        setTimeout(() => {
+            form.submit();
+         }, 100);
+}
 
             function toggleNotifs() {
                 const d = document.getElementById('notifDropdown');

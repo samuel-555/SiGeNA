@@ -62,7 +62,35 @@
         %>
             <p style="color:red;"><%= erro %></p>
         <% } %>
+        
+        <div class="barra-filtros">
+                    <form action="ProdutoController" method="GET" class="form-filtros">
 
+                        <input type="hidden" name="acao" value="listar">
+
+                        <div class="grupo-input">
+                            <label for="busca">Buscar:</label>
+                            <input type="text" name="busca" id="busca" class="form-control" placeholder="Nome produto" 
+                                   value="<%= request.getParameter("busca") != null ? request.getParameter("busca") : ""%>">
+                        </div>
+
+                        <div class="grupo-input">
+                            <label for="">Tipo</label>
+                            <select name="tipo" id="tipo" class="form-control">
+                                <option value="">Todos</option>
+                                <c:forEach var="tipo" items="${tiposProduto}">
+                                    <option value="${tipo}">${tipo.tipo}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="grupo-botoes">
+                            <button type="submit" class="btn-pequeno">Filtrar</button>
+                            <a href="ProdutoController?acao=listar" class="link-limpar">Limpar</a>
+                        </div>
+                    </form>
+                </div>
+                                
         <table border="1" width="100%">
             <tr>
                 <th>ID</th>

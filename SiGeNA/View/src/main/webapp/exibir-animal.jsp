@@ -24,11 +24,19 @@
   <title>SiGeNA - Gestão de Animais</title>
   <link rel="stylesheet" href="CSS\styleanimais.css">
   <link rel="stylesheet" href="CSS\style.css">
+  <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
 </head>
 <body>
-  <header>
-    <div class="titulo"><a href="<%= request.getContextPath() + "/home.jsp" %>">SiGeNA</a></div>
-  </header>
+<header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
+        </header>
 
   <div class="container">
     <h1>Gestão de Animais</h1>

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="sigena.model.domain.Cargo" %>
+<%@ page import="sigena.model.domain.util.Cargo" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%
@@ -22,10 +22,18 @@
         <title>Gestão de Relatórios de Saúde</title>
         <link rel="stylesheet" href="CSS/style.css">
         <link rel="stylesheet" href="CSS/stylerelatorios.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo"><a href="<%= homeDestino %>">SiGeNA</a></div>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
+            </div>
         </header>
         <main class="relatorio-main">
             <h1>Gestão de Relatórios de Saúde</h1>

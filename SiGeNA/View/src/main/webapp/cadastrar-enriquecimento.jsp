@@ -6,17 +6,23 @@
         <title>SiGeNA - Cadastrar Enriquecimento</title>
         <link rel="stylesheet" href="CSS/styleespecies.css">
         <link rel="stylesheet" href="CSS\style.css">
+        <link rel="stylesheet" href="CSS/stylehome.css">
+    <link rel="stylesheet" href="CSS/stylefuncionalidades.css">
     </head>
     <body>
-        <header>
-            <div class="titulo">
-                <a href="<%= request.getContextPath() + "/home.jsp"%>">SiGeNA</a>
+        <header class="topbar">
+            <a href="TarefaController" class="titulo">
+                <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
+                <span>SiGeNA</span>
+            </a>
+            <div class="user-area">
+                <a href="LogoutServlet" class="btn-sair">Sair</a>
             </div>
         </header>
         <div class="container">
             <div class="formulario">
                 <h2>Adicionar Novo Enriquecimento</h2>
-
+                <a href="enriquecimento" class="btn-sair" style="background: var(--zoo-mint); color: var(--zoo-dark-green); margin-right: 10px;">Voltar</a>
                 <c:if test="${not empty erro}">
                     <div style="color:#c0392b; margin-bottom:10px;">${erro}</div>
                 </c:if>

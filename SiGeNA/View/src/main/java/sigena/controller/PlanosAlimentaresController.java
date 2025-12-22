@@ -13,6 +13,7 @@ import sigena.model.dao.PlanoAlimentarDAO;
 import sigena.model.domain.Animal;
 import sigena.model.domain.PlanoAlimentar;
 import sigena.model.domain.ItemPlanoAlimentar;
+import sigena.model.service.GestaoNotificacaoService;
 import sigena.model.service.GestaoPlanoAlimentarService;
 
 @WebServlet("/PlanosAlimentaresController")
@@ -97,6 +98,8 @@ public class PlanosAlimentaresController extends Controller {
                 }
                 String cpfLogado = getCpfUsuarioLogado(request);
                 service.cadastrar(plano, cpfLogado);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo plano cadastrado");
                 response.sendRedirect("PlanosAlimentaresController");
                 return;
             }

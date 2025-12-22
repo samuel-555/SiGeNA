@@ -16,8 +16,10 @@ import sigena.model.common.exception.PersistenciaException;
 import sigena.model.common.util.DataConverter;
 import sigena.model.common.util.StringUtils;
 import sigena.model.domain.Evento;
+import sigena.model.domain.util.Cargo;
 import sigena.model.service.GestaoEventoService;
 import sigena.controller.util.ListOrdener;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet(name = "EventoController", urlPatterns = {"/EventoController"})
 public class EventoController extends HttpServlet {
@@ -28,6 +30,7 @@ public class EventoController extends HttpServlet {
             throws ServletException, IOException {
         try {
                 String acao = request.getParameter("acao");
+                Cargo cargo = obterCargo(request);
                 
                 if("listar".equals(acao)) {
                     String di = StringUtils.conferNull(request.getParameter("dataInicio"));
@@ -91,6 +94,10 @@ public class EventoController extends HttpServlet {
                 }
                 
                 if("editar".equals(acao)) {
+                    if (!podeGerenciarEventos(cargo)) {
+                        negarAcesso(request, response);
+                        return;
+                    }
                     Long id = Long.valueOf(request.getParameter("id"));
                     Evento evento = service.buscarEvento(id);
                     request.setAttribute("evento", evento);
@@ -105,6 +112,10 @@ public class EventoController extends HttpServlet {
                 }
                 
                 if("cadastrar".equals(acao)) {
+                    if (!podeGerenciarEventos(cargo)) {
+                        negarAcesso(request, response);
+                        return;
+                    }
                     request.getRequestDispatcher("cadastrar-evento.jsp").forward(request, response);
                 }
                 
@@ -119,11 +130,16 @@ public class EventoController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String acao = request.getParameter("acao");
+            Cargo cargo = obterCargo(request);
             
             if(acao == null)
                 throw new NullPointerException();
                 
             if("salvar".equals(acao)) {
+                if (!podeGerenciarEventos(cargo)) {
+                    negarAcesso(request, response);
+                    return;
+                }
                 boolean success = cadastrar(request, response);
                 HttpSession sessao = request.getSession(false);
                 if(!success) {
@@ -133,11 +149,17 @@ public class EventoController extends HttpServlet {
                 }
                 
                 sessao.setAttribute("acaoBemSucedida", "Evento cadastrado com sucesso!");
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo evento cadastrado");
                 response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
                 return;
             }
             
             if("excluir".equals(acao)) {
+                if (!podeGerenciarEventos(cargo)) {
+                    negarAcesso(request, response);
+                    return;
+                }
                 excluir(request, response);
                 response.sendRedirect(request.getContextPath() + "/EventoController?acao=listar");
             }
@@ -153,6 +175,10 @@ public class EventoController extends HttpServlet {
             }
             
             if("editar".equals(acao)) {
+                if (!podeGerenciarEventos(cargo)) {
+                    negarAcesso(request, response);
+                    return;
+                }
                 boolean success = editar(request, response);
                 String id = request.getParameter("id");
                 HttpSession sessao = request.getSession(false);
@@ -203,5 +229,36 @@ public class EventoController extends HttpServlet {
         Evento eventoEditado = new Evento(id, titulo, descricao, dataProgramada);
  
         return service.editarEvento(eventoEditado);
+    }
+
+    private Cargo obterCargo(HttpServletRequest request) {
+        HttpSession sessao = request.getSession(false);
+        if (sessao == null) {
+            return null;
+        }
+        Object cargoObj = sessao.getAttribute("cargoUsuario");
+        if (cargoObj instanceof Cargo) {
+            return (Cargo) cargoObj;
+        }
+        if (cargoObj instanceof String) {
+            try {
+                return Cargo.valueOf((String) cargoObj);
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private boolean podeGerenciarEventos(Cargo cargo) {
+        return Cargo.GERENTE == cargo;
+    }
+
+    private void negarAcesso(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession sessao = request.getSession(false);
+        if (sessao != null) {
+            sessao.setAttribute("campoInvalidoErro", "Acesso nao autorizado.");
+        }
+        response.sendRedirect(request.getContextPath() + "/home.jsp");
     }
 }

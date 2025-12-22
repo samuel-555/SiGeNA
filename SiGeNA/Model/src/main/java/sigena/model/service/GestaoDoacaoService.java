@@ -10,6 +10,7 @@ import sigena.model.domain.Doacao;
 import sigena.model.domain.ReciboDoacao;
 import sigena.model.domain.util.StatusDoacao;
 import sigena.model.domain.util.DoacaoTipo;
+import sigena.model.domain.util.TipoHistorico;
 
 
 public class GestaoDoacaoService {
@@ -18,19 +19,22 @@ public class GestaoDoacaoService {
 
     private final DoacaoDAO doacaoDAO;
     private final ReciboDoacaoDAO reciboDAO;
+    private final GestaoHistoricoService historicoService;
 
     public GestaoDoacaoService() {
         this.doacaoDAO = new DoacaoDAO();
         this.reciboDAO = new ReciboDoacaoDAO();
+        historicoService = new GestaoHistoricoService();
     }
 
-    public Doacao registrarDoacao(Doacao doacao) throws PersistenciaException, ValidationException {
+    public Doacao registrarDoacao(Doacao doacao, String cpf) throws PersistenciaException, ValidationException {
         validarDoacao(doacao);
         doacao.setStatus(StatusDoacao.ATIVA);
         doacao.setReciboEmitido(false);
 
         try {
             doacaoDAO.salvar(doacao);
+            historicoService.registrar(TipoHistorico.DOACAO,TipoHistorico.DOACAO.getDescricao(doacao.getNomeDoador(),doacao.getTipo(),doacao.getValorMonetario(),doacao.getDescricaoOutro(),doacao.getObservacoes()), cpf);
             if (deveEmitirRecibo(doacao)) {
                 reciboDAO.emitirRecibo(doacao.getId());
                 doacaoDAO.atualizarReciboEmitido(doacao.getId(), true);

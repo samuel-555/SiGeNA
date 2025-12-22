@@ -299,7 +299,21 @@ body {
 .btn[data-id="historico"] .btn-icon {
     background-image: url('https://cdn-icons-png.flaticon.com/512/32/32223.png');
 }
-
+.btn[data-id="enriquecimento"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/427/427735.png');
+}
+.btn[data-id="visitantes"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/1256/1256650.png');
+}
+.btn[data-id="agendamentos"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/747/747310.png');
+}
+.btn[data-id="doacoes"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/1077/1077035.png');
+}
+.btn[data-id="eventos"] .btn-icon {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/2921/2921222.png');
+}
 
 .carousel .btn:hover {
     transform: translateY(-8px);

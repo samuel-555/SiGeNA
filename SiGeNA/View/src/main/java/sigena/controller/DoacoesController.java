@@ -14,9 +14,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import sigena.model.domain.util.StatusDoacao;
 import java.util.List;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/doacoes")
-public class DoacoesController extends HttpServlet {
+public class DoacoesController extends Controller {
 
     private static final long serialVersionUID = 1L;
     private GestaoDoacaoService service = new GestaoDoacaoService();
@@ -116,7 +117,10 @@ public class DoacoesController extends HttpServlet {
                     req.getRequestDispatcher("cadastrar-doacao.jsp").forward(req, resp);
                     return;
                 }
-                service.registrarDoacao(d);
+                String cpfLogado = getCpfUsuarioLogado(req);
+                service.registrarDoacao(d,cpfLogado);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Nova doação cadastrado");
                 resp.sendRedirect("doacoes?acao=listar");
                 return;
             }

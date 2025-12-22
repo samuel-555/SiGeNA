@@ -19,6 +19,13 @@ body {
     flex-direction: column;
 }
 
+header {
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+    height: auto;
+}
+
 .login-box {
     background-color: var(--white);
     padding: 50px;

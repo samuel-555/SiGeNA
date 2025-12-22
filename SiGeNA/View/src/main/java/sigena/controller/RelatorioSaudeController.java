@@ -13,6 +13,7 @@ import sigena.model.domain.Animal;
 import sigena.model.domain.util.Cargo;
 import sigena.model.domain.RelatorioSaude;
 import sigena.model.service.GestaoAnimalService;
+import sigena.model.service.GestaoNotificacaoService;
 import sigena.model.service.RelatorioSaudeService;
 
 @WebServlet(name = "RelatorioSaudeController", urlPatterns = {"/RelatorioSaudeController"})
@@ -52,6 +53,8 @@ public class RelatorioSaudeController extends Controller {
             if ("criar".equals(acao)) {
                 salvarRelatorio(request);
                 redirecionarComMensagem(request, response, "Relatório registrado com sucesso.", false);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo relatorio cadastrado");
                 return;
             }
             if ("atualizar".equals(acao)) {

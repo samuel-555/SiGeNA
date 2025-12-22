@@ -17,7 +17,7 @@ public class Tarefa {
         this.nome = nome;
         this.texto = texto;
         this.id_destinatario = id_destinatario;
-        this.concluida = false;
+        this.concluida = concluida;
         this.dataCadastro = dataCadastro;
         this.dataPConclusao = dataPConclusao;
     }

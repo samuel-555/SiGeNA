@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ include file="/WEB-INF/jspf/permissoes.jspf" %>
 <%@taglib uri="jakarta.tags.core" prefix="c" %>
 <%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@taglib uri="jakarta.tags.functions" prefix="fn" %>
@@ -12,6 +13,9 @@
         response.sendRedirect("index.jsp");
         return;
     }
+    Cargo cargo = (Cargo) sessao.getAttribute("cargoUsuario");
+    boolean podeCadastrarEventos = temPermissaoCadastro(cargo, "eventos");
+    boolean podeExcluirEventos = temPermissaoGerenciamento(cargo, "eventos");
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -26,7 +30,7 @@
 </head>
 <body>
 <header class="topbar">
-            <a href="TarefaController" class="titulo">
+            <a href="HomeController" class="titulo">
                 <img src="IMG's/logoSiGeNA-COR2.png" alt="Logo" class="brand-logo">
                 <span>SiGeNA</span>
             </a>
@@ -38,7 +42,9 @@
   <div class="container">
     <h1>Gestão de Eventos</h1>
     <div class="botoes-acoes">
+        <% if (podeCadastrarEventos) { %>
         <a href="EventoController?acao=cadastrar" class="btn">Cadastrar Novo Evento</a>
+        <% } %>
     </div>
     <form method="get" action="EventoController">
       <input type="hidden" name="acao" value="listar">
@@ -124,11 +130,13 @@
                   </h3>
 
                   <c:if test="${empty param.tipo}">
+                  <% if (podeExcluirEventos) { %>
                   <form action="EventoController" method="post">
                   <input type="hidden" name="acao" value="excluir">
                         <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">
                         <button type="submit" class="btn-pequeno excluir" onclick="return confirm('Tem certeza que deseja excluir o evento marcado para ${evento.dataProgramadaFormat} às ${evento.horaProgramadaFormat} permanentemente?')">Excluir</button>
                   </form>
+                  <% } %>
                   <form action="EventoController" method="post">
                         <input type="hidden" name="acao" value="cancelar">
                         <input type="hidden" name="id" value="<c:out value="${evento.id}"/>">

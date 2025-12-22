@@ -19,10 +19,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.List;
+import sigena.model.common.exception.PersistenciaException;
 import sigena.model.dao.HistoricoOcorrenciaDAO;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/ocorrencias")
-public class OcorrenciaController extends HttpServlet {
+public class OcorrenciaController extends Controller {
 
     private GestaoOcorrenciaService service;
 
@@ -113,8 +115,12 @@ public class OcorrenciaController extends HttpServlet {
                 oc.setCpfCadastrador(cpf);
 
                 StatusOcorrencia statusInicial = oc.getStatus();
-
-                service.criar(oc);
+                String cpfLogado = getCpfUsuarioLogado(request);
+                
+                service.criar(oc,cpfLogado);
+                
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Nova ocorrência cadastrado");
 
                 HistoricoOcorrenciaDAO historicoDAO = new HistoricoOcorrenciaDAO(sigena.model.util.ConexaoDB.getConnection());
 
@@ -163,8 +169,9 @@ public class OcorrenciaController extends HttpServlet {
                             novoStatus,
                             cpf
                     );
+                    
                 }
-
+                
                 service.atualizar(oc);
 
                 response.sendRedirect("ocorrencias");
@@ -210,7 +217,7 @@ public class OcorrenciaController extends HttpServlet {
 
     }
 
-    private Ocorrencia montarOcorrencia(HttpServletRequest request) {
+    private Ocorrencia montarOcorrencia(HttpServletRequest request) throws PersistenciaException {
 
         String tipoStr = request.getParameter("tipo");
         String descricao = request.getParameter("descricao");
@@ -246,7 +253,7 @@ public class OcorrenciaController extends HttpServlet {
         oc.setTipo(OcorrenciaTipo.valueOf(tipoStr));
         oc.setDescricao(descricao);
         oc.setData(LocalDateTime.of(data, hora));
-
+        
         if (statusStr != null && !statusStr.isBlank()) {
             oc.setStatus(StatusOcorrencia.valueOf(statusStr));
         } else {

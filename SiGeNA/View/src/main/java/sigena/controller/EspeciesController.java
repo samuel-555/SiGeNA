@@ -8,6 +8,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
+import sigena.model.service.GestaoNotificacaoService;
 
 @WebServlet("/EspeciesController")
 public class EspeciesController extends HttpServlet {
@@ -110,6 +111,8 @@ public class EspeciesController extends HttpServlet {
                 e.setObservacoes(request.getParameter("observacoes"));
 
                 service.inserir(e);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Nova especie cadastrada");
                 response.sendRedirect("EspeciesController");
                 return;
             }

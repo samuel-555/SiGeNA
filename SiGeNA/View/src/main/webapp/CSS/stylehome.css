@@ -457,6 +457,51 @@ body {
     opacity: 0.4;
 }
 
+.btn:hover {
+  background-color: #0e7142;
+}
+
+.notificacao {
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    text-align: left;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.nao-lida {
+    background-color: #ffffff;
+    border-left: 5px solid #149b5a; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.nao-lida a {
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.nao-lida:hover {
+    background-color: #f0fdf4;
+    transform: translateX(3px); 
+    cursor: pointer;
+}
+
+.lida {
+    background-color: #e9ecef; 
+    border: 1px solid #dee2e6;
+    opacity: 0.8;
+}
+
+.lida p {
+    color: #6c757d;
+    margin: 0;
+    font-weight: normal;
+    font-size: 0.95em;
 @media (max-width: 992px) {
     .header-info-center {
         display: none;

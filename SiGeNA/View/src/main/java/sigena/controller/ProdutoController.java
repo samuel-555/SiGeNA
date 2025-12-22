@@ -12,29 +12,16 @@ import java.time.LocalDate;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Fornecedor;
+import sigena.model.domain.Notificacao;
 import sigena.model.domain.Produto;
+import sigena.model.domain.Usuario;
 import sigena.model.domain.util.TipoProduto;
 import sigena.model.service.GestaoFornecedorService;
+import sigena.model.service.GestaoNotificacaoService;
 import sigena.model.service.GestaoProdutoService;
 
 @WebServlet(name = "ProdutoController", urlPatterns = {"/ProdutoController"})
 public class ProdutoController extends HttpServlet {
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProdutoController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProdutoController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -66,12 +53,14 @@ public class ProdutoController extends HttpServlet {
             }
             if ("salvar".equals(acao)) {
                 cadastrar(request, response);
+                GestaoNotificacaoService not = new GestaoNotificacaoService();
+                not.criarParaTodos("Novo produto cadastrado");
             } else if ("salvarEdicao".equals(acao)) {
                 editar(request, response);
             }
+            response.sendRedirect("ProdutoController?acao=listar");
         } catch (PersistenciaException e) {
-            response.sendRedirect(
-                    "ProdutoController?acao=listar&erro="
+            response.sendRedirect("ProdutoController?acao=listar&erro="
                     + URLEncoder.encode(e.getMessage(), "UTF-8")
             );
         }
@@ -117,7 +106,6 @@ public class ProdutoController extends HttpServlet {
         Produto produto = new Produto(nome, fornecedor, quantidade, validade, lote, tipo);
         GestaoProdutoService service = new GestaoProdutoService();
         service.cadastrar(produto, fornecedor);
-        response.sendRedirect("ProdutoController?acao=listar");
     }
 
     private void listar(HttpServletRequest request, HttpServletResponse response)
@@ -125,7 +113,7 @@ public class ProdutoController extends HttpServlet {
 
         GestaoProdutoService service = new GestaoProdutoService();
 
-        List<Produto> lista = service.listar();
+        List<Produto> lista = service.listar("", "");
         LocalDate hoje = LocalDate.now();
 
         for (Produto p : lista) {
@@ -138,7 +126,15 @@ public class ProdutoController extends HttpServlet {
             }
         }
 
-        lista = service.listar();
+        String busca = request.getParameter("busca");
+        String tipo = request.getParameter("tipo");
+        if (busca == null) {
+            busca = "";
+        }
+        if (tipo == null) {
+            tipo = "";
+        }
+        lista = service.listar(busca, tipo);
 
         request.setAttribute("lista", lista);
         request.getRequestDispatcher("produtos.jsp").forward(request, response);
@@ -194,17 +190,15 @@ public class ProdutoController extends HttpServlet {
             if (loteStr != null && !loteStr.isBlank()) {
                 lote = LocalDate.parse(loteStr);
             }
-        }else {
+        } else {
             validade = LocalDate.of(9999, 12, 31);
             lote = LocalDate.of(9999, 12, 31);
         }
-        
+
         boolean disponivel = request.getParameter("disponivel") != null;
 
         GestaoProdutoService service = new GestaoProdutoService();
         Produto produto = service.buscar(id);
-
-        GestaoFornecedorService serviceF = new GestaoFornecedorService();
 
         produto.setNome(nome);
         produto.setQuantidade(quantidade);
@@ -214,8 +208,6 @@ public class ProdutoController extends HttpServlet {
         produto.setDisponivel(disponivel);
 
         service.alterar(produto);
-
-        response.sendRedirect("ProdutoController?acao=listar");
     }
 
     @Override

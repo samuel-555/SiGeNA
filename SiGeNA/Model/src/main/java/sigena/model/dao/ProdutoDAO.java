@@ -42,42 +42,63 @@ public class ProdutoDAO {
 
     }
 
-    public List<Produto> listar() throws PersistenciaException {
-        String sql = "SELECT * FROM produtos WHERE disponivel= true";
+    public List<Produto> listar(String busca, String tipo) throws PersistenciaException {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.* FROM produtos p ");
+        sql.append("WHERE 1=1 ");
+        boolean temBusca = busca != null && !busca.isEmpty();
+        if (temBusca) {
+            sql.append(" AND (p.nome LIKE ? OR p.id LIKE ?)");
+        }
+        boolean temTipo = tipo != null && !tipo.isEmpty();
+        if (temTipo) {
+            sql.append(" AND tipo = ?");
+        }
+        sql.append(" ORDER BY p.nome DESC");
         List<Produto> produtos = new ArrayList<>();
+        try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            int index = 1;
 
-        try (
-                Connection conn = ConexaoDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (temBusca) {
+                ps.setString(index++, "%" + busca + "%");
+                ps.setString(index++, "%" + busca + "%");
+            }
+            if (temTipo) {
+                ps.setString(index++, tipo);
+            }
 
-            while (rs.next()) {
-                Produto produto = new Produto();
-                Long fId = rs.getLong("fornecedor_id");
-                FornecedorDAO fDAO = new FornecedorDAO();
-                Fornecedor fornecedor = fDAO.buscarPorId(fId);
-                produto.setFornecedor(fornecedor);
-                produto.setId(rs.getLong("id"));
-                produto.setNome(rs.getString("nome"));
-                produto.setQuantidade(rs.getInt("quantidade"));
-                produto.setDisponivel(rs.getBoolean("disponivel"));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Produto produto = new Produto();
+                    Long fId = rs.getLong("fornecedor_id");
+                    FornecedorDAO fDAO = new FornecedorDAO();
+                    Fornecedor fornecedor = fDAO.buscarPorId(fId);
+                    produto.setFornecedor(fornecedor);
+                    produto.setId(rs.getLong("id"));
+                    produto.setNome(rs.getString("nome"));
+                    produto.setQuantidade(rs.getInt("quantidade"));
+                    produto.setDisponivel(rs.getBoolean("disponivel"));
 
-                Date validade = rs.getDate("validade");
-                if (validade != null) {
-                    produto.setValidade(validade.toLocalDate());
+                    Date validade = rs.getDate("validade");
+                    if (validade != null) {
+                        produto.setValidade(validade.toLocalDate());
+                    }
+
+                    Date lote = rs.getDate("lote");
+                    if (lote != null) {
+                        produto.setLote(lote.toLocalDate());
+                    }
+
+                    String tipoStr = rs.getString("tipo");
+                    produto.setTipo(TipoProduto.valueOf(rs.getString("tipo")));
+
+                    produtos.add(produto);
+
                 }
-
-                Date lote = rs.getDate("lote");
-                if (lote != null) {
-                    produto.setLote(lote.toLocalDate());
-                }
-
-                String tipoStr = rs.getString("tipo");
-                produto.setTipo(TipoProduto.valueOf(rs.getString("tipo")));
-
-                produtos.add(produto);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenciaException("Erro ao listar produtos: " + e.getMessage());
         }
 
         return produtos;
@@ -143,7 +164,7 @@ public class ProdutoDAO {
         String sql = "UPDATE produtos SET nome = ?, fornecedor_id = ?, quantidade = ?, tipo = ?, lote = ?, validade = ?, disponivel = ? WHERE id = ?";
 
         try (Connection con = ConexaoDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setString(1, produto.getNome());
             ps.setLong(2, produto.getFornecedor().getId());
             ps.setInt(3, produto.getQuantidade());

@@ -22,7 +22,6 @@ public class LoginServlet extends HttpServlet {
             cpf = cpf.trim();
         }
         String senha = request.getParameter("senha");
-        Usuario usuario1 = new Usuario(cpf, senha);
 
         try {
             if (cpf == null || !cpf.matches("\\d{11}")) {
@@ -46,6 +45,13 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("CpfLogado", usuario.getCpf());
                 session.setAttribute("NomeLogado", nomeParaSessao);
                 session.setAttribute("cargoUsuario", usuario.getCargo());
+                session.setAttribute("UsuarioLogado", usuario);
+
+                if (usuario.getCargo() == sigena.model.domain.Cargo.GERENTE) {
+                    response.sendRedirect("home-gerente.jsp");
+                } else {
+                    response.sendRedirect("NotificacaoController");
+                }
                 session.setAttribute("UsuarioLogado", usuario1);
                 response.sendRedirect("TarefaController");
             } else {

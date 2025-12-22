@@ -150,6 +150,8 @@ tr:last-child td {
 
 .btn-pequeno.cancelar {
   background-color: #c0392b;
+}
+
 tr:hover td {
     background-color: #fafafa;
 }

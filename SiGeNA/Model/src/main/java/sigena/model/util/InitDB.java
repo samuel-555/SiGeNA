@@ -57,6 +57,7 @@ public class InitDB {
             CREATE TABLE IF NOT EXISTS planos_alimentares (
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
                 animal_id BIGINT NOT NULL,
+                status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
                 data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (animal_id) REFERENCES animais(id)
                     ON DELETE CASCADE
@@ -79,6 +80,18 @@ public class InitDB {
         try (Statement st = con.createStatement()) {
             st.executeUpdate(planosSql);
             st.executeUpdate(itensSql);
+            try {
+                st.executeUpdate("ALTER TABLE planos_alimentares ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ATIVO'");
+            } catch (SQLException e) {
+                String msg = e.getMessage();
+                if (msg != null) {
+                    msg = msg.toLowerCase();
+                    if (msg.contains("duplicate column") || msg.contains("already exists")) {
+                        return;
+                    }
+                }
+                throw e;
+            }
         }
     }
 

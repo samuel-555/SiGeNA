@@ -44,6 +44,7 @@
     features.add(new Feature("funcionarios", "Funcionários", "FuncionarioServlet"));
     features.add(new Feature("ocorrencias", "Ocorrências", "ocorrencias.jsp"));
     features.add(new Feature("historico", "Histórico", "HistoricoController?acao=buscar"));
+    features.add(new Feature("eventos", "Eventos", "EventoController?acao=listar"));
     
 
     Set<String> permitido = new LinkedHashSet<>();
@@ -95,21 +96,24 @@
                 <div class="notif-dropdown" id="notifDropdown">
                     <div class="notif-header">Notificações</div>
                     <div class="notif-body">
-                        <c:choose>
-                            <c:when test="${empty tarefas and empty tarefasAtrasadas}">
-                                <div class="notif-item">Sem novas notificações</div>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="t" items="${tarefasAtrasadas}">
-                                    <div class="notif-item" style="color:#e03131"><b>Atrasada:</b> ${t.nome}</div>
-                                </c:forEach>
-                                <c:forEach var="t" items="${tarefas}">
-                                    <c:if test="${!t.concluida}">
-                                        <div class="notif-item"><b>Pendente:</b> ${t.nome}</div>
-                                    </c:if>
-                                </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
+                         <c:forEach var="n" items="${notificacoes}">
+                 <div class="notificacao ${n.lida ? 'lida' : 'nao-lida'}">
+
+                    <c:if test="${!n.lida}">
+                        <form id="form-${n.id}" action="NotificacaoController" method="post">
+                            <input type="hidden" name="id" value="${n.id}">
+                        </form>
+                        <a href="#" onclick="document.getElementById('form-${n.id}').submit(); return false;">
+                            ${n.titulo}
+                        </a>
+                    </c:if>
+
+                    <c:if test="${n.lida}">
+                        <p>${n.titulo}</p>
+                    </c:if>
+
+                </div>
+                </c:forEach>
                     </div>
                 </div>
             </div>

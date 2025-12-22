@@ -1,7 +1,6 @@
 package sigena.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,9 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import sigena.model.common.exception.PersistenciaException;
 import sigena.model.domain.Fornecedor;
-import sigena.model.domain.Notificacao;
 import sigena.model.domain.Produto;
-import sigena.model.domain.Usuario;
 import sigena.model.domain.util.TipoProduto;
 import sigena.model.service.GestaoFornecedorService;
 import sigena.model.service.GestaoNotificacaoService;

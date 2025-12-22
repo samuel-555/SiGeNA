@@ -194,7 +194,7 @@
                         <table class="modern-table">
                             <tbody>
                                 <c:forEach var="tarefa" items="${tarefasAtrasadas}">
-                                    <tr>
+                                    <tr class="${tarefa.concluida ? 'row-done' : ''}">
                                         <td class="task-name" style="color: #dc2626;">${tarefa.nome}</td>
                                         <td>${tarefa.texto}</td>
                                         <td style="color: #dc2626; font-weight: bold;">Vencimento: ${tarefa.dataPConclusao}</td>
@@ -203,7 +203,9 @@
                                                 <input type="hidden" name="acao" value="concluir">
                                                 <input type="hidden" name="id" value="${tarefa.id}">
                                                 <input type="hidden" name="status" value="true">
-                                                <input type="checkbox" class="task-checkbox" onchange="confirmarConclusao(this, '${tarefa.nome}')">
+                                                <input type="checkbox" class="task-checkbox"
+                                                       <c:if test="${tarefa.concluida}">checked disabled</c:if>
+                                                       onchange="confirmarConclusao(event, this, '${tarefa.nome}')">
                                             </form>
                                         </td>
                                     </tr>
@@ -242,9 +244,9 @@
                                                     <input type="hidden" name="acao" value="concluir">
                                                     <input type="hidden" name="id" value="${tarefa.id}">
                                                     <input type="hidden" name="status" value="true">
-                                                    <input type="checkbox" class="task-checkbox" 
-                                                           <c:if test="${tarefa.concluida}">checked disabled</c:if>
-                                                           onchange="confirmarConclusao(this, '${tarefa.nome}')">
+                                                <input type="checkbox" class="task-checkbox" 
+                                                       <c:if test="${tarefa.concluida}">checked disabled</c:if>
+                                                       onchange="confirmarConclusao(event, this, '${tarefa.nome}')">
                                                 </form>
                                             </td>
                                             <td style="text-align:right">
@@ -313,16 +315,42 @@
                 startTimer();
             }
 
-            function confirmarConclusao(checkbox, nomeTarefa) {
-                if (checkbox.checked) {
-                    if (confirm("Deseja concluir '" + nomeTarefa + "'? Após isso, não será possível editar ou excluir.")) {
-                        const sound = document.getElementById('clickSound');
-                        if (sound)
-                            sound.play();
-                        setTimeout(() => checkbox.form.submit(), 300);
-                    } else {
-                        checkbox.checked = false;
+            async function confirmarConclusao(event, checkbox, nomeTarefa) {
+                if (!checkbox.checked) {
+                    return;
+                }
+                event.preventDefault();
+                if (!confirm("Deseja concluir '" + nomeTarefa + "'? Após isso, não será possível editar ou excluir.")) {
+                    checkbox.checked = false;
+                    return;
+                }
+
+                const form = checkbox.form;
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: form.method,
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Falha ao concluir tarefa");
                     }
+
+                    const row = checkbox.closest('tr');
+                    if (row) {
+                        row.classList.add('row-done');
+                    }
+                    checkbox.checked = true;
+                    checkbox.disabled = true;
+
+                    const sound = document.getElementById('clickSound');
+                    if (sound)
+                        sound.play();
+                } catch (e) {
+                    checkbox.checked = false;
+                    alert("Não foi possível concluir a tarefa. Tente novamente.");
                 }
             }
 

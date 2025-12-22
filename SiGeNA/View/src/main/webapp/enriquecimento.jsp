@@ -98,7 +98,7 @@
                                 </form>
                                     
                                 <% if (podeGerenciar) { %>
-                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;" onsubmit="return confirm('Confirmar exclusao?');">
+                                <form action="${pageContext.request.contextPath}/enriquecimento" method="get" style="display:inline;" onsubmit="return confirm('Confirmar exclusão?');">
                                     <input type="hidden" name="action" value="deletar"/>
                                     <input type="hidden" name="id" value="<%= en.getId()%>"/>
                                     <button type="submit" class="btn-pequeno excluir">Desalocar</button>
